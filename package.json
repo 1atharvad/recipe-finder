@@ -1,0 +1,37 @@
+{
+  "name": "recipe-finder",
+  "version": "1.0.0",
+  "description": "Full-stack recipe recommendation platform using Java Spring Boot, React, PostgreSQL with Docker containerization and Nginx deployment",
+  "license": "MIT",
+  "author": {
+    "name": "Atharva Devasthali",
+    "email": "atharvadevasthali22@gmail.com",
+    "url": "https://atharvadevasthali.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1atharvad/recipe-finder.git"
+  },
+  "homepage": "https://github.com/1atharvad/recipe-finder#readme",
+  "bugs": {
+    "url": "https://github.com/1atharvad/recipe-finder/issues"
+  },
+  "keywords": [
+    "recipe-finder",
+    "java-spring-boot",
+    "react",
+    "postgresql",
+    "docker",
+    "microservices",
+    "food-recommendation",
+    "ingredient-search"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "docker compose up --build",
+    "dev:detach": "docker compose up --build -d",
+    "prod": "SPRING_PROFILES_ACTIVE=prod docker compose -f docker-compose.yml up --build -d",
+    "down": "docker compose down",
+    "logs": "docker compose logs -f"
+  }
+}
