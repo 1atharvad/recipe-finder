@@ -82,9 +82,19 @@ public class RecipeService {
                 .collect(Collectors.joining("\n"));
 
         StringBuilder prompt = new StringBuilder();
-        prompt.append("You are a friendly recipe assistant for a recipe-finder app. ")
-              .append("Answer conversationally in 2-4 sentences, recommending only from the recipes listed below. ")
-              .append("Do not invent recipes that aren't listed. If none fit, say so and suggest a broader search.\n\n")
+        prompt.append("You are a friendly recipe assistant for a recipe-finder app. Your reply is inserted directly into ")
+              .append("a chat bubble as inline HTML — do not wrap it in <p> or any other container tag, and never use ")
+              .append("markdown syntax (no asterisks, no bullet dashes, no headers). For emphasis, you may use only ")
+              .append("these inline tags where helpful: <b> for bold, <i> for italics, and <span class=\"hl\"> to ")
+              .append("highlight a key dish or ingredient name. Do not use any other tags, attributes, or styles.\n\n")
+              .append("Figure out the user's intent first:\n")
+              .append("- If their latest message is a greeting, small talk, or not about food/cooking, respond naturally ")
+              .append("and briefly (1-2 sentences), invite them to describe what they'd like to cook, and do NOT mention ")
+              .append("or list any recipes.\n")
+              .append("- If they're asking about food/recipes and relevant recipes are listed below, recommend only from ")
+              .append("that list in 2-4 sentences. Never invent a recipe that isn't listed.\n")
+              .append("- If they're asking about food/recipes but nothing relevant is listed below, say so briefly and ")
+              .append("suggest they rephrase or broaden their request.\n\n")
               .append("Available recipes:\n").append(context).append("\n\n");
 
         if (history != null) {

@@ -81,16 +81,24 @@ public class RecipeEmbeddingService {
                 .forEach(this::upsertEmbedding);
     }
 
-    /** Returns recipe IDs from the general/public pool, ranked by similarity to the query, most similar first. */
+    // Cosine distance (pgvector's <=> operator) above which a match is considered
+    // unrelated noise rather than a real hit — e.g. "hi" lands ~0.5+ against any
+    // recipe, while genuinely relevant queries land ~0.3-0.45. Tuned empirically
+    // against the seed recipe set; revisit if results start feeling off.
+    private static final double MAX_RELEVANT_DISTANCE = 0.45;
+
+    /** Returns recipe IDs from the general/public pool that are actually relevant to the query, most similar first. */
     public List<Long> similaritySearch(String query, int limit) {
         if (!geminiClient.isConfigured()) return List.of();
         float[] queryVector = geminiClient.embed(query);
+        String vectorLiteral = toVectorLiteral(queryVector);
         return jdbcTemplate.queryForList(
             "SELECT re.recipe_id FROM recipe_embeddings re " +
             "JOIN recipes r ON r.id = re.recipe_id " +
-            "WHERE r.owner_id IS NULL OR r.is_public = true " +
+            "WHERE (r.owner_id IS NULL OR r.is_public = true) " +
+            "AND re.embedding <=> ?::vector < ? " +
             "ORDER BY re.embedding <=> ?::vector LIMIT ?",
-            Long.class, toVectorLiteral(queryVector), limit
+            Long.class, vectorLiteral, MAX_RELEVANT_DISTANCE, vectorLiteral, limit
         );
     }
 

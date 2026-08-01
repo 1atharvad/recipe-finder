@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { ChatCircleDots, X, PaperPlaneRight, WarningCircle } from '@phosphor-icons/react'
+import DOMPurify from 'dompurify'
+import { ChatCircleDots, X, PaperPlaneRight, WarningCircle, Microphone } from '@phosphor-icons/react'
 import { RecipeCard } from './RecipeCard'
 import { recipeApi } from '../api/api'
+import { useSpeechToText } from '../hooks/useSpeechToText'
 import type { Recipe, ChatMessage } from '../types'
 
 const STARTER_PROMPTS = [
@@ -9,6 +11,12 @@ const STARTER_PROMPTS = [
   'Quick vegetarian dinner',
   'I have leftover rice, what can I make?',
 ]
+
+// The assistant's reply is prompted to only ever use <b>/<i>/<span class="hl">
+// for emphasis — sanitize down to exactly that allowlist before rendering as
+// HTML, in case a prompt-injection attempt tries to sneak anything else in.
+const sanitizeAssistantHtml = (html: string) =>
+  DOMPurify.sanitize(html, { ALLOWED_TAGS: ['b', 'i', 'span'], ALLOWED_ATTR: ['class'] })
 
 export const ChatWidget = () => {
   const [open, setOpen] = useState(false)
@@ -18,6 +26,8 @@ export const ChatWidget = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const bodyEndRef = useRef<HTMLDivElement>(null)
+  const { supported: speechSupported, listening, start: startListening, stop: stopListening } =
+    useSpeechToText(transcript => setInput(transcript))
 
   useEffect(() => {
     if (open) bodyEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
@@ -73,7 +83,14 @@ export const ChatWidget = () => {
               <div className="chat-thread">
                 {messages.map((m, i) => (
                   <div key={i} className={`chat-message ${m.role}`}>
-                    <div className="chat-bubble">{m.content}</div>
+                    {m.role === 'assistant' ? (
+                      <div
+                        className="chat-bubble"
+                        dangerouslySetInnerHTML={{ __html: sanitizeAssistantHtml(m.content) }}
+                      />
+                    ) : (
+                      <div className="chat-bubble">{m.content}</div>
+                    )}
                   </div>
                 ))}
                 {loading && (
@@ -112,6 +129,17 @@ export const ChatWidget = () => {
               onKeyDown={e => e.key === 'Enter' && send()}
               disabled={loading}
             />
+            {speechSupported && (
+              <button
+                type="button"
+                className={`chatbot-mic-btn${listening ? ' listening' : ''}`}
+                onClick={() => (listening ? stopListening() : startListening())}
+                disabled={loading}
+                aria-label={listening ? 'Stop voice input' : 'Start voice input'}
+              >
+                <Microphone weight={listening ? 'fill' : 'bold'} />
+              </button>
+            )}
             <button
               className="btn-pill btn-primary btn-icon-only"
               onClick={() => send()}
