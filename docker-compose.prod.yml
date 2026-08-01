@@ -1,11 +1,12 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     container_name: recipe-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: recipedb
       POSTGRES_USER: recipe_user
-      POSTGRES_PASSWORD: recipe_pass
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     expose:
@@ -19,32 +20,22 @@ services:
   backend:
     build: ./backend
     container_name: recipe-backend
+    restart: unless-stopped
     expose:
       - "6754"
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/recipedb
       - SPRING_DATASOURCE_USERNAME=recipe_user
-      - SPRING_DATASOURCE_PASSWORD=recipe_pass
-      - JWT_SECRET=a8f3d2c1b0e94567890abcdef1234567890abcdef1234567890abcdef12345678
-      - ADMIN_USERNAME=admin
-      - ADMIN_PASSWORD=admin123
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:?DB_PASSWORD is required}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:?ADMIN_USERNAME is required}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:?ALLOWED_ORIGINS is required, e.g. https://your-app.vercel.app}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy
-
-  frontend:
-    container_name: recipe-frontend
-    image: node:20-alpine
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    expose:
-      - "5173"
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
-    depends_on:
-      - backend
 
   nginx:
     image: nginx:alpine
@@ -53,9 +44,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
-      - frontend
       - backend
 
 volumes:

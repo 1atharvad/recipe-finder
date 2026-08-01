@@ -4,6 +4,8 @@ A full-stack recipe management app with user authentication, personalised recomm
 
 Built with **Spring Boot 3** · **React + TypeScript** · **PostgreSQL** · **Docker Compose** · **nginx**
 
+Dev runs Postgres + backend in Docker (backend uses an incremental `mvn spring-boot:run`, not a full rebuild, so it stays light) and the frontend natively via Vite. Prod deploys the backend + Postgres + nginx to a VPS (e.g. Contabo) via Docker, and the frontend as a static build on Vercel.
+
 ---
 
 ## Features
@@ -61,42 +63,99 @@ recipe-finder/
 │       ├── context/           # AuthContext (JWT + user state)
 │       ├── pages/             # All page components
 │       └── types/             # Shared TypeScript interfaces
-├── nginx/nginx.conf           # Reverse proxy config
-└── docker-compose.yml
+├── nginx/nginx.prod.conf      # Prod reverse proxy (API only, fronts the backend on the VPS)
+├── docker-compose.dev.yml     # Dev: Postgres + backend (mvn spring-boot:run, source bind-mounted)
+└── docker-compose.prod.yml    # Prod: Postgres + backend + nginx (deployed to the VPS)
 ```
 
 ---
 
-## Running Locally
+## Running Locally (Dev)
 
-**Prerequisites:** Docker + Docker Compose
+Postgres and the backend run in Docker; the frontend runs natively via Vite.
+
+The backend container bind-mounts `./backend` into a plain `maven:3.9.6-eclipse-temurin-17` image and
+runs `mvn spring-boot:run` — no Dockerfile build step, no `mvn clean package` on every start. Maven's
+`~/.m2` cache is a named volume (`m2_cache`), so dependencies download once, not on every container
+start. `spring-boot-devtools` is on the classpath, so if your editor compiles `.java` files on save
+(most do), the app restarts automatically inside the container.
+
+**Prerequisites:** Docker, Node 20+ (Java is not needed on the host — it runs in the container)
 
 ```bash
 git clone <repo-url>
 cd recipe-finder
-docker compose up --build
+npm install   # installs root dev tooling (concurrently)
+npm run dev   # starts Postgres + backend in Docker, and the frontend via Vite
 ```
 
-The app will be available at **http://localhost**.
+- Frontend: **http://localhost:5173** (Vite proxies `/api/v1` to the backend, see `frontend/vite.config.ts`)
+- Backend: **http://localhost:6754** (in Docker)
+- Postgres: **localhost:5433** (in Docker — mapped off the default 5432 to avoid clashing with other local Postgres instances)
 
 The database is seeded automatically with 10 general recipes on first run.
+
+Other useful scripts: `npm run dev:backend` (Postgres + backend only), `npm run dev:frontend`
+(frontend only), `npm run dev:down` (stop and remove the dev containers).
+
+---
+
+## Deploying (Prod)
+
+**Backend + Postgres** run on a VPS (e.g. Contabo) via Docker; **frontend** is a static build deployed
+to Vercel. They talk to each other over CORS, not a shared nginx proxy.
+
+### Backend (VPS)
+
+```bash
+cd recipe-finder
+DB_PASSWORD=... JWT_SECRET=... ADMIN_USERNAME=... ADMIN_PASSWORD=... \
+ALLOWED_ORIGINS=https://your-app.vercel.app \
+npm run prod
+```
+
+This builds and starts Postgres + the Spring Boot backend + nginx (`docker-compose.prod.yml`),
+with nginx reverse-proxying `/api/v1/*` to the backend on port 8080. Point your domain's DNS at the
+VPS and put nginx behind Let's Encrypt/certbot for HTTPS (or front it with another reverse proxy
+that terminates TLS on 443 and forwards to 8080).
+
+`npm run prod:down` stops it, `npm run prod:logs` tails logs.
+
+### Frontend (Vercel)
+
+Import the `frontend/` directory as the project root in Vercel, and set the env var:
+
+| Variable | Value |
+|---|---|
+| `VITE_API_BASE_URL` | `https://api.your-domain.com` (your VPS's public URL) |
+
+`frontend/vercel.json` handles SPA routing (React Router) so all paths resolve to `index.html`.
 
 ---
 
 ## Environment Variables
 
-All secrets use env-var substitution with dev-safe fallbacks. Override in production:
+### Backend
 
 | Variable | Default | Description |
 |---|---|---|
-| `JWT_SECRET` | (64-char hex string) | HMAC-SHA key for JWT signing |
+| `JWT_SECRET` | (64-char hex string, dev only) | HMAC-SHA key for JWT signing — **required** in prod |
 | `ADMIN_USERNAME` | `admin` | Admin login username |
 | `ADMIN_PASSWORD` | `admin123` | Admin login password |
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/recipedb` | DB URL |
 | `SPRING_DATASOURCE_USERNAME` | `recipe_user` | DB user |
 | `SPRING_DATASOURCE_PASSWORD` | `recipe_pass` | DB password |
+| `ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated CORS-allowed origins — set to your Vercel URL in prod |
+| `GEMINI_API_KEY` | *(empty)* | Google Gemini API key, powers recipe embeddings + smart search. Optional — smart search is silently disabled if unset |
 
-Set these in `docker-compose.yml` or as shell environment variables before running.
+`docker-compose.prod.yml` requires `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`,
+and `ALLOWED_ORIGINS` to be set (no insecure defaults in prod). `GEMINI_API_KEY` is optional.
+
+### Frontend
+
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_API_BASE_URL` | *(empty → relative, dev)* | Backend origin, e.g. `https://api.your-domain.com` |
 
 ---
 

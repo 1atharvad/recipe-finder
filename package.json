@@ -28,10 +28,16 @@
   ],
   "type": "module",
   "scripts": {
-    "dev": "docker compose up --build",
-    "dev:detach": "docker compose up --build -d",
-    "prod": "SPRING_PROFILES_ACTIVE=prod docker compose -f docker-compose.yml up --build -d",
-    "down": "docker compose down",
-    "logs": "docker compose logs -f"
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "docker compose -f docker-compose.dev.yml up postgres backend",
+    "dev:frontend": "wait-on tcp:6754 && npm --prefix frontend run dev",
+    "dev:down": "docker compose -f docker-compose.dev.yml down",
+    "prod": "docker compose -f docker-compose.prod.yml up --build -d",
+    "prod:down": "docker compose -f docker-compose.prod.yml down",
+    "prod:logs": "docker compose -f docker-compose.prod.yml logs -f"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "wait-on": "^8.0.1"
   }
 }

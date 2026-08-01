@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: recipe-postgres-dev
+    environment:
+      POSTGRES_DB: recipedb
+      POSTGRES_USER: recipe_user
+      POSTGRES_PASSWORD: recipe_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recipe_user -d recipedb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: maven:3.9.6-eclipse-temurin-17
+    container_name: recipe-backend-dev
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - m2_cache:/root/.m2
+    ports:
+      - "6754:6754"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/recipedb
+      - SPRING_DATASOURCE_USERNAME=recipe_user
+      - SPRING_DATASOURCE_PASSWORD=recipe_pass
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    # No `clean`/`package` here — spring-boot:run does an incremental compile,
+    # which is what keeps this from turning into the full-rebuild-every-start
+    # cost that made docker compose --build so heavy before.
+    command: mvn spring-boot:run
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data_dev:
+  m2_cache:

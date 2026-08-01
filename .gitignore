@@ -12,6 +12,7 @@ backend/.env
 
 # Root
 node_modules/
+.env
 
 # IDE
 .idea/
