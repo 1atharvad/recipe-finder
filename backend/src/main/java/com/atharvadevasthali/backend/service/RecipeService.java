@@ -1,6 +1,7 @@
 package com.atharvadevasthali.backend.service;
 
-import com.atharvadevasthali.backend.dto.IngredientDTO;
+import com.atharvadevasthali.backend.dto.ChatMessageDTO;
+import com.atharvadevasthali.backend.dto.ChatResponse;
 import com.atharvadevasthali.backend.dto.RecipeRequest;
 import com.atharvadevasthali.backend.model.*;
 import com.atharvadevasthali.backend.repository.*;
@@ -21,25 +22,80 @@ public class RecipeService {
     private final UserRepository userRepository;
     private final UserFavoriteRepository favoriteRepository;
     private final EatingHistoryRepository historyRepository;
+    private final RecipeEmbeddingService embeddingService;
+    private final GeminiClient geminiClient;
 
     public RecipeService(RecipeRepository recipeRepository,
                          UserRepository userRepository,
                          UserFavoriteRepository favoriteRepository,
-                         EatingHistoryRepository historyRepository) {
+                         EatingHistoryRepository historyRepository,
+                         RecipeEmbeddingService embeddingService,
+                         GeminiClient geminiClient) {
         this.recipeRepository = recipeRepository;
         this.userRepository = userRepository;
         this.favoriteRepository = favoriteRepository;
         this.historyRepository = historyRepository;
+        this.embeddingService = embeddingService;
+        this.geminiClient = geminiClient;
     }
 
     // ── Public ──────────────────────────────────────────────────────────────
 
     public List<Recipe> getTopGeneralRecipes() {
-        return recipeRepository.findByOwnerIsNull(PageRequest.of(0, 6)).getContent();
+        return recipeRepository.findByOwnerIsNullOrIsPublicTrue(PageRequest.of(0, 6)).getContent();
     }
 
     public List<Recipe> searchPublic(String q) {
         return recipeRepository.searchGeneralByNameOrIngredient(q.toLowerCase().trim());
+    }
+
+    /** RAG-style natural-language search over the general/public recipe pool. */
+    public List<Recipe> smartSearch(String query, int limit) {
+        List<Long> ids = embeddingService.similaritySearch(query, limit);
+        return ids.stream()
+                .map(id -> recipeRepository.findById(id).orElse(null))
+                .filter(r -> r != null)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Multi-turn RAG chat: retrieves candidate recipes for the whole conversation so far,
+     * then asks Gemini to answer conversationally using only that retrieved context.
+     */
+    public ChatResponse chat(String message, List<ChatMessageDTO> history) {
+        if (!geminiClient.isConfigured()) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "AI chat is not configured");
+        }
+
+        String retrievalQuery = (history == null ? "" : history.stream()
+                .filter(m -> "user".equals(m.getRole()))
+                .map(ChatMessageDTO::getContent)
+                .collect(Collectors.joining(" "))) + " " + message;
+
+        List<Recipe> candidates = smartSearch(retrievalQuery.trim(), 6);
+
+        String context = candidates.isEmpty() ? "No matching recipes were found." : candidates.stream()
+                .map(r -> "- " + r.getName() + " (" +
+                        (r.getDietaryType() != null ? r.getDietaryType() : "any diet") + ", " +
+                        (r.getCuisineType() != null ? r.getCuisineType() : "any cuisine") + "): ingredients " +
+                        r.getIngredients().stream().map(Ingredient::getName).collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
+
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("You are a friendly recipe assistant for a recipe-finder app. ")
+              .append("Answer conversationally in 2-4 sentences, recommending only from the recipes listed below. ")
+              .append("Do not invent recipes that aren't listed. If none fit, say so and suggest a broader search.\n\n")
+              .append("Available recipes:\n").append(context).append("\n\n");
+
+        if (history != null) {
+            for (ChatMessageDTO m : history) {
+                prompt.append(m.getRole()).append(": ").append(m.getContent()).append("\n");
+            }
+        }
+        prompt.append("user: ").append(message).append("\nassistant:");
+
+        String reply = geminiClient.generate(prompt.toString());
+        return new ChatResponse(reply, candidates);
     }
 
     public Recipe getById(Long id) {
@@ -64,7 +120,9 @@ public class RecipeService {
         User user = getUser(username);
         Recipe recipe = buildRecipe(req);
         recipe.setOwner(user);
-        return recipeRepository.save(recipe);
+        recipe = recipeRepository.save(recipe);
+        syncEmbedding(recipe);
+        return recipe;
     }
 
     public Recipe updateMyRecipe(String username, Long id, RecipeRequest req) {
@@ -75,7 +133,9 @@ public class RecipeService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not your recipe");
         }
         applyRecipeRequest(recipe, req);
-        return recipeRepository.save(recipe);
+        recipe = recipeRepository.save(recipe);
+        syncEmbedding(recipe);
+        return recipe;
     }
 
     public void deleteMyRecipe(String username, Long id) {
@@ -118,6 +178,10 @@ public class RecipeService {
         return historyRepository.findByUserOrderByEatenOnDesc(getUser(username));
     }
 
+    public List<EatingHistory> getHistoryForRecipe(String username, Long recipeId) {
+        return historyRepository.findByUserAndRecipeOrderByEatenOnDesc(getUser(username), getById(recipeId));
+    }
+
     public EatingHistory markAsEaten(String username, Long recipeId) {
         User user = getUser(username);
         Recipe recipe = getById(recipeId);
@@ -132,7 +196,9 @@ public class RecipeService {
     }
 
     public Recipe createGeneralRecipe(RecipeRequest req) {
-        return recipeRepository.save(buildRecipe(req));
+        Recipe recipe = recipeRepository.save(buildRecipe(req));
+        syncEmbedding(recipe);
+        return recipe;
     }
 
     public Recipe updateGeneralRecipe(Long id, RecipeRequest req) {
@@ -142,7 +208,9 @@ public class RecipeService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a general recipe");
         }
         applyRecipeRequest(recipe, req);
-        return recipeRepository.save(recipe);
+        recipe = recipeRepository.save(recipe);
+        syncEmbedding(recipe);
+        return recipe;
     }
 
     public void deleteGeneralRecipe(Long id) {
@@ -155,6 +223,15 @@ public class RecipeService {
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+
+    /** Keeps the vector index in sync: indexed when visible (general or public), removed otherwise. */
+    private void syncEmbedding(Recipe recipe) {
+        if (recipe.getOwner() == null || recipe.getIsPublic()) {
+            embeddingService.upsertEmbedding(recipe);
+        } else {
+            embeddingService.deleteEmbedding(recipe.getId());
+        }
+    }
 
     private User getUser(String username) {
         return userRepository.findByUsername(username)
@@ -172,6 +249,8 @@ public class RecipeService {
         recipe.setServings(req.getServings());
         recipe.setDietaryType(req.getDietaryType());
         recipe.setCuisineType(req.getCuisineType());
+        recipe.setVideoUrl(req.getVideoUrl());
+        recipe.setIsPublic(req.getIsPublic());
         if (req.getIngredients() != null) {
             recipe.setIngredients(req.getIngredients().stream()
                     .map(dto -> {

@@ -2,7 +2,10 @@ package com.atharvadevasthali.backend;
 
 import com.atharvadevasthali.backend.model.*;
 import com.atharvadevasthali.backend.repository.RecipeRepository;
+import com.atharvadevasthali.backend.service.RecipeEmbeddingService;
 import jakarta.annotation.PostConstruct;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,9 +14,15 @@ import java.util.List;
 public class DataInitializer {
 
     private final RecipeRepository recipeRepository;
+    private final JdbcTemplate jdbcTemplate;
+    private final RecipeEmbeddingService embeddingService;
 
-    public DataInitializer(RecipeRepository recipeRepository) {
+    public DataInitializer(RecipeRepository recipeRepository,
+                            JdbcTemplate jdbcTemplate,
+                            RecipeEmbeddingService embeddingService) {
         this.recipeRepository = recipeRepository;
+        this.jdbcTemplate = jdbcTemplate;
+        this.embeddingService = embeddingService;
     }
 
     private static Ingredient ing(String name, String quantity) {
@@ -22,8 +31,9 @@ public class DataInitializer {
 
     @PostConstruct
     public void loadData() {
-        if (!recipeRepository.findByOwnerIsNull().isEmpty()) return;
+        setupVectorStore();
 
+        if (recipeRepository.findByOwnerIsNull().isEmpty()) {
         recipeRepository.saveAll(List.of(
             new Recipe("Tomato Pasta", 2,
                 List.of(ing("pasta", "200 g"), ing("tomatoes", "3, chopped"), ing("onion", "1, diced"),
@@ -150,5 +160,24 @@ public class DataInitializer {
                 DietaryType.VEGETARIAN, CuisineType.OTHER
             )
         ));
+        }
+
+        embeddingService.backfillMissingEmbeddings();
+    }
+
+    // pgvector is Postgres-specific; skip quietly on other databases (e.g. H2 in tests)
+    // so the vector index remains an optional enhancement rather than a hard boot dependency.
+    private void setupVectorStore() {
+        try {
+            jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS vector");
+            jdbcTemplate.execute(
+                "CREATE TABLE IF NOT EXISTS recipe_embeddings (" +
+                "  recipe_id BIGINT PRIMARY KEY REFERENCES recipes(id) ON DELETE CASCADE," +
+                "  embedding vector(768) NOT NULL" +
+                ")"
+            );
+        } catch (DataAccessException e) {
+            // Not running on Postgres/pgvector — smart search/chat stay disabled.
+        }
     }
 }

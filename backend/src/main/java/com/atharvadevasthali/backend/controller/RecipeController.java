@@ -1,5 +1,7 @@
 package com.atharvadevasthali.backend.controller;
 
+import com.atharvadevasthali.backend.dto.ChatRequest;
+import com.atharvadevasthali.backend.dto.ChatResponse;
 import com.atharvadevasthali.backend.dto.PreferencesRequest;
 import com.atharvadevasthali.backend.dto.RecommendationDTO;
 import com.atharvadevasthali.backend.dto.RecipeRequest;
@@ -18,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "*")
 public class RecipeController {
 
     private final RecipeService recipeService;
@@ -46,6 +47,16 @@ public class RecipeController {
             return recipeService.searchForUser(q, auth.getName());
         }
         return recipeService.searchPublic(q);
+    }
+
+    @GetMapping("/recipes/smart-search")
+    public List<Recipe> smartSearch(@RequestParam String q, @RequestParam(defaultValue = "10") int limit) {
+        return recipeService.smartSearch(q, limit);
+    }
+
+    @PostMapping("/recipes/chat")
+    public ChatResponse chat(@Valid @RequestBody ChatRequest req) {
+        return recipeService.chat(req.getMessage(), req.getHistory());
     }
 
     @GetMapping("/recipes/{id}")
@@ -109,6 +120,11 @@ public class RecipeController {
     @GetMapping("/history")
     public List<EatingHistory> getHistory(Authentication auth) {
         return recipeService.getHistory(auth.getName());
+    }
+
+    @GetMapping("/history/{recipeId}")
+    public List<EatingHistory> getHistoryForRecipe(@PathVariable Long recipeId, Authentication auth) {
+        return recipeService.getHistoryForRecipe(auth.getName(), recipeId);
     }
 
     // ── Recommendations ──────────────────────────────────────────────────────
