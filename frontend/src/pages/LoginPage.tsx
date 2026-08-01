@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { authApi } from '../api/api'
 import { useAuth } from '../context/AuthContext'
+import { LandingHeader } from '../components/LandingHeader'
+import { LandingFooter } from '../components/LandingFooter'
 
 export const LoginPage = () => {
   const { isAuthenticated, login } = useAuth()
@@ -11,7 +13,7 @@ export const LoginPage = () => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  if (isAuthenticated) return <Navigate to="/" replace />
+  if (isAuthenticated) return <Navigate to="/dashboard" replace />
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,7 +22,7 @@ export const LoginPage = () => {
     try {
       const res = await authApi.login({ username, password })
       login(res)
-      navigate('/')
+      navigate('/dashboard')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
@@ -29,41 +31,54 @@ export const LoginPage = () => {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <h2>Welcome back</h2>
-        <p className="auth-sub">Sign in to access your recipes and recommendations.</p>
-        {error && <p className="auth-error">{error}</p>}
-        <form onSubmit={handleSubmit} className="auth-form">
-          <label>
-            Username
-            <input
-              type="text"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              required
-              autoFocus
-              placeholder="your username"
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              placeholder="••••••"
-            />
-          </label>
-          <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? 'Signing in…' : 'Sign In'}
-          </button>
-        </form>
-        <p className="auth-link">
-          No account? <Link to="/signup">Create one</Link>
-        </p>
+    <div className="landing">
+      <LandingHeader />
+
+      <section className="auth-hero">
+        <div className="section-inner">
+          <h1>Welcome back to your tastiest era</h1>
+          <p>Log in to save recipes, track meals, and keep fridge panic in the past.</p>
+        </div>
+      </section>
+
+      <div className="auth-page">
+        <div className="auth-card">
+          <h2>Log in to Recipe Finder</h2>
+          <p className="auth-sub">Your next good meal is waiting.</p>
+          {error && <p className="auth-error">{error}</p>}
+          <form onSubmit={handleSubmit} className="auth-form">
+            <label>
+              Username
+              <input
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                required
+                autoFocus
+                placeholder="your username"
+              />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                placeholder="Enter your password"
+              />
+            </label>
+            <button type="submit" className="btn-pill btn-primary" disabled={loading}>
+              {loading ? 'Signing in…' : 'Log in'}
+            </button>
+          </form>
+          <p className="auth-link">
+            New here? <Link to="/signup">Create a free account</Link>
+          </p>
+        </div>
       </div>
+
+      <LandingFooter />
     </div>
   )
 }

@@ -47,7 +47,7 @@ export const MyRecipesPage = () => {
       <div className="page-header">
         <div>
           <h2>My Recipes</h2>
-          <p>{recipes.length} private recipe{recipes.length !== 1 ? 's' : ''}</p>
+          <p>{recipes.length} recipe{recipes.length !== 1 ? 's' : ''}</p>
         </div>
         <button className="btn-primary" onClick={() => setShowCreate(true)}>+ Add Recipe</button>
       </div>
@@ -64,7 +64,12 @@ export const MyRecipesPage = () => {
           {recipes.map(recipe => (
             <div key={recipe.id} className="my-recipe-row">
               <div className="my-recipe-info">
-                <span className="my-recipe-name">{recipe.name}</span>
+                <span className="my-recipe-name">
+                  {recipe.name}
+                  <span className={`visibility-badge ${recipe.isPublic ? 'is-public' : 'is-private'}`}>
+                    {recipe.isPublic ? 'Public' : 'Private'}
+                  </span>
+                </span>
                 <span className="my-recipe-meta">
                   {recipe.servings} serving{recipe.servings !== 1 ? 's' : ''}
                   {recipe.dietaryType && ` · ${recipe.dietaryType.replace('_', ' ')}`}

@@ -23,7 +23,7 @@ export const Navbar = () => {
           </>
         ) : isAuthenticated ? (
           <>
-            <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            <NavLink to="/dashboard/search" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Search
             </NavLink>
             <NavLink to="/favorites" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
@@ -35,15 +35,18 @@ export const Navbar = () => {
             <NavLink to="/history" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               History
             </NavLink>
-            <NavLink to="/recommendations" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-              For You
+            <NavLink to="/dashboard/recommender" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Recommender
+            </NavLink>
+            <NavLink to="/dashboard/inventory" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Inventory
             </NavLink>
             <span className="nav-username">{user?.username}</span>
             <button className="nav-logout" onClick={handleLogout}>Logout</button>
           </>
         ) : (
           <>
-            <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            <NavLink to="/dashboard/search" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Search
             </NavLink>
             <NavLink to="/login" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>

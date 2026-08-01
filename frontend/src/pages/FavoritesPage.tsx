@@ -31,7 +31,7 @@ export const FavoritesPage = () => {
           <span className="empty-icon">♡</span>
           <h2>No saved recipes yet</h2>
           <p>Open any recipe and save the ones you like.</p>
-          <Link to="/" className="btn-primary">Browse Recipes</Link>
+          <Link to="/dashboard/search" className="btn-primary">Browse Recipes</Link>
         </div>
       </div>
     )

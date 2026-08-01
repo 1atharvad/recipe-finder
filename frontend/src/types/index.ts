@@ -12,10 +12,22 @@ export interface Recipe {
   dietaryType?: 'VEGETARIAN' | 'VEGAN' | 'NON_VEGETARIAN' | null
   cuisineType?: 'ITALIAN' | 'INDIAN' | 'ASIAN' | 'MEXICAN' | 'OTHER' | null
   owner?: { id: number; username: string } | null
+  videoUrl?: string | null
+  isPublic?: boolean
 }
 
 export interface RecommendationDTO extends Recipe {
   score: number
+}
+
+export interface ChatMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export interface ChatResponse {
+  reply: string
+  recipes: Recipe[]
 }
 
 export interface User {
@@ -60,6 +72,8 @@ export interface RecipeRequest {
   steps: string[]
   dietaryType?: string | null
   cuisineType?: string | null
+  videoUrl?: string | null
+  isPublic?: boolean
 }
 
 export interface PreferencesRequest {

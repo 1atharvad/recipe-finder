@@ -1,8 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import {
+  ArrowLeft, Heart, CheckCircle, Users, ListChecks, ForkKnife,
+  Printer, ShareNetwork, ClockCounterClockwise, PlayCircle,
+} from '@phosphor-icons/react'
 import { recipeApi, favoritesApi, historyApi } from '../api/api'
 import { useAuth } from '../context/AuthContext'
-import type { Recipe } from '../types'
+import { LandingHeader } from '../components/LandingHeader'
+import { LandingFooter } from '../components/LandingFooter'
+import { RecipeCard } from '../components/RecipeCard'
+import { getRecipeImage } from '../assets/recipeImages'
+import { handleImageFallback } from '../assets/imageFallback'
+import { getYouTubeEmbedUrl } from '../assets/youtube'
+import type { Recipe, EatingHistoryEntry } from '../types'
 
 export const RecipePage = () => {
   const { id } = useParams()
@@ -12,8 +22,12 @@ export const RecipePage = () => {
   const [status, setStatus] = useState<'loading' | 'done' | 'error'>('loading')
   const [favorited, setFavorited] = useState(false)
   const [eatenMsg, setEatenMsg] = useState('')
+  const [cookHistory, setCookHistory] = useState<EatingHistoryEntry[]>([])
+  const [similar, setSimilar] = useState<Recipe[]>([])
+  const [shareMsg, setShareMsg] = useState('')
 
   useEffect(() => {
+    setStatus('loading')
     recipeApi.getById(Number(id))
       .then(data => { setRecipe(data); setStatus('done') })
       .catch(() => setStatus('error'))
@@ -24,7 +38,22 @@ export const RecipePage = () => {
     favoritesApi.getAll()
       .then(favs => setFavorited(favs.some(f => f.id === recipe.id)))
       .catch(() => {})
+    historyApi.getForRecipe(recipe.id)
+      .then(setCookHistory)
+      .catch(() => {})
   }, [isAuthenticated, recipe])
+
+  useEffect(() => {
+    if (!recipe) return
+    recipeApi.getTop()
+      .then(top => setSimilar(
+        top.filter(r =>
+          r.id !== recipe.id &&
+          (r.cuisineType === recipe.cuisineType || r.dietaryType === recipe.dietaryType)
+        ).slice(0, 3)
+      ))
+      .catch(() => {})
+  }, [recipe])
 
   const toggleFavorite = async () => {
     if (!recipe) return
@@ -43,90 +72,173 @@ export const RecipePage = () => {
   const markEaten = async () => {
     if (!recipe) return
     try {
-      await historyApi.markEaten(recipe.id)
+      const entry = await historyApi.markEaten(recipe.id)
       setEatenMsg('Marked as eaten!')
+      setCookHistory(prev => [entry, ...prev])
       setTimeout(() => setEatenMsg(''), 2000)
     } catch {}
   }
 
-  if (status === 'loading') return <div className="recipe-page-loading">Loading recipe...</div>
-  if (status === 'error' || !recipe) return (
-    <div className="recipe-page-error">
-      <p>Recipe not found.</p>
-      <button onClick={() => navigate('/')}>← Back to Search</button>
-    </div>
-  )
+  const share = async () => {
+    const url = window.location.href
+    if (navigator.share) {
+      try { await navigator.share({ title: recipe?.name, url }) } catch {}
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(url)
+      setShareMsg('Link copied!')
+      setTimeout(() => setShareMsg(''), 2000)
+    } catch {}
+  }
+
+  if (status === 'loading') {
+    return (
+      <div className="landing">
+        <LandingHeader />
+        <div className="recipe-page-loading">Loading recipe...</div>
+        <LandingFooter />
+      </div>
+    )
+  }
+
+  if (status === 'error' || !recipe) {
+    return (
+      <div className="landing">
+        <LandingHeader />
+        <div className="recipe-page-error">
+          <p>Recipe not found.</p>
+          <button className="btn-pill btn-primary btn-small" onClick={() => navigate('/dashboard/search')}>
+            ← Back to Search
+          </button>
+        </div>
+        <LandingFooter />
+      </div>
+    )
+  }
+
+  const embedUrl = recipe.videoUrl ? getYouTubeEmbedUrl(recipe.videoUrl) : null
 
   return (
-    <div className="recipe-page">
-      <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
+    <div className="landing">
+      <LandingHeader />
 
-      <article className="recipe-book">
-        <header className="book-header">
-          <div className="book-title-row">
-            <h1 className="book-title">{recipe.name}</h1>
-            <div className="book-actions">
-              <button
-                className={favorited ? 'btn-save saved' : 'btn-save'}
-                onClick={toggleFavorite}
-              >
-                {favorited ? '♥ Saved' : '♡ Save Recipe'}
-              </button>
-              {isAuthenticated && (
-                <button className="btn-eaten" onClick={markEaten}>
-                  {eatenMsg || '✓ Mark as Eaten'}
+      <div className="recipe-page">
+        <button className="btn-link back-btn" onClick={() => navigate(-1)}>
+          <ArrowLeft weight="bold" /> Back
+        </button>
+
+        <article className="recipe-card-detail">
+          <img
+            className="recipe-hero-img"
+            src={getRecipeImage(recipe.name, true)}
+            alt={recipe.name}
+            onError={handleImageFallback}
+          />
+
+          <header className="book-header">
+            <div className="book-title-row">
+              <div>
+                <h1 className="book-title">{recipe.name}</h1>
+                {recipe.owner && (
+                  <p className="book-owner">by {recipe.owner.username}</p>
+                )}
+              </div>
+              <div className="book-actions">
+                <button
+                  className={`btn-pill btn-small ${favorited ? 'btn-save saved' : 'btn-save'}`}
+                  onClick={toggleFavorite}
+                >
+                  <Heart weight={favorited ? 'fill' : 'bold'} /> {favorited ? 'Saved' : 'Save Recipe'}
                 </button>
+                {isAuthenticated && (
+                  <button className="btn-pill btn-small btn-eaten" onClick={markEaten}>
+                    <CheckCircle weight="bold" /> {eatenMsg || 'Mark as Eaten'}
+                  </button>
+                )}
+                <button className="btn-pill btn-small btn-icon-only" onClick={share} aria-label="Share recipe">
+                  <ShareNetwork weight="bold" />
+                </button>
+                <button className="btn-pill btn-small btn-icon-only" onClick={() => window.print()} aria-label="Print recipe">
+                  <Printer weight="bold" />
+                </button>
+              </div>
+            </div>
+            {shareMsg && <p className="share-msg">{shareMsg}</p>}
+            <div className="book-meta">
+              <span className="meta-chip"><Users weight="bold" /> Serves {recipe.servings} {recipe.servings === 1 ? 'person' : 'people'}</span>
+              <span className="meta-chip"><ListChecks weight="bold" /> {recipe.steps.length} steps</span>
+              <span className="meta-chip"><ForkKnife weight="bold" /> {recipe.ingredients.length} ingredients</span>
+              {recipe.dietaryType && (
+                <span className="meta-badge tone-sage">{recipe.dietaryType.replace('_', ' ')}</span>
+              )}
+              {recipe.cuisineType && (
+                <span className="meta-badge tone-mustard">{recipe.cuisineType}</span>
               )}
             </div>
-          </div>
-          <div className="book-meta">
-            <span>Serves {recipe.servings} {recipe.servings === 1 ? 'person' : 'people'}</span>
-            <span className="meta-dot">·</span>
-            <span>{recipe.steps.length} steps</span>
-            <span className="meta-dot">·</span>
-            <span>{recipe.ingredients.length} ingredients</span>
-            {recipe.dietaryType && (
-              <>
-                <span className="meta-dot">·</span>
-                <span className="meta-badge">{recipe.dietaryType.replace('_', ' ')}</span>
-              </>
-            )}
-            {recipe.cuisineType && (
-              <>
-                <span className="meta-dot">·</span>
-                <span className="meta-badge">{recipe.cuisineType}</span>
-              </>
-            )}
-          </div>
-          <div className="book-divider" />
-        </header>
 
-        <div className="book-body">
-          <section className="ingredients-section">
-            <h2>Ingredients</h2>
-            <ul className="ingredients-list">
-              {recipe.ingredients.map((ing, i) => (
-                <li key={i}>
-                  <span className="ing-quantity">{ing.quantity}</span>
-                  <span className="ing-name">{ing.name}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
+            {cookHistory.length > 0 && (
+              <p className="cook-history-note">
+                <ClockCounterClockwise weight="bold" /> You've cooked this {cookHistory.length} time{cookHistory.length !== 1 ? 's' : ''}
+                {' '}— last on {new Date(cookHistory[0].eatenOn).toLocaleDateString()}.
+              </p>
+            )}
+          </header>
 
-          <section className="steps-section">
-            <h2>Instructions</h2>
-            <ol className="steps-list">
-              {recipe.steps.map((step, i) => (
-                <li key={i}>
-                  <span className="step-number">{i + 1}</span>
-                  <p>{step}</p>
-                </li>
+          <div className="book-body">
+            <section className="ingredients-section">
+              <h2>Ingredients</h2>
+              <ul className="ingredients-list">
+                {recipe.ingredients.map((ing, i) => (
+                  <li key={i}>
+                    <span className="ing-quantity">{ing.quantity}</span>
+                    <span className="ing-name">{ing.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="steps-section">
+              <h2>Instructions</h2>
+              <ol className="steps-list">
+                {recipe.steps.map((step, i) => (
+                  <li key={i}>
+                    <span className="step-number">{i + 1}</span>
+                    <p>{step}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            {embedUrl && (
+              <section className="video-section">
+                <h2><PlayCircle weight="bold" /> Watch it made</h2>
+                <div className="video-embed">
+                  <iframe
+                    src={embedUrl}
+                    title={`${recipe.name} video`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </section>
+            )}
+          </div>
+        </article>
+
+        {similar.length > 0 && (
+          <section className="similar-recipes">
+            <p className="section-label">You might also like</p>
+            <div className="recipe-list">
+              {similar.map(r => (
+                <RecipeCard key={r.id} recipe={r} />
               ))}
-            </ol>
+            </div>
           </section>
-        </div>
-      </article>
+        )}
+      </div>
+
+      <LandingFooter />
     </div>
   )
 }

@@ -23,7 +23,7 @@ export const HistoryPage = () => {
           <span className="empty-icon">📅</span>
           <h2>No history yet</h2>
           <p>Mark recipes as eaten from any recipe page to track your meals.</p>
-          <Link to="/" className="btn-primary">Browse Recipes</Link>
+          <Link to="/dashboard/search" className="btn-primary">Browse Recipes</Link>
         </div>
       </div>
     )

@@ -18,6 +18,8 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
   const [servings, setServings] = useState(initial?.servings ?? 2)
   const [dietaryType, setDietaryType] = useState<string>(initial?.dietaryType ?? '')
   const [cuisineType, setCuisineType] = useState<string>(initial?.cuisineType ?? '')
+  const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? '')
+  const [isPublic, setIsPublic] = useState(initial?.isPublic ?? false)
   const [ingredients, setIngredients] = useState<{ name: string; quantity: string }[]>(
     initial?.ingredients?.length ? initial.ingredients : [{ name: '', quantity: '' }]
   )
@@ -57,6 +59,8 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
       steps: steps.filter(s => s.trim()),
       dietaryType: dietaryType || null,
       cuisineType: cuisineType || null,
+      videoUrl: videoUrl.trim() || null,
+      isPublic: context === 'user' ? isPublic : undefined,
     }
 
     try {
@@ -129,6 +133,29 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
               </select>
             </label>
           </div>
+
+          <div className="form-row">
+            <label className="form-label-full">
+              Video URL (optional)
+              <input
+                type="url"
+                value={videoUrl}
+                onChange={e => setVideoUrl(e.target.value)}
+                placeholder="https://youtube.com/watch?v=..."
+              />
+            </label>
+          </div>
+
+          {context === 'user' && (
+            <label className="form-checkbox-row">
+              <input
+                type="checkbox"
+                checked={isPublic}
+                onChange={e => setIsPublic(e.target.checked)}
+              />
+              Make this recipe public (visible to everyone, not just you)
+            </label>
+          )}
 
           <fieldset className="form-fieldset">
             <legend>Ingredients</legend>

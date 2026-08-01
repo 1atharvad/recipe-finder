@@ -2,9 +2,10 @@ import type {
   AuthResponse, AuthRequest, SignupRequest,
   Recipe, RecipeRequest, RecommendationDTO,
   EatingHistoryEntry, UserPreferences, PreferencesRequest,
+  ChatMessage, ChatResponse,
 } from '../types'
 
-const BASE = '/api/v1'
+const BASE = `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1`
 const AUTH_KEY = 'recipe-auth'
 
 function getToken(): string | null {
@@ -50,6 +51,8 @@ export const authApi = {
 export const recipeApi = {
   getTop: () => request<Recipe[]>('/recipes'),
   search: (q: string) => request<Recipe[]>(`/recipes/search?q=${encodeURIComponent(q)}`),
+  chat: (message: string, history: ChatMessage[]) =>
+    request<ChatResponse>('/recipes/chat', { method: 'POST', body: JSON.stringify({ message, history }) }),
   getById: (id: number) => request<Recipe>(`/recipes/${id}`),
   getMyRecipes: () => request<Recipe[]>('/my-recipes'),
   createMine: (body: RecipeRequest) =>
@@ -70,6 +73,7 @@ export const favoritesApi = {
 // ── History ───────────────────────────────────────────────────────────────────
 export const historyApi = {
   getAll: () => request<EatingHistoryEntry[]>('/history'),
+  getForRecipe: (recipeId: number) => request<EatingHistoryEntry[]>(`/history/${recipeId}`),
   markEaten: (id: number) => request<EatingHistoryEntry>(`/history/${id}`, { method: 'POST' }),
 }
 
