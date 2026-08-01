@@ -21,12 +21,18 @@ public class RecipeRequest {
 
     private CuisineType cuisineType;
 
+    private String videoUrl;
+
+    private boolean isPublic;
+
     public String getName() { return name; }
     public int getServings() { return servings; }
     public List<IngredientDTO> getIngredients() { return ingredients; }
     public List<String> getSteps() { return steps; }
     public DietaryType getDietaryType() { return dietaryType; }
     public CuisineType getCuisineType() { return cuisineType; }
+    public String getVideoUrl() { return videoUrl; }
+    public boolean getIsPublic() { return isPublic; }
 
     public void setName(String name) { this.name = name; }
     public void setServings(int servings) { this.servings = servings; }
@@ -34,4 +40,6 @@ public class RecipeRequest {
     public void setSteps(List<String> steps) { this.steps = steps; }
     public void setDietaryType(DietaryType dietaryType) { this.dietaryType = dietaryType; }
     public void setCuisineType(CuisineType cuisineType) { this.cuisineType = cuisineType; }
+    public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
+    public void setIsPublic(boolean isPublic) { this.isPublic = isPublic; }
 }

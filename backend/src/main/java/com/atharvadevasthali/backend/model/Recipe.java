@@ -36,6 +36,16 @@ public class Recipe {
     @Enumerated(EnumType.STRING)
     private CuisineType cuisineType;
 
+    @Column(length = 500)
+    private String videoUrl;
+
+    // Only meaningful when owner is set — lets a user opt a private recipe
+    // into the general/search pool while keeping their ownership/edit rights.
+    // Explicit default so Hibernate's schema update can add this NOT NULL
+    // column to an already-populated table without failing.
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean isPublic;
+
     public Recipe() {}
 
     public Recipe(String name, int servings, List<Ingredient> ingredients, List<String> steps) {
@@ -63,6 +73,8 @@ public class Recipe {
     public User getOwner() { return owner; }
     public DietaryType getDietaryType() { return dietaryType; }
     public CuisineType getCuisineType() { return cuisineType; }
+    public String getVideoUrl() { return videoUrl; }
+    public boolean getIsPublic() { return isPublic; }
 
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
@@ -72,4 +84,6 @@ public class Recipe {
     public void setOwner(User owner) { this.owner = owner; }
     public void setDietaryType(DietaryType dietaryType) { this.dietaryType = dietaryType; }
     public void setCuisineType(CuisineType cuisineType) { this.cuisineType = cuisineType; }
+    public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
+    public void setIsPublic(boolean isPublic) { this.isPublic = isPublic; }
 }
