@@ -5,6 +5,7 @@ interface AuthContextValue {
   user: User | null
   login: (res: AuthResponse) => void
   logout: () => void
+  updateName: (firstName: string, lastName: string) => void
   isAuthenticated: boolean
   isAdmin: boolean
 }
@@ -24,7 +25,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = (res: AuthResponse) => {
     const u: User = {
-      username: res.username,
+      firstName: res.firstName,
+      lastName: res.lastName,
       role: res.role as User['role'],
       token: res.token,
     }
@@ -37,11 +39,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null)
   }
 
+  const updateName = (firstName: string, lastName: string) => {
+    setUser(prev => {
+      if (!prev) return prev
+      const updated = { ...prev, firstName, lastName }
+      localStorage.setItem(AUTH_KEY, JSON.stringify(updated))
+      return updated
+    })
+  }
+
   return (
     <AuthContext.Provider value={{
       user,
       login,
       logout,
+      updateName,
       isAuthenticated: user !== null,
       isAdmin: user?.role === 'ROLE_ADMIN',
     }}>

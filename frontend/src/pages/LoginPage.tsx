@@ -8,7 +8,7 @@ import { LandingFooter } from '../components/LandingFooter'
 export const LoginPage = () => {
   const { isAuthenticated, login } = useAuth()
   const navigate = useNavigate()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -20,7 +20,7 @@ export const LoginPage = () => {
     setError('')
     setLoading(true)
     try {
-      const res = await authApi.login({ username, password })
+      const res = await authApi.login({ email, password })
       login(res)
       navigate('/dashboard')
     } catch (err: unknown) {
@@ -48,14 +48,14 @@ export const LoginPage = () => {
           {error && <p className="auth-error">{error}</p>}
           <form onSubmit={handleSubmit} className="auth-form">
             <label>
-              Username
+              Email
               <input
-                type="text"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 required
                 autoFocus
-                placeholder="your username"
+                placeholder="you@example.com"
               />
             </label>
             <label>

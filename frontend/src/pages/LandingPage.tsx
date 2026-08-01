@@ -8,6 +8,7 @@ import { LandingFooter } from '../components/LandingFooter'
 import { PhotoCarousel } from '../components/PhotoCarousel'
 import { BentoGrid } from '../components/BentoGrid'
 import { recipeApi } from '../api/api'
+import { useAuth } from '../context/AuthContext'
 import type { Recipe } from '../types'
 
 const PHOTO_CARDS = [
@@ -38,6 +39,7 @@ const TODAY_WEEKDAY = new Date().toLocaleDateString('en-US', { weekday: 'long' }
 
 export const LandingPage = () => {
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const [showcase, setShowcase] = useState<Recipe[]>([])
 
   useEffect(() => {
@@ -153,8 +155,8 @@ export const LandingPage = () => {
         <div className="section-inner">
           <h2>Stop wondering what to cook!</h2>
           <p>Your next delicious idea is only a few taps away.</p>
-          <button className="btn-pill btn-cta" onClick={() => navigate('/signup')}>
-            Create Free Account <Confetti weight="fill" />
+          <button className="btn-pill btn-cta" onClick={() => navigate(isAuthenticated ? '/dashboard' : '/signup')}>
+            {isAuthenticated ? 'Go to Dashboard' : 'Create Free Account'} <Confetti weight="fill" />
           </button>
         </div>
       </section>

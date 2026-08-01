@@ -61,6 +61,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Spring's error handling does an internal forward to /error (e.g. for any
+                        // ResponseStatusException), which otherwise gets caught by anyRequest().authenticated()
+                        // below and masks every error status (401/404/409/...) as a generic 403.
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/recipes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/recipes/search").permitAll()

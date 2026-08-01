@@ -1,8 +1,9 @@
 import type {
-  AuthResponse, AuthRequest, SignupRequest,
+  AuthResponse, AuthRequest, LoginRequest, SignupRequest,
   Recipe, RecipeRequest, RecommendationDTO,
   EatingHistoryEntry, UserPreferences, PreferencesRequest,
   ChatMessage, ChatResponse,
+  UserProfile, UpdateProfileRequest, ChangePasswordRequest,
 } from '../types'
 
 const BASE = `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1`
@@ -29,7 +30,14 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE}${path}`, { ...options, headers })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    throw new Error(text || `HTTP ${res.status}`)
+    let message = text
+    try {
+      const body = JSON.parse(text) as { message?: string }
+      if (body.message) message = body.message
+    } catch {
+      // not JSON — fall back to the raw text below
+    }
+    throw new Error(message || `HTTP ${res.status}`)
   }
   if (res.status === 204 || res.headers.get('content-length') === '0') {
     return undefined as T
@@ -41,7 +49,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 export const authApi = {
   signup: (body: SignupRequest) =>
     request<AuthResponse>('/auth/signup', { method: 'POST', body: JSON.stringify(body) }),
-  login: (body: AuthRequest) =>
+  login: (body: LoginRequest) =>
     request<AuthResponse>('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   adminLogin: (body: AuthRequest) =>
     request<AuthResponse>('/auth/admin/login', { method: 'POST', body: JSON.stringify(body) }),
@@ -87,6 +95,15 @@ export const preferencesApi = {
   get: () => request<UserPreferences>('/preferences'),
   save: (body: PreferencesRequest) =>
     request<UserPreferences>('/preferences', { method: 'PUT', body: JSON.stringify(body) }),
+}
+
+// ── User profile ─────────────────────────────────────────────────────────────
+export const userApi = {
+  getProfile: () => request<UserProfile>('/users/me'),
+  updateProfile: (body: UpdateProfileRequest) =>
+    request<UserProfile>('/users/me', { method: 'PUT', body: JSON.stringify(body) }),
+  changePassword: (body: ChangePasswordRequest) =>
+    request<void>('/users/me/password', { method: 'PUT', body: JSON.stringify(body) }),
 }
 
 // ── Admin ─────────────────────────────────────────────────────────────────────

@@ -41,7 +41,7 @@ export const Navbar = () => {
             <NavLink to="/dashboard/inventory" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Inventory
             </NavLink>
-            <span className="nav-username">{user?.username}</span>
+            <span className="nav-username">{user?.firstName}</span>
             <button className="nav-logout" onClick={handleLogout}>Logout</button>
           </>
         ) : (

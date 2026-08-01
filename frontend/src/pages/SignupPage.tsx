@@ -8,9 +8,11 @@ import { LandingFooter } from '../components/LandingFooter'
 export const SignupPage = () => {
   const { isAuthenticated, login } = useAuth()
   const navigate = useNavigate()
-  const [username, setUsername] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -19,9 +21,13 @@ export const SignupPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
     setLoading(true)
     try {
-      const res = await authApi.signup({ username, email, password })
+      const res = await authApi.signup({ firstName, lastName, email, password, confirmPassword })
       login(res)
       navigate('/dashboard')
     } catch (err: unknown) {
@@ -49,14 +55,24 @@ export const SignupPage = () => {
           {error && <p className="auth-error">{error}</p>}
           <form onSubmit={handleSubmit} className="auth-form">
             <label>
-              Username
+              First name
               <input
                 type="text"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
+                value={firstName}
+                onChange={e => setFirstName(e.target.value)}
                 required
                 autoFocus
-                placeholder="choose a username"
+                placeholder="Jamie"
+              />
+            </label>
+            <label>
+              Last name
+              <input
+                type="text"
+                value={lastName}
+                onChange={e => setLastName(e.target.value)}
+                required
+                placeholder="Oliver"
               />
             </label>
             <label>
@@ -78,6 +94,17 @@ export const SignupPage = () => {
                 required
                 minLength={6}
                 placeholder="at least 6 characters"
+              />
+            </label>
+            <label>
+              Confirm password
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+                placeholder="re-enter your password"
               />
             </label>
             <button type="submit" className="btn-pill btn-primary" disabled={loading}>

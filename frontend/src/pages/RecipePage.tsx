@@ -141,7 +141,7 @@ export const RecipePage = () => {
               <div>
                 <h1 className="book-title">{recipe.name}</h1>
                 {recipe.owner && (
-                  <p className="book-owner">by {recipe.owner.username}</p>
+                  <p className="book-owner">by {recipe.owner.firstName}</p>
                 )}
               </div>
               <div className="book-actions">

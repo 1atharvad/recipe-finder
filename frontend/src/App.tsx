@@ -12,6 +12,7 @@ import { DashboardHomePage } from './pages/DashboardHomePage'
 import { SearchPage } from './pages/SearchPage'
 import { RecommenderPage } from './pages/RecommenderPage'
 import { InventoryPage } from './pages/InventoryPage'
+import { ProfilePage } from './pages/ProfilePage'
 import { FavoritesPage } from './pages/FavoritesPage'
 import { RecipePage } from './pages/RecipePage'
 import { LoginPage } from './pages/LoginPage'
@@ -59,6 +60,7 @@ export const App = () => {
             <Route path="search" element={<SearchPage />} />
             <Route path="recommender" element={<RecommenderPage />} />
             <Route path="inventory" element={<InventoryPage />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
 
           {/* Protected user routes */}

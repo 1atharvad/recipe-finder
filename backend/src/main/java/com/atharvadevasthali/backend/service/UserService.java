@@ -2,8 +2,12 @@ package com.atharvadevasthali.backend.service;
 
 import com.atharvadevasthali.backend.dto.AuthRequest;
 import com.atharvadevasthali.backend.dto.AuthResponse;
+import com.atharvadevasthali.backend.dto.ChangePasswordRequest;
+import com.atharvadevasthali.backend.dto.LoginRequest;
 import com.atharvadevasthali.backend.dto.PreferencesRequest;
 import com.atharvadevasthali.backend.dto.SignupRequest;
+import com.atharvadevasthali.backend.dto.UpdateProfileRequest;
+import com.atharvadevasthali.backend.dto.UserProfileDTO;
 import com.atharvadevasthali.backend.model.User;
 import com.atharvadevasthali.backend.model.UserPreferences;
 import com.atharvadevasthali.backend.repository.UserPreferencesRepository;
@@ -55,15 +59,17 @@ public class UserService implements UserDetailsService {
     }
 
     public AuthResponse signup(SignupRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords do not match");
         }
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already registered");
         }
 
         User user = new User(
-                request.getUsername(),
+                generateUniqueUsername(request.getFirstName(), request.getLastName()),
+                request.getFirstName(),
+                request.getLastName(),
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
                 "ROLE_USER"
@@ -74,11 +80,11 @@ public class UserService implements UserDetailsService {
         preferencesRepository.save(prefs);
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return new AuthResponse(token, user.getUsername(), user.getRole());
+        return new AuthResponse(token, user.getFirstName(), user.getLastName(), user.getRole());
     }
 
-    public AuthResponse login(AuthRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+    public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -86,7 +92,7 @@ public class UserService implements UserDetailsService {
         }
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return new AuthResponse(token, user.getUsername(), user.getRole());
+        return new AuthResponse(token, user.getFirstName(), user.getLastName(), user.getRole());
     }
 
     public AuthResponse adminLogin(AuthRequest request) {
@@ -94,12 +100,41 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid admin credentials");
         }
         String token = jwtUtil.generateToken(adminUsername, "ROLE_ADMIN");
-        return new AuthResponse(token, adminUsername, "ROLE_ADMIN");
+        return new AuthResponse(token, adminUsername, "", "ROLE_ADMIN");
     }
 
     public User getByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    public UserProfileDTO getProfile(String username) {
+        User user = getByUsername(username);
+        return new UserProfileDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+    }
+
+    public UserProfileDTO updateProfile(String username, UpdateProfileRequest request) {
+        User user = getByUsername(username);
+        if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already registered");
+        }
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        userRepository.save(user);
+        return new UserProfileDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+    }
+
+    public void changePassword(String username, ChangePasswordRequest request) {
+        User user = getByUsername(username);
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Current password is incorrect");
+        }
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New passwords do not match");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     public UserPreferences getPreferences(String username) {
@@ -118,5 +153,23 @@ public class UserService implements UserDetailsService {
         prefs.setDietaryType(request.getDietaryType());
         prefs.setCuisineType(request.getCuisineType());
         return preferencesRepository.save(prefs);
+    }
+
+    // Internal identity only — never surfaced to the user or the API (see User.username's @JsonIgnore).
+    // Derived from the name with a numeric suffix appended on collision.
+    private String generateUniqueUsername(String firstName, String lastName) {
+        String base = (firstName + "." + lastName)
+                .toLowerCase()
+                .replaceAll("[^a-z0-9.]", "");
+        if (base.isBlank()) {
+            base = "user";
+        }
+        String candidate = base;
+        int suffix = 1;
+        while (userRepository.existsByUsername(candidate)) {
+            candidate = base + suffix;
+            suffix++;
+        }
+        return candidate;
     }
 }

@@ -15,7 +15,7 @@ export const DashboardHomePage = () => {
   return (
     <section className="dashboard-home">
       <p className="section-label">Dashboard</p>
-      <h1>Welcome back{user?.username ? `, ${user.username}` : ''}</h1>
+      <h1>Welcome back{user?.firstName ? `, ${user.firstName}` : ''}</h1>
       <p className="dashboard-home-sub">Pick a starting point.</p>
 
       <div className="features-row">

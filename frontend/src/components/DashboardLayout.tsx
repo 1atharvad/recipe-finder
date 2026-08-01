@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { BowlSteam, List, X, MagnifyingGlass, Sparkle, Package, SquaresFour, SignOut } from '@phosphor-icons/react'
+import { BowlSteam, List, X, MagnifyingGlass, Sparkle, Package, SquaresFour, SignOut, UserCircle } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
 import { ChatWidget } from './ChatWidget'
 
@@ -15,10 +15,18 @@ export const DashboardLayout = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false)
 
   const handleLogout = () => {
+    setProfileMenuOpen(false)
     logout()
     navigate('/')
+  }
+
+  const goToProfile = () => {
+    setProfileMenuOpen(false)
+    setMenuOpen(false)
+    navigate('/dashboard/profile')
   }
 
   return (
@@ -61,10 +69,33 @@ export const DashboardLayout = () => {
         </nav>
 
         <div className="dashboard-sidebar-footer">
-          <span className="dashboard-username">{user?.username}</span>
-          <button className="btn-link" onClick={handleLogout}>
-            <SignOut weight="bold" /> Logout
-          </button>
+          <div className="dashboard-user-menu">
+            <button
+              className="dashboard-user"
+              onClick={() => setProfileMenuOpen(o => !o)}
+              aria-haspopup="true"
+              aria-expanded={profileMenuOpen}
+            >
+              <span className="dashboard-avatar">
+                {`${user?.firstName?.charAt(0) ?? ''}${user?.lastName?.charAt(0) ?? ''}`.toUpperCase()}
+              </span>
+              <span className="dashboard-username">{user?.firstName}</span>
+            </button>
+
+            {profileMenuOpen && (
+              <>
+                <div className="dashboard-user-menu-backdrop" onClick={() => setProfileMenuOpen(false)} />
+                <div className="dashboard-user-dropdown">
+                  <button onClick={goToProfile}>
+                    <UserCircle weight="bold" /> Profile
+                  </button>
+                  <button onClick={handleLogout}>
+                    <SignOut weight="bold" /> Logout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </aside>
 
