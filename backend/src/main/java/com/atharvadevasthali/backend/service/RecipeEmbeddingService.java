@@ -3,8 +3,11 @@ package com.atharvadevasthali.backend.service;
 import com.atharvadevasthali.backend.model.Ingredient;
 import com.atharvadevasthali.backend.model.Recipe;
 import com.atharvadevasthali.backend.repository.RecipeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +22,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RecipeEmbeddingService {
+
+    private static final Logger log = LoggerFactory.getLogger(RecipeEmbeddingService.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final RecipeRepository recipeRepository;
@@ -57,6 +62,7 @@ public class RecipeEmbeddingService {
             );
         } catch (Exception e) {
             // Embedding is a best-effort enhancement — never let it break a recipe save.
+            log.warn("Failed to embed recipe {}: {}", recipe.getId(), e.getMessage());
         }
     }
 
@@ -65,6 +71,7 @@ public class RecipeEmbeddingService {
     }
 
     /** Embeds any general/public recipe that doesn't have an embedding yet (startup backfill). */
+    @Transactional
     public void backfillMissingEmbeddings() {
         if (!geminiClient.isConfigured()) return;
         List<Long> alreadyEmbedded = jdbcTemplate.queryForList("SELECT recipe_id FROM recipe_embeddings", Long.class);

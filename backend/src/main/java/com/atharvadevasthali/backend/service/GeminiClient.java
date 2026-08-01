@@ -15,9 +15,15 @@ import java.util.List;
 @Service
 public class GeminiClient {
 
-    private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
-    private static final String EMBEDDING_MODEL = "models/gemini-embedding-001";
-    private static final String GENERATION_MODEL = "models/gemini-2.5-flash";
+    // Model ids are substituted into a single {model} URI template variable below,
+    // so they must NOT contain a literal "/" — RestClient's UriTemplate percent-encodes
+    // slashes inside a variable's value (it doesn't know it should span path segments),
+    // which turned "models/gemini-embedding-001" into "models%2Fgemini-embedding-001"
+    // and made every call 404 against Google's API. The "models/" prefix is baked into
+    // the URI template string itself instead.
+    private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
+    private static final String EMBEDDING_MODEL = "gemini-embedding-001";
+    private static final String GENERATION_MODEL = "gemini-2.5-flash";
     private static final int EMBEDDING_DIMENSIONS = 768;
 
     private final RestClient restClient;
