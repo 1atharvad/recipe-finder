@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { authApi } from '../api/api'
-import { useAuth } from '../context/AuthContext'
+import { authApi } from '@/api/api'
+import { useAuth } from '@/context/AuthContext'
+import { FormField } from '@/components/FormField'
+import content from '@/content/adminLoginPage.json'
 
 export const AdminLoginPage = () => {
   const { isAdmin, login } = useAuth()
@@ -22,7 +24,7 @@ export const AdminLoginPage = () => {
       login(res)
       navigate('/admin')
     } catch {
-      setError('Invalid admin credentials')
+      setError(content.errorMessage)
     } finally {
       setLoading(false)
     }
@@ -31,30 +33,13 @@ export const AdminLoginPage = () => {
   return (
     <div className="auth-page">
       <div className="auth-card auth-card--admin">
-        <h2>Admin</h2>
+        <h2>{content.title}</h2>
         {error && <p className="auth-error">{error}</p>}
         <form onSubmit={handleSubmit} className="auth-form">
-          <label>
-            Username
-            <input
-              type="text"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              required
-              autoFocus
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
-          </label>
+          <FormField label={content.usernameLabel} value={username} onChange={setUsername} required autoFocus />
+          <FormField label={content.passwordLabel} type="password" value={password} onChange={setPassword} required />
           <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? 'Signing in…' : 'Sign In'}
+            {loading ? content.submittingLabel : content.submitLabel}
           </button>
         </form>
       </div>

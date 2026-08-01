@@ -1,0 +1,30 @@
+{
+  "hero": {
+    "eyebrow": "THE FULL WALKTHROUGH",
+    "title": "How Recipe Finder works",
+    "text": "Three simple steps take you from \"what do I even have\" to a plate of something you'll actually want to eat."
+  },
+  "steps": [
+    {
+      "n": "01",
+      "tone": "cream",
+      "icon": "MagnifyingGlass",
+      "title": "Search",
+      "html": "<p>Look up a dish by name, or just type whatever ingredients you've got — search matches against both. Every result shows servings, ingredients, steps, and dietary and cuisine tags at a glance.</p><p>Once you're signed in, search also includes your own private recipes alongside the general pool, so your own cooking shows up right next to everyone else's.</p>"
+    },
+    {
+      "n": "02",
+      "tone": "sage",
+      "icon": "Heart",
+      "title": "Save &amp; Log",
+      "html": "<p><strong>Favorites</strong> save a recipe to your account — not just your browser, so they follow you across devices. <strong>My Recipes</strong> lets you write up your own dishes, visible only to you.</p><p>Mark a recipe as eaten and it lands in your <strong>History</strong>, grouped by date. That history isn't just a log — it's what powers step three.</p>"
+    },
+    {
+      "n": "03",
+      "tone": "peach",
+      "icon": "Sparkle",
+      "title": "Get Smart Picks",
+      "html": "<p>Every recipe in the general pool gets scored against your eating history:</p><p class=\"score-formula\">score = dayAffinity + frequencyWeight − recencyPenalty + preferenceBonus</p><ul class=\"score-breakdown\"><li><strong>dayAffinity</strong> — surfaces recipes you tend to eat on this weekday</li><li><strong>frequencyWeight</strong> — favors recipes you eat often</li><li><strong>recencyPenalty</strong> — discourages repeating something you just had</li><li><strong>preferenceBonus</strong> — boosts matches to your dietary &amp; cuisine preferences</li></ul><p>The top 10 scored recipes show up on your <strong>Recommender</strong> page.</p>"
+    }
+  ]
+}

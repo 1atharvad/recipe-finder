@@ -1,0 +1,17 @@
+{
+  "title": "Recipe Assistant",
+  "closeLabel": "Close",
+  "starterHint": "Ask in your own words — \"something spicy with chicken\" or \"quick vegetarian dinner.\"",
+  "starterPrompts": [
+    "Something spicy with chicken",
+    "Quick vegetarian dinner",
+    "I have leftover rice, what can I make?"
+  ],
+  "errorMessage": "Could not reach the assistant. Is the backend running?",
+  "resultsForYouSuffix": "for you",
+  "inputPlaceholder": "e.g. something with garlic...",
+  "startVoiceLabel": "Start voice input",
+  "stopVoiceLabel": "Stop voice input",
+  "sendLabel": "Send",
+  "openLabel": "Open recipe assistant"
+}

@@ -1,0 +1,13 @@
+{
+  "loadingLabel": "Loading history...",
+  "emptyIcon": "📅",
+  "emptyTitle": "No history yet",
+  "emptyText": "Mark recipes as eaten from any recipe page to track your meals.",
+  "browseLabel": "Browse Recipes",
+  "title": "Eating History",
+  "countWord": "meal",
+  "countSuffix": "tracked",
+  "entryIcon": "🍽️",
+  "todayLabel": "Today",
+  "yesterdayLabel": "Yesterday"
+}

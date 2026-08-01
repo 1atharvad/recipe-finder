@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { historyApi } from '../api/api'
-import type { EatingHistoryEntry } from '../types'
+import { historyApi } from '@/api/api'
+import type { EatingHistoryEntry } from '@/types'
+import content from '@/content/historyPage.json'
 
 export const HistoryPage = () => {
   const [history, setHistory] = useState<EatingHistoryEntry[]>([])
@@ -14,16 +15,16 @@ export const HistoryPage = () => {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <div className="recipe-page-loading">Loading history...</div>
+  if (loading) return <div className="recipe-page-loading">{content.loadingLabel}</div>
 
   if (history.length === 0) {
     return (
       <div className="page">
         <div className="empty-state">
-          <span className="empty-icon">📅</span>
-          <h2>No history yet</h2>
-          <p>Mark recipes as eaten from any recipe page to track your meals.</p>
-          <Link to="/dashboard/search" className="btn-primary">Browse Recipes</Link>
+          <span className="empty-icon">{content.emptyIcon}</span>
+          <h2>{content.emptyTitle}</h2>
+          <p>{content.emptyText}</p>
+          <Link to="/dashboard/search" className="btn-primary">{content.browseLabel}</Link>
         </div>
       </div>
     )
@@ -42,8 +43,8 @@ export const HistoryPage = () => {
   return (
     <div className="page">
       <div className="page-header">
-        <h2>Eating History</h2>
-        <p>{history.length} meal{history.length !== 1 ? 's' : ''} tracked</p>
+        <h2>{content.title}</h2>
+        <p>{history.length} {content.countWord}{history.length !== 1 ? 's' : ''} {content.countSuffix}</p>
       </div>
       <div className="history-list">
         {sortedDates.map(date => (
@@ -55,7 +56,7 @@ export const HistoryPage = () => {
                 to={`/recipe/${entry.recipe.id}`}
                 className="history-entry"
               >
-                <span className="history-entry-icon">🍽️</span>
+                <span className="history-entry-icon">{content.entryIcon}</span>
                 <span>{entry.recipe.name}</span>
               </Link>
             ))}
@@ -72,8 +73,8 @@ function formatDate(dateStr: string): string {
   const yesterday = new Date(today)
   yesterday.setDate(today.getDate() - 1)
 
-  if (dateStr === today.toISOString().split('T')[0]) return 'Today'
-  if (dateStr === yesterday.toISOString().split('T')[0]) return 'Yesterday'
+  if (dateStr === today.toISOString().split('T')[0]) return content.todayLabel
+  if (dateStr === yesterday.toISOString().split('T')[0]) return content.yesterdayLabel
 
   return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 }

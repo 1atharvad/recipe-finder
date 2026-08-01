@@ -1,0 +1,19 @@
+{
+  "loadingLabel": "Loading recipes...",
+  "title": "Admin Dashboard",
+  "countSuffix": "general recipes",
+  "addRecipeLabel": "+ Add Recipe",
+  "deleteConfirm": "Delete this recipe from the general pool?",
+  "emptyValue": "—",
+  "columns": {
+    "name": "Name",
+    "servings": "Servings",
+    "dietary": "Dietary",
+    "cuisine": "Cuisine",
+    "ingredients": "Ingredients",
+    "steps": "Steps",
+    "actions": "Actions"
+  },
+  "editLabel": "Edit",
+  "deleteLabel": "Delete"
+}

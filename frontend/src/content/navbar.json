@@ -1,0 +1,12 @@
+{
+  "brand": "🍳 Recipe Finder",
+  "adminPanelLabel": "Admin Panel",
+  "searchLabel": "Search",
+  "favoritesLabel": "Favorites",
+  "myRecipesLabel": "My Recipes",
+  "historyLabel": "History",
+  "recommenderLabel": "Recommender",
+  "inventoryLabel": "Inventory",
+  "loginLabel": "Login",
+  "logoutLabel": "Logout"
+}

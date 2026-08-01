@@ -1,0 +1,22 @@
+{
+  "heroTitle": "Start your tastiest era today",
+  "heroText": "Create a free account to save recipes, track what you cook, and get picks that fit you.",
+  "cardTitle": "Create your Recipe Finder account",
+  "cardSubtitle": "Good food starts here.",
+  "passwordMismatchError": "Passwords do not match",
+  "defaultError": "Signup failed",
+  "firstNameLabel": "First name",
+  "firstNamePlaceholder": "Jamie",
+  "lastNameLabel": "Last name",
+  "lastNamePlaceholder": "Oliver",
+  "emailLabel": "Email",
+  "emailPlaceholder": "you@example.com",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "at least 6 characters",
+  "confirmPasswordLabel": "Confirm password",
+  "confirmPasswordPlaceholder": "re-enter your password",
+  "submitLabel": "Sign up",
+  "submittingLabel": "Creating account…",
+  "loginPrompt": "Already have an account?",
+  "loginLink": "Sign in"
+}

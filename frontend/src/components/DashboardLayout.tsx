@@ -1,15 +1,12 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import type { Icon } from '@phosphor-icons/react'
 import { BowlSteam, List, X, MagnifyingGlass, Sparkle, Package, SquaresFour, SignOut, UserCircle } from '@phosphor-icons/react'
-import { useAuth } from '../context/AuthContext'
-import { ChatWidget } from './ChatWidget'
+import { useAuth } from '@/context/AuthContext'
+import { ChatWidget } from '@/components/ChatWidget'
+import content from '@/content/dashboardNav.json'
 
-const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Overview', icon: SquaresFour, end: true },
-  { to: '/dashboard/search', label: 'Search', icon: MagnifyingGlass, end: false },
-  { to: '/dashboard/recommender', label: 'Recommender', icon: Sparkle, end: false },
-  { to: '/dashboard/inventory', label: 'Inventory', icon: Package, end: false },
-]
+const ICONS: Record<string, Icon> = { MagnifyingGlass, Sparkle, Package, SquaresFour }
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuth()
@@ -33,12 +30,12 @@ export const DashboardLayout = () => {
     <div className="landing dashboard-shell">
       <div className="dashboard-topbar">
         <NavLink to="/" className="dashboard-logo">
-          <BowlSteam weight="duotone" /> Recipe Finder
+          <BowlSteam weight="duotone" /> {content.logo}
         </NavLink>
         <button
           className="dashboard-menu-toggle"
           onClick={() => setMenuOpen(o => !o)}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-label={menuOpen ? content.closeMenuLabel : content.openMenuLabel}
           aria-expanded={menuOpen}
         >
           {menuOpen ? <X weight="bold" /> : <List weight="bold" />}
@@ -51,21 +48,24 @@ export const DashboardLayout = () => {
 
       <aside className={menuOpen ? 'dashboard-sidebar open' : 'dashboard-sidebar'}>
         <NavLink to="/" className="dashboard-logo">
-          <BowlSteam weight="duotone" /> Recipe Finder
+          <BowlSteam weight="duotone" /> {content.logo}
         </NavLink>
 
         <nav className="dashboard-nav">
-          {NAV_ITEMS.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={() => setMenuOpen(false)}
-              className={({ isActive }) => isActive ? 'dashboard-nav-link active' : 'dashboard-nav-link'}
-            >
-              <item.icon weight="bold" /> {item.label}
-            </NavLink>
-          ))}
+          {content.navItems.map(item => {
+            const ItemIcon = ICONS[item.icon]
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) => isActive ? 'dashboard-nav-link active' : 'dashboard-nav-link'}
+              >
+                <ItemIcon weight="bold" /> {item.label}
+              </NavLink>
+            )
+          })}
         </nav>
 
         <div className="dashboard-sidebar-footer">
@@ -87,10 +87,10 @@ export const DashboardLayout = () => {
                 <div className="dashboard-user-menu-backdrop" onClick={() => setProfileMenuOpen(false)} />
                 <div className="dashboard-user-dropdown">
                   <button onClick={goToProfile}>
-                    <UserCircle weight="bold" /> Profile
+                    <UserCircle weight="bold" /> {content.profileLabel}
                   </button>
                   <button onClick={handleLogout}>
-                    <SignOut weight="bold" /> Logout
+                    <SignOut weight="bold" /> {content.logoutLabel}
                   </button>
                 </div>
               </>

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
-import { authApi } from '../api/api'
-import { useAuth } from '../context/AuthContext'
-import { LandingHeader } from '../components/LandingHeader'
-import { LandingFooter } from '../components/LandingFooter'
+import { authApi } from '@/api/api'
+import { useAuth } from '@/context/AuthContext'
+import { LandingHeader } from '@/components/LandingHeader'
+import { LandingFooter } from '@/components/LandingFooter'
+import { FormField } from '@/components/FormField'
+import content from '@/content/loginPage.json'
 
 export const LoginPage = () => {
   const { isAuthenticated, login } = useAuth()
@@ -24,7 +26,7 @@ export const LoginPage = () => {
       login(res)
       navigate('/dashboard')
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      setError(err instanceof Error ? err.message : content.defaultError)
     } finally {
       setLoading(false)
     }
@@ -36,44 +38,40 @@ export const LoginPage = () => {
 
       <section className="auth-hero">
         <div className="section-inner">
-          <h1>Welcome back to your tastiest era</h1>
-          <p>Log in to save recipes, track meals, and keep fridge panic in the past.</p>
+          <h1>{content.heroTitle}</h1>
+          <p>{content.heroText}</p>
         </div>
       </section>
 
       <div className="auth-page">
         <div className="auth-card">
-          <h2>Log in to Recipe Finder</h2>
-          <p className="auth-sub">Your next good meal is waiting.</p>
+          <h2>{content.cardTitle}</h2>
+          <p className="auth-sub">{content.cardSubtitle}</p>
           {error && <p className="auth-error">{error}</p>}
           <form onSubmit={handleSubmit} className="auth-form">
-            <label>
-              Email
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                autoFocus
-                placeholder="you@example.com"
-              />
-            </label>
-            <label>
-              Password
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                placeholder="Enter your password"
-              />
-            </label>
+            <FormField
+              label={content.emailLabel}
+              type="email"
+              value={email}
+              onChange={setEmail}
+              required
+              autoFocus
+              placeholder={content.emailPlaceholder}
+            />
+            <FormField
+              label={content.passwordLabel}
+              type="password"
+              value={password}
+              onChange={setPassword}
+              required
+              placeholder={content.passwordPlaceholder}
+            />
             <button type="submit" className="btn-pill btn-primary" disabled={loading}>
-              {loading ? 'Signing in…' : 'Log in'}
+              {loading ? content.submittingLabel : content.submitLabel}
             </button>
           </form>
           <p className="auth-link">
-            New here? <Link to="/signup">Create a free account</Link>
+            {content.signupPrompt} <Link to="/signup">{content.signupLink}</Link>
           </p>
         </div>
       </div>

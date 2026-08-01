@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { recipeApi } from '../api/api'
-import type { Recipe } from '../types'
-import { RecipeFormModal } from '../components/RecipeFormModal'
+import { recipeApi } from '@/api/api'
+import type { Recipe } from '@/types'
+import { RecipeFormModal } from '@/components/RecipeFormModal'
+import content from '@/content/myRecipesPage.json'
 
 export const MyRecipesPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -19,7 +20,7 @@ export const MyRecipesPage = () => {
   useEffect(load, [])
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Delete this recipe?')) return
+    if (!confirm(content.deleteConfirm)) return
     try {
       await recipeApi.deleteMine(id)
       setRecipes(prev => prev.filter(r => r.id !== id))
@@ -40,24 +41,24 @@ export const MyRecipesPage = () => {
     setShowCreate(false)
   }
 
-  if (loading) return <div className="recipe-page-loading">Loading your recipes...</div>
+  if (loading) return <div className="recipe-page-loading">{content.loadingLabel}</div>
 
   return (
     <div className="page">
       <div className="page-header">
         <div>
-          <h2>My Recipes</h2>
-          <p>{recipes.length} recipe{recipes.length !== 1 ? 's' : ''}</p>
+          <h2>{content.title}</h2>
+          <p>{recipes.length} {content.countWord}{recipes.length !== 1 ? 's' : ''}</p>
         </div>
-        <button className="btn-primary" onClick={() => setShowCreate(true)}>+ Add Recipe</button>
+        <button className="btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeLabel}</button>
       </div>
 
       {recipes.length === 0 ? (
         <div className="empty-state">
-          <span className="empty-icon">📝</span>
-          <h2>No recipes yet</h2>
-          <p>Add your own private recipes here.</p>
-          <button className="btn-primary" onClick={() => setShowCreate(true)}>Add Recipe</button>
+          <span className="empty-icon">{content.emptyIcon}</span>
+          <h2>{content.emptyTitle}</h2>
+          <p>{content.emptyText}</p>
+          <button className="btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeEmptyLabel}</button>
         </div>
       ) : (
         <div className="my-recipes-list">
@@ -67,18 +68,18 @@ export const MyRecipesPage = () => {
                 <span className="my-recipe-name">
                   {recipe.name}
                   <span className={`visibility-badge ${recipe.isPublic ? 'is-public' : 'is-private'}`}>
-                    {recipe.isPublic ? 'Public' : 'Private'}
+                    {recipe.isPublic ? content.publicLabel : content.privateLabel}
                   </span>
                 </span>
                 <span className="my-recipe-meta">
-                  {recipe.servings} serving{recipe.servings !== 1 ? 's' : ''}
+                  {recipe.servings} {content.servingWord}{recipe.servings !== 1 ? 's' : ''}
                   {recipe.dietaryType && ` · ${recipe.dietaryType.replace('_', ' ')}`}
                   {recipe.cuisineType && ` · ${recipe.cuisineType}`}
                 </span>
               </div>
               <div className="my-recipe-actions">
-                <button className="btn-edit" onClick={() => setEditTarget(recipe)}>Edit</button>
-                <button className="btn-delete" onClick={() => handleDelete(recipe.id)}>Delete</button>
+                <button className="btn-edit" onClick={() => setEditTarget(recipe)}>{content.editLabel}</button>
+                <button className="btn-delete" onClick={() => handleDelete(recipe.id)}>{content.deleteLabel}</button>
               </div>
             </div>
           ))}

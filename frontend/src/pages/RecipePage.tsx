@@ -4,15 +4,16 @@ import {
   ArrowLeft, Heart, CheckCircle, Users, ListChecks, ForkKnife,
   Printer, ShareNetwork, ClockCounterClockwise, PlayCircle,
 } from '@phosphor-icons/react'
-import { recipeApi, favoritesApi, historyApi } from '../api/api'
-import { useAuth } from '../context/AuthContext'
-import { LandingHeader } from '../components/LandingHeader'
-import { LandingFooter } from '../components/LandingFooter'
-import { RecipeCard } from '../components/RecipeCard'
-import { getRecipeImage } from '../assets/recipeImages'
-import { handleImageFallback } from '../assets/imageFallback'
-import { getYouTubeEmbedUrl } from '../assets/youtube'
-import type { Recipe, EatingHistoryEntry } from '../types'
+import { recipeApi, favoritesApi, historyApi } from '@/api/api'
+import { useAuth } from '@/context/AuthContext'
+import { LandingHeader } from '@/components/LandingHeader'
+import { LandingFooter } from '@/components/LandingFooter'
+import { RecipeCard } from '@/components/RecipeCard'
+import { getRecipeImage } from '@/assets/recipeImages'
+import { handleImageFallback } from '@/assets/imageFallback'
+import { getYouTubeEmbedUrl } from '@/assets/youtube'
+import type { Recipe, EatingHistoryEntry } from '@/types'
+import content from '@/content/recipePage.json'
 
 export const RecipePage = () => {
   const { id } = useParams()
@@ -73,7 +74,7 @@ export const RecipePage = () => {
     if (!recipe) return
     try {
       const entry = await historyApi.markEaten(recipe.id)
-      setEatenMsg('Marked as eaten!')
+      setEatenMsg(content.markedEatenLabel)
       setCookHistory(prev => [entry, ...prev])
       setTimeout(() => setEatenMsg(''), 2000)
     } catch {}
@@ -87,7 +88,7 @@ export const RecipePage = () => {
     }
     try {
       await navigator.clipboard.writeText(url)
-      setShareMsg('Link copied!')
+      setShareMsg(content.linkCopiedLabel)
       setTimeout(() => setShareMsg(''), 2000)
     } catch {}
   }
@@ -96,7 +97,7 @@ export const RecipePage = () => {
     return (
       <div className="landing">
         <LandingHeader />
-        <div className="recipe-page-loading">Loading recipe...</div>
+        <div className="recipe-page-loading">{content.loadingLabel}</div>
         <LandingFooter />
       </div>
     )
@@ -107,9 +108,9 @@ export const RecipePage = () => {
       <div className="landing">
         <LandingHeader />
         <div className="recipe-page-error">
-          <p>Recipe not found.</p>
+          <p>{content.notFoundLabel}</p>
           <button className="btn-pill btn-primary btn-small" onClick={() => navigate('/dashboard/search')}>
-            ← Back to Search
+            {content.backToSearchLabel}
           </button>
         </div>
         <LandingFooter />
@@ -125,7 +126,7 @@ export const RecipePage = () => {
 
       <div className="recipe-page">
         <button className="btn-link back-btn" onClick={() => navigate(-1)}>
-          <ArrowLeft weight="bold" /> Back
+          <ArrowLeft weight="bold" /> {content.backLabel}
         </button>
 
         <article className="recipe-card-detail">
@@ -141,7 +142,7 @@ export const RecipePage = () => {
               <div>
                 <h1 className="book-title">{recipe.name}</h1>
                 {recipe.owner && (
-                  <p className="book-owner">by {recipe.owner.firstName}</p>
+                  <p className="book-owner">{content.byPrefix} {recipe.owner.firstName}</p>
                 )}
               </div>
               <div className="book-actions">
@@ -149,26 +150,26 @@ export const RecipePage = () => {
                   className={`btn-pill btn-small ${favorited ? 'btn-save saved' : 'btn-save'}`}
                   onClick={toggleFavorite}
                 >
-                  <Heart weight={favorited ? 'fill' : 'bold'} /> {favorited ? 'Saved' : 'Save Recipe'}
+                  <Heart weight={favorited ? 'fill' : 'bold'} /> {favorited ? content.savedLabel : content.saveLabel}
                 </button>
                 {isAuthenticated && (
                   <button className="btn-pill btn-small btn-eaten" onClick={markEaten}>
-                    <CheckCircle weight="bold" /> {eatenMsg || 'Mark as Eaten'}
+                    <CheckCircle weight="bold" /> {eatenMsg || content.markEatenLabel}
                   </button>
                 )}
-                <button className="btn-pill btn-small btn-icon-only" onClick={share} aria-label="Share recipe">
+                <button className="btn-pill btn-small btn-icon-only" onClick={share} aria-label={content.shareLabel}>
                   <ShareNetwork weight="bold" />
                 </button>
-                <button className="btn-pill btn-small btn-icon-only" onClick={() => window.print()} aria-label="Print recipe">
+                <button className="btn-pill btn-small btn-icon-only" onClick={() => window.print()} aria-label={content.printLabel}>
                   <Printer weight="bold" />
                 </button>
               </div>
             </div>
             {shareMsg && <p className="share-msg">{shareMsg}</p>}
             <div className="book-meta">
-              <span className="meta-chip"><Users weight="bold" /> Serves {recipe.servings} {recipe.servings === 1 ? 'person' : 'people'}</span>
-              <span className="meta-chip"><ListChecks weight="bold" /> {recipe.steps.length} steps</span>
-              <span className="meta-chip"><ForkKnife weight="bold" /> {recipe.ingredients.length} ingredients</span>
+              <span className="meta-chip"><Users weight="bold" /> {content.servesPrefix} {recipe.servings} {recipe.servings === 1 ? content.personSingular : content.personPlural}</span>
+              <span className="meta-chip"><ListChecks weight="bold" /> {recipe.steps.length} {content.stepsSuffix}</span>
+              <span className="meta-chip"><ForkKnife weight="bold" /> {recipe.ingredients.length} {content.ingredientsSuffix}</span>
               {recipe.dietaryType && (
                 <span className="meta-badge tone-sage">{recipe.dietaryType.replace('_', ' ')}</span>
               )}
@@ -179,15 +180,15 @@ export const RecipePage = () => {
 
             {cookHistory.length > 0 && (
               <p className="cook-history-note">
-                <ClockCounterClockwise weight="bold" /> You've cooked this {cookHistory.length} time{cookHistory.length !== 1 ? 's' : ''}
-                {' '}— last on {new Date(cookHistory[0].eatenOn).toLocaleDateString()}.
+                <ClockCounterClockwise weight="bold" /> {content.cookedPrefix} {cookHistory.length} {cookHistory.length !== 1 ? content.timePlural : content.timeSingular}
+                {' '}{content.lastOnPrefix} {new Date(cookHistory[0].eatenOn).toLocaleDateString()}.
               </p>
             )}
           </header>
 
           <div className="book-body">
             <section className="ingredients-section">
-              <h2>Ingredients</h2>
+              <h2>{content.ingredientsTitle}</h2>
               <ul className="ingredients-list">
                 {recipe.ingredients.map((ing, i) => (
                   <li key={i}>
@@ -199,7 +200,7 @@ export const RecipePage = () => {
             </section>
 
             <section className="steps-section">
-              <h2>Instructions</h2>
+              <h2>{content.instructionsTitle}</h2>
               <ol className="steps-list">
                 {recipe.steps.map((step, i) => (
                   <li key={i}>
@@ -212,7 +213,7 @@ export const RecipePage = () => {
 
             {embedUrl && (
               <section className="video-section">
-                <h2><PlayCircle weight="bold" /> Watch it made</h2>
+                <h2><PlayCircle weight="bold" /> {content.watchItMadeTitle}</h2>
                 <div className="video-embed">
                   <iframe
                     src={embedUrl}
@@ -228,7 +229,7 @@ export const RecipePage = () => {
 
         {similar.length > 0 && (
           <section className="similar-recipes">
-            <p className="section-label">You might also like</p>
+            <p className="section-label">{content.similarRecipesLabel}</p>
             <div className="recipe-list">
               {similar.map(r => (
                 <RecipeCard key={r.id} recipe={r} />

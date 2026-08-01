@@ -1,16 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import DOMPurify from 'dompurify'
 import { ChatCircleDots, X, PaperPlaneRight, WarningCircle, Microphone } from '@phosphor-icons/react'
-import { RecipeCard } from './RecipeCard'
-import { recipeApi } from '../api/api'
-import { useSpeechToText } from '../hooks/useSpeechToText'
-import type { Recipe, ChatMessage } from '../types'
-
-const STARTER_PROMPTS = [
-  'Something spicy with chicken',
-  'Quick vegetarian dinner',
-  'I have leftover rice, what can I make?',
-]
+import { RecipeCard } from '@/components/RecipeCard'
+import { recipeApi } from '@/api/api'
+import { useSpeechToText } from '@/hooks/useSpeechToText'
+import type { Recipe, ChatMessage } from '@/types'
+import content from '@/content/chatWidget.json'
 
 // The assistant's reply is prompted to only ever use <b>/<i>/<span class="hl">
 // for emphasis — sanitize down to exactly that allowlist before rendering as
@@ -48,7 +43,7 @@ export const ChatWidget = () => {
       setMessages(prev => [...prev, { role: 'assistant', content: res.reply }])
       setRecipes(res.recipes)
     } catch {
-      setError('Could not reach the assistant. Is the backend running?')
+      setError(content.errorMessage)
     } finally {
       setLoading(false)
     }
@@ -61,8 +56,8 @@ export const ChatWidget = () => {
       {open && (
         <div className="chatbot-panel">
           <div className="chatbot-header">
-            <span><ChatCircleDots weight="duotone" /> Recipe Assistant</span>
-            <button className="chatbot-close" onClick={() => setOpen(false)} aria-label="Close">
+            <span><ChatCircleDots weight="duotone" /> {content.title}</span>
+            <button className="chatbot-close" onClick={() => setOpen(false)} aria-label={content.closeLabel}>
               <X weight="bold" />
             </button>
           </div>
@@ -70,9 +65,9 @@ export const ChatWidget = () => {
           <div className="chatbot-body">
             {!started && (
               <div className="chatbot-starter">
-                <p>Ask in your own words — "something spicy with chicken" or "quick vegetarian dinner."</p>
+                <p>{content.starterHint}</p>
                 <div className="search-chips">
-                  {STARTER_PROMPTS.map(p => (
+                  {content.starterPrompts.map(p => (
                     <button key={p} className="chip" onClick={() => send(p)}>{p}</button>
                   ))}
                 </div>
@@ -109,7 +104,7 @@ export const ChatWidget = () => {
 
             {recipes.length > 0 && (
               <div className="chatbot-results">
-                <p className="section-label">{recipes.length} recipe{recipes.length > 1 ? 's' : ''} for you</p>
+                <p className="section-label">{recipes.length} recipe{recipes.length > 1 ? 's' : ''} {content.resultsForYouSuffix}</p>
                 <div className="recipe-list">
                   {recipes.map(recipe => (
                     <RecipeCard key={recipe.id} recipe={recipe} />
@@ -123,7 +118,7 @@ export const ChatWidget = () => {
           <div className="chat-input-bar">
             <input
               type="text"
-              placeholder="e.g. something with garlic..."
+              placeholder={content.inputPlaceholder}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && send()}
@@ -135,7 +130,7 @@ export const ChatWidget = () => {
                 className={`chatbot-mic-btn${listening ? ' listening' : ''}`}
                 onClick={() => (listening ? stopListening() : startListening())}
                 disabled={loading}
-                aria-label={listening ? 'Stop voice input' : 'Start voice input'}
+                aria-label={listening ? content.stopVoiceLabel : content.startVoiceLabel}
               >
                 <Microphone weight={listening ? 'fill' : 'bold'} />
               </button>
@@ -144,7 +139,7 @@ export const ChatWidget = () => {
               className="btn-pill btn-primary btn-icon-only"
               onClick={() => send()}
               disabled={!input.trim() || loading}
-              aria-label="Send"
+              aria-label={content.sendLabel}
             >
               <PaperPlaneRight weight="fill" />
             </button>
@@ -156,7 +151,7 @@ export const ChatWidget = () => {
         <button
           className="chatbot-launcher"
           onClick={() => setOpen(true)}
-          aria-label="Open recipe assistant"
+          aria-label={content.openLabel}
         >
           <ChatCircleDots weight="fill" />
         </button>

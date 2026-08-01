@@ -1,0 +1,10 @@
+{
+  "sectionLabel": "Dashboard",
+  "welcomeBack": "Welcome back",
+  "subtitle": "Pick a starting point.",
+  "cards": [
+    { "to": "/dashboard/search", "tone": "sage", "icon": "MagnifyingGlass", "title": "Search", "text": "Look up a recipe by name or ingredient." },
+    { "to": "/dashboard/recommender", "tone": "mustard", "icon": "Sparkle", "title": "Recommender", "text": "We find the recipe for you, based on your history and preferences." },
+    { "to": "/dashboard/inventory", "tone": "peach", "icon": "Package", "title": "Inventory", "text": "Track what you have on hand. Coming soon." }
+  ]
+}

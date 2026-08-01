@@ -1,0 +1,16 @@
+{
+  "loadingLabel": "Loading your recipes...",
+  "title": "My Recipes",
+  "countWord": "recipe",
+  "addRecipeLabel": "+ Add Recipe",
+  "emptyIcon": "📝",
+  "emptyTitle": "No recipes yet",
+  "emptyText": "Add your own private recipes here.",
+  "addRecipeEmptyLabel": "Add Recipe",
+  "deleteConfirm": "Delete this recipe?",
+  "publicLabel": "Public",
+  "privateLabel": "Private",
+  "servingWord": "serving",
+  "editLabel": "Edit",
+  "deleteLabel": "Delete"
+}

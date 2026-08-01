@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { UserCircle, CheckCircle, WarningCircle } from '@phosphor-icons/react'
-import { userApi } from '../api/api'
-import { useAuth } from '../context/AuthContext'
+import { userApi } from '@/api/api'
+import { useAuth } from '@/context/AuthContext'
+import { FormField } from '@/components/FormField'
+import content from '@/content/profilePage.json'
 
 export const ProfilePage = () => {
   const { updateName } = useAuth()
@@ -39,7 +41,7 @@ export const ProfilePage = () => {
       setProfileStatus('done')
     } catch (err: unknown) {
       setProfileStatus('error')
-      setProfileError(err instanceof Error ? err.message : 'Could not update profile')
+      setProfileError(err instanceof Error ? err.message : content.defaultProfileError)
     }
   }
 
@@ -47,7 +49,7 @@ export const ProfilePage = () => {
     e.preventDefault()
     if (newPassword !== confirmNewPassword) {
       setPasswordStatus('error')
-      setPasswordError('New passwords do not match')
+      setPasswordError(content.passwordMismatchError)
       return
     }
     setPasswordStatus('saving')
@@ -60,90 +62,55 @@ export const ProfilePage = () => {
       setConfirmNewPassword('')
     } catch (err: unknown) {
       setPasswordStatus('error')
-      setPasswordError(err instanceof Error ? err.message : 'Could not update password')
+      setPasswordError(err instanceof Error ? err.message : content.defaultPasswordError)
     }
   }
 
   if (loading) {
-    return <div className="recipe-page-loading">Loading profile...</div>
+    return <div className="recipe-page-loading">{content.loadingLabel}</div>
   }
 
   return (
     <section className="dashboard-home profile-page">
-      <p className="section-label">Profile</p>
-      <h1><UserCircle weight="fill" /> Your profile</h1>
+      <p className="section-label">{content.sectionLabel}</p>
+      <h1><UserCircle weight="fill" /> {content.title}</h1>
 
       <div className="profile-card">
-        <h2>Your info</h2>
+        <h2>{content.infoCard.title}</h2>
         <form onSubmit={saveProfile} className="auth-form">
-          <label>
-            First name
-            <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} required />
-          </label>
-          <label>
-            Last name
-            <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} required />
-          </label>
-          <label>
-            Email
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-          </label>
+          <FormField label={content.infoCard.firstNameLabel} value={firstName} onChange={setFirstName} required />
+          <FormField label={content.infoCard.lastNameLabel} value={lastName} onChange={setLastName} required />
+          <FormField label={content.infoCard.emailLabel} type="email" value={email} onChange={setEmail} required />
 
           {profileStatus === 'done' && (
-            <p className="msg success"><CheckCircle weight="bold" /> Profile updated</p>
+            <p className="msg success"><CheckCircle weight="bold" /> {content.infoCard.successMessage}</p>
           )}
           {profileStatus === 'error' && (
             <p className="msg error"><WarningCircle weight="bold" /> {profileError}</p>
           )}
 
           <button type="submit" className="btn-pill btn-primary" disabled={profileStatus === 'saving'}>
-            {profileStatus === 'saving' ? 'Saving…' : 'Save changes'}
+            {profileStatus === 'saving' ? content.infoCard.savingLabel : content.infoCard.saveLabel}
           </button>
         </form>
       </div>
 
       <div className="profile-card">
-        <h2>Change password</h2>
+        <h2>{content.passwordCard.title}</h2>
         <form onSubmit={savePassword} className="auth-form">
-          <label>
-            Current password
-            <input
-              type="password"
-              value={currentPassword}
-              onChange={e => setCurrentPassword(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            New password
-            <input
-              type="password"
-              value={newPassword}
-              onChange={e => setNewPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-          </label>
-          <label>
-            Confirm new password
-            <input
-              type="password"
-              value={confirmNewPassword}
-              onChange={e => setConfirmNewPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-          </label>
+          <FormField label={content.passwordCard.currentPasswordLabel} type="password" value={currentPassword} onChange={setCurrentPassword} required />
+          <FormField label={content.passwordCard.newPasswordLabel} type="password" value={newPassword} onChange={setNewPassword} required minLength={6} />
+          <FormField label={content.passwordCard.confirmNewPasswordLabel} type="password" value={confirmNewPassword} onChange={setConfirmNewPassword} required minLength={6} />
 
           {passwordStatus === 'done' && (
-            <p className="msg success"><CheckCircle weight="bold" /> Password updated</p>
+            <p className="msg success"><CheckCircle weight="bold" /> {content.passwordCard.successMessage}</p>
           )}
           {passwordStatus === 'error' && (
             <p className="msg error"><WarningCircle weight="bold" /> {passwordError}</p>
           )}
 
           <button type="submit" className="btn-pill btn-primary" disabled={passwordStatus === 'saving'}>
-            {passwordStatus === 'saving' ? 'Updating…' : 'Update password'}
+            {passwordStatus === 'saving' ? content.passwordCard.savingLabel : content.passwordCard.saveLabel}
           </button>
         </form>
       </div>

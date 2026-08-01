@@ -1,0 +1,26 @@
+{
+  "loadingLabel": "Loading profile...",
+  "sectionLabel": "Profile",
+  "title": "Your profile",
+  "defaultProfileError": "Could not update profile",
+  "defaultPasswordError": "Could not update password",
+  "passwordMismatchError": "New passwords do not match",
+  "infoCard": {
+    "title": "Your info",
+    "firstNameLabel": "First name",
+    "lastNameLabel": "Last name",
+    "emailLabel": "Email",
+    "successMessage": "Profile updated",
+    "saveLabel": "Save changes",
+    "savingLabel": "Saving…"
+  },
+  "passwordCard": {
+    "title": "Change password",
+    "currentPasswordLabel": "Current password",
+    "newPasswordLabel": "New password",
+    "confirmNewPasswordLabel": "Confirm new password",
+    "successMessage": "Password updated",
+    "saveLabel": "Update password",
+    "savingLabel": "Updating…"
+  }
+}

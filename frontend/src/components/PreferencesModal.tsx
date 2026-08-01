@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { preferencesApi } from '../api/api'
+import { preferencesApi } from '@/api/api'
+import { SelectField } from '@/components/SelectField'
+import content from '@/content/preferencesModal.json'
 
 interface Props {
   onClose: () => void
 }
-
-const DIETARY_OPTIONS = ['', 'VEGETARIAN', 'VEGAN', 'NON_VEGETARIAN']
-const CUISINE_OPTIONS = ['', 'ITALIAN', 'INDIAN', 'ASIAN', 'MEXICAN', 'OTHER']
 
 export const PreferencesModal = ({ onClose }: Props) => {
   const [dietary, setDietary] = useState('')
@@ -46,39 +45,23 @@ export const PreferencesModal = ({ onClose }: Props) => {
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal-card modal-card--sm">
         <div className="modal-header">
-          <h3>Your Preferences</h3>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <h3>{content.title}</h3>
+          <button className="modal-close" onClick={onClose}>{content.closeLabel}</button>
         </div>
 
         {loading ? (
-          <p style={{ padding: '1.5rem', textAlign: 'center' }}>Loading...</p>
+          <p style={{ padding: '1.5rem', textAlign: 'center' }}>{content.loadingLabel}</p>
         ) : (
           <>
-            <p className="prefs-hint">
-              These preferences boost your recommendation scores for matching recipes.
-            </p>
+            <p className="prefs-hint">{content.hint}</p>
             <div className="prefs-form">
-              <label>
-                Dietary preference
-                <select value={dietary} onChange={e => setDietary(e.target.value)}>
-                  {DIETARY_OPTIONS.map(o => (
-                    <option key={o} value={o}>{o ? o.replace('_', ' ') : '— No preference —'}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Cuisine preference
-                <select value={cuisine} onChange={e => setCuisine(e.target.value)}>
-                  {CUISINE_OPTIONS.map(o => (
-                    <option key={o} value={o}>{o || '— No preference —'}</option>
-                  ))}
-                </select>
-              </label>
+              <SelectField label={content.dietaryLabel} value={dietary} onChange={setDietary} options={content.dietaryOptions} />
+              <SelectField label={content.cuisineLabel} value={cuisine} onChange={setCuisine} options={content.cuisineOptions} />
             </div>
             <div className="modal-footer">
-              <button className="btn-secondary" onClick={onClose}>Cancel</button>
+              <button className="btn-secondary" onClick={onClose}>{content.cancelLabel}</button>
               <button className="btn-primary" onClick={handleSave} disabled={saving}>
-                {saving ? 'Saving…' : 'Save Preferences'}
+                {saving ? content.savingLabel : content.saveLabel}
               </button>
             </div>
           </>

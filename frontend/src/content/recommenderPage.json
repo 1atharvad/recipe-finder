@@ -1,0 +1,11 @@
+{
+  "eyebrow": "FOR YOU",
+  "title": "Recommender",
+  "text": "We find the recipe for you — scored against your history and preferences.",
+  "preferencesLabel": "Preferences",
+  "loadingLabel": "Calculating recommendations...",
+  "emptyTitle": "No recommendations yet",
+  "emptyText": "Mark a few recipes as eaten to get personalised suggestions.",
+  "topPickLabel": "Top pick",
+  "scoreLabel": "Score"
+}

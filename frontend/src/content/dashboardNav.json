@@ -1,0 +1,13 @@
+{
+  "logo": "Recipe Finder",
+  "openMenuLabel": "Open menu",
+  "closeMenuLabel": "Close menu",
+  "profileLabel": "Profile",
+  "logoutLabel": "Logout",
+  "navItems": [
+    { "to": "/dashboard", "label": "Overview", "icon": "SquaresFour", "end": true },
+    { "to": "/dashboard/search", "label": "Search", "icon": "MagnifyingGlass", "end": false },
+    { "to": "/dashboard/recommender", "label": "Recommender", "icon": "Sparkle", "end": false },
+    { "to": "/dashboard/inventory", "label": "Inventory", "icon": "Package", "end": false }
+  ]
+}

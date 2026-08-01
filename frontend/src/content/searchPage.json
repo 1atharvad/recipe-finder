@@ -1,0 +1,25 @@
+{
+  "hero": {
+    "eyebrow": "DISCOVER RECIPES",
+    "title": "What's in your kitchen?",
+    "text": "Search by dish name or ingredient to find something delicious to cook right now.",
+    "placeholder": "e.g. pasta, garlic, chicken...",
+    "clearLabel": "Clear search",
+    "searchingLabel": "Searching…",
+    "searchLabel": "Search"
+  },
+  "results": {
+    "serverErrorMessage": "Could not reach the server. Is the backend running?",
+    "topRecipesLabel": "Top Recipes",
+    "noResultsPrefix": "No recipes found for",
+    "resultsForPrefix": "for"
+  },
+  "quickSearches": [
+    { "q": "pasta", "label": "Pasta", "emoji": "🍝" },
+    { "q": "chicken", "label": "Chicken", "emoji": "🍗" },
+    { "q": "eggs", "label": "Eggs", "emoji": "🥚" },
+    { "q": "garlic", "label": "Garlic", "emoji": "🧄" },
+    { "q": "rice", "label": "Rice", "emoji": "🍚" },
+    { "q": "tomato", "label": "Tomato", "emoji": "🍅" }
+  ]
+}

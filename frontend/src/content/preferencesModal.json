@@ -1,0 +1,25 @@
+{
+  "title": "Your Preferences",
+  "closeLabel": "✕",
+  "loadingLabel": "Loading...",
+  "hint": "These preferences boost your recommendation scores for matching recipes.",
+  "dietaryLabel": "Dietary preference",
+  "cuisineLabel": "Cuisine preference",
+  "dietaryOptions": [
+    { "value": "", "label": "— No preference —" },
+    { "value": "VEGETARIAN", "label": "VEGETARIAN" },
+    { "value": "VEGAN", "label": "VEGAN" },
+    { "value": "NON_VEGETARIAN", "label": "NON VEGETARIAN" }
+  ],
+  "cuisineOptions": [
+    { "value": "", "label": "— No preference —" },
+    { "value": "ITALIAN", "label": "ITALIAN" },
+    { "value": "INDIAN", "label": "INDIAN" },
+    { "value": "ASIAN", "label": "ASIAN" },
+    { "value": "MEXICAN", "label": "MEXICAN" },
+    { "value": "OTHER", "label": "OTHER" }
+  ],
+  "cancelLabel": "Cancel",
+  "saveLabel": "Save Preferences",
+  "savingLabel": "Saving…"
+}

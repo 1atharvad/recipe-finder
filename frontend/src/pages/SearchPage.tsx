@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react'
 import { MagnifyingGlass, X, WarningCircle, Sparkle } from '@phosphor-icons/react'
-import { RecipeCard } from '../components/RecipeCard'
-import { BentoGrid } from '../components/BentoGrid'
-import { recipeApi } from '../api/api'
-import type { Recipe } from '../types'
-
-const QUICK_SEARCHES = [
-  { q: 'pasta',   label: 'Pasta',   emoji: '🍝' },
-  { q: 'chicken', label: 'Chicken', emoji: '🍗' },
-  { q: 'eggs',    label: 'Eggs',    emoji: '🥚' },
-  { q: 'garlic',  label: 'Garlic',  emoji: '🧄' },
-  { q: 'rice',    label: 'Rice',    emoji: '🍚' },
-  { q: 'tomato',  label: 'Tomato',  emoji: '🍅' },
-]
+import { RecipeCard } from '@/components/RecipeCard'
+import { BentoGrid } from '@/components/BentoGrid'
+import { recipeApi } from '@/api/api'
+import type { Recipe } from '@/types'
+import content from '@/content/searchPage.json'
 
 export const SearchPage = () => {
   const [query, setQuery] = useState('')
@@ -51,35 +43,35 @@ export const SearchPage = () => {
     <>
       <section className="search-hero">
         <div className="section-inner">
-          <span className="hero-eyebrow">DISCOVER RECIPES <Sparkle weight="fill" /></span>
-          <h1>What's in your kitchen?</h1>
-          <p>Search by dish name or ingredient to find something delicious to cook right now.</p>
+          <span className="hero-eyebrow">{content.hero.eyebrow} <Sparkle weight="fill" /></span>
+          <h1>{content.hero.title}</h1>
+          <p>{content.hero.text}</p>
 
           <div className="search-bar">
             <div className="search-input-wrap">
               <MagnifyingGlass className="search-bar-icon" weight="bold" />
               <input
                 type="text"
-                placeholder="e.g. pasta, garlic, chicken..."
+                placeholder={content.hero.placeholder}
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && search(query)}
                 autoFocus
               />
               {query && (
-                <button type="button" className="search-bar-clear" onClick={clearSearch} aria-label="Clear search">
+                <button type="button" className="search-bar-clear" onClick={clearSearch} aria-label={content.hero.clearLabel}>
                   <X weight="bold" />
                 </button>
               )}
             </div>
             <button className="btn-pill btn-primary" onClick={() => search(query)} disabled={!query.trim() || status === 'loading'}>
-              {status === 'loading' ? 'Searching…' : 'Search'}
+              {status === 'loading' ? content.hero.searchingLabel : content.hero.searchLabel}
             </button>
           </div>
 
           {!searched && (
             <div className="search-chips">
-              {QUICK_SEARCHES.map(({ q, label, emoji }) => (
+              {content.quickSearches.map(({ q, label, emoji }) => (
                 <button
                   key={q}
                   className="chip"
@@ -96,23 +88,23 @@ export const SearchPage = () => {
       <section className="search-results">
         <div className="section-inner">
           {status === 'error' && (
-            <p className="msg error"><WarningCircle weight="bold" /> Could not reach the server. Is the backend running?</p>
+            <p className="msg error"><WarningCircle weight="bold" /> {content.results.serverErrorMessage}</p>
           )}
 
           {!searched && topRecipes.length > 0 && (
             <>
-              <p className="section-label">Top Recipes</p>
+              <p className="section-label">{content.results.topRecipesLabel}</p>
               <BentoGrid recipes={topRecipes} />
             </>
           )}
 
           {searched && status === 'done' && results.length === 0 && (
-            <p className="msg">No recipes found for "{query}".</p>
+            <p className="msg">{content.results.noResultsPrefix} "{query}".</p>
           )}
 
           {searched && status === 'done' && results.length > 0 && (
             <>
-              <p className="section-label">{results.length} result{results.length > 1 ? 's' : ''} for "{query}"</p>
+              <p className="section-label">{results.length} result{results.length > 1 ? 's' : ''} {content.results.resultsForPrefix} "{query}"</p>
               <div className="recipe-list">
                 {results.map(recipe => (
                   <RecipeCard key={recipe.id} recipe={recipe} />

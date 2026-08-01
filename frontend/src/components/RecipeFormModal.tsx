@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
-import { recipeApi, adminApi } from '../api/api'
-import type { Recipe, RecipeRequest } from '../types'
+import { recipeApi, adminApi } from '@/api/api'
+import { FormField } from '@/components/FormField'
+import { SelectField } from '@/components/SelectField'
+import content from '@/content/recipeFormModal.json'
+import type { Recipe, RecipeRequest } from '@/types'
 
 interface Props {
   mode: 'create' | 'edit'
@@ -9,9 +12,6 @@ interface Props {
   onSave: (recipe: Recipe) => void
   onClose: () => void
 }
-
-const DIETARY_OPTIONS = ['', 'VEGETARIAN', 'VEGAN', 'NON_VEGETARIAN']
-const CUISINE_OPTIONS = ['', 'ITALIAN', 'INDIAN', 'ASIAN', 'MEXICAN', 'OTHER']
 
 export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Props) => {
   const [name, setName] = useState(initial?.name ?? '')
@@ -76,7 +76,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
       }
       onSave(saved)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Save failed')
+      setError(err instanceof Error ? err.message : content.defaultError)
     } finally {
       setLoading(false)
     }
@@ -86,8 +86,8 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal-card">
         <div className="modal-header">
-          <h3>{mode === 'create' ? 'Add Recipe' : 'Edit Recipe'}</h3>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <h3>{mode === 'create' ? content.titleCreate : content.titleEdit}</h3>
+          <button className="modal-close" onClick={onClose}>{content.closeLabel}</button>
         </div>
 
         {error && <p className="auth-error">{error}</p>}
@@ -95,53 +95,31 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
         <form onSubmit={handleSubmit} className="recipe-form">
           <div className="form-row">
             <label className="form-label-full">
-              Name *
+              {content.nameLabel}
               <input
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
-                placeholder="Recipe name"
+                placeholder={content.namePlaceholder}
               />
             </label>
           </div>
 
           <div className="form-row form-row--3">
-            <label>
-              Servings
-              <input
-                type="number"
-                value={servings}
-                onChange={e => setServings(Number(e.target.value))}
-                min={1}
-              />
-            </label>
-            <label>
-              Dietary
-              <select value={dietaryType} onChange={e => setDietaryType(e.target.value)}>
-                {DIETARY_OPTIONS.map(o => (
-                  <option key={o} value={o}>{o ? o.replace('_', ' ') : '— Any —'}</option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Cuisine
-              <select value={cuisineType} onChange={e => setCuisineType(e.target.value)}>
-                {CUISINE_OPTIONS.map(o => (
-                  <option key={o} value={o}>{o || '— Any —'}</option>
-                ))}
-              </select>
-            </label>
+            <FormField label={content.servingsLabel} type="number" value={servings} onChange={v => setServings(Number(v))} min={1} />
+            <SelectField label={content.dietaryLabel} value={dietaryType} onChange={setDietaryType} options={content.dietaryOptions} />
+            <SelectField label={content.cuisineLabel} value={cuisineType} onChange={setCuisineType} options={content.cuisineOptions} />
           </div>
 
           <div className="form-row">
             <label className="form-label-full">
-              Video URL (optional)
+              {content.videoUrlLabel}
               <input
                 type="url"
                 value={videoUrl}
                 onChange={e => setVideoUrl(e.target.value)}
-                placeholder="https://youtube.com/watch?v=..."
+                placeholder={content.videoUrlPlaceholder}
               />
             </label>
           </div>
@@ -153,59 +131,59 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
                 checked={isPublic}
                 onChange={e => setIsPublic(e.target.checked)}
               />
-              Make this recipe public (visible to everyone, not just you)
+              {content.publicCheckboxLabel}
             </label>
           )}
 
           <fieldset className="form-fieldset">
-            <legend>Ingredients</legend>
+            <legend>{content.ingredientsLegend}</legend>
             {ingredients.map((ing, i) => (
               <div key={i} className="ingredient-row">
                 <input
                   type="text"
                   value={ing.quantity}
                   onChange={e => updateIngredient(i, 'quantity', e.target.value)}
-                  placeholder="Quantity"
+                  placeholder={content.ingredientQuantityPlaceholder}
                   className="ing-qty-input"
                 />
                 <input
                   type="text"
                   value={ing.name}
                   onChange={e => updateIngredient(i, 'name', e.target.value)}
-                  placeholder="Ingredient name"
+                  placeholder={content.ingredientNamePlaceholder}
                   className="ing-name-input"
                 />
                 {ingredients.length > 1 && (
-                  <button type="button" className="remove-row-btn" onClick={() => removeIngredient(i)}>✕</button>
+                  <button type="button" className="remove-row-btn" onClick={() => removeIngredient(i)}>{content.closeLabel}</button>
                 )}
               </div>
             ))}
-            <button type="button" className="add-row-btn" onClick={addIngredient}>+ Add Ingredient</button>
+            <button type="button" className="add-row-btn" onClick={addIngredient}>{content.addIngredientLabel}</button>
           </fieldset>
 
           <fieldset className="form-fieldset">
-            <legend>Steps</legend>
+            <legend>{content.stepsLegend}</legend>
             {steps.map((step, i) => (
               <div key={i} className="step-row">
                 <span className="step-num">{i + 1}</span>
                 <textarea
                   value={step}
                   onChange={e => updateStep(i, e.target.value)}
-                  placeholder={`Step ${i + 1}`}
+                  placeholder={`${content.stepPlaceholderPrefix} ${i + 1}`}
                   rows={2}
                 />
                 {steps.length > 1 && (
-                  <button type="button" className="remove-row-btn" onClick={() => removeStep(i)}>✕</button>
+                  <button type="button" className="remove-row-btn" onClick={() => removeStep(i)}>{content.closeLabel}</button>
                 )}
               </div>
             ))}
-            <button type="button" className="add-row-btn" onClick={addStep}>+ Add Step</button>
+            <button type="button" className="add-row-btn" onClick={addStep}>{content.addStepLabel}</button>
           </fieldset>
 
           <div className="modal-footer">
-            <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="button" className="btn-secondary" onClick={onClose}>{content.cancelLabel}</button>
             <button type="submit" className="btn-primary" disabled={loading}>
-              {loading ? 'Saving…' : mode === 'create' ? 'Create' : 'Save Changes'}
+              {loading ? content.savingLabel : mode === 'create' ? content.createLabel : content.saveLabel}
             </button>
           </div>
         </form>

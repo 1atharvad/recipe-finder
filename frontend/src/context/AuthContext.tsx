@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react'
-import type { User, AuthResponse } from '../types'
+import type { User, AuthResponse } from '@/types'
 
 interface AuthContextValue {
   user: User | null

@@ -4,7 +4,7 @@ import type {
   EatingHistoryEntry, UserPreferences, PreferencesRequest,
   ChatMessage, ChatResponse,
   UserProfile, UpdateProfileRequest, ChangePasswordRequest,
-} from '../types'
+} from '@/types'
 
 const BASE = `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1`
 const AUTH_KEY = 'recipe-auth'

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { favoritesApi } from '../api/api'
-import { RecipeCard } from '../components/RecipeCard'
-import type { Recipe } from '../types'
+import { favoritesApi } from '@/api/api'
+import { RecipeCard } from '@/components/RecipeCard'
+import type { Recipe } from '@/types'
+import content from '@/content/favoritesPage.json'
 
 export const FavoritesPage = () => {
   const [favorites, setFavorites] = useState<Recipe[]>([])
@@ -22,16 +23,16 @@ export const FavoritesPage = () => {
     } catch {}
   }
 
-  if (loading) return <div className="recipe-page-loading">Loading favorites...</div>
+  if (loading) return <div className="recipe-page-loading">{content.loadingLabel}</div>
 
   if (favorites.length === 0) {
     return (
       <div className="page">
         <div className="empty-state">
-          <span className="empty-icon">♡</span>
-          <h2>No saved recipes yet</h2>
-          <p>Open any recipe and save the ones you like.</p>
-          <Link to="/dashboard/search" className="btn-primary">Browse Recipes</Link>
+          <span className="empty-icon">{content.emptyIcon}</span>
+          <h2>{content.emptyTitle}</h2>
+          <p>{content.emptyText}</p>
+          <Link to="/dashboard/search" className="btn-primary">{content.browseLabel}</Link>
         </div>
       </div>
     )
@@ -40,14 +41,14 @@ export const FavoritesPage = () => {
   return (
     <div className="page">
       <div className="page-header">
-        <h2>Saved Recipes</h2>
-        <p>{favorites.length} recipe{favorites.length > 1 ? 's' : ''} saved</p>
+        <h2>{content.title}</h2>
+        <p>{favorites.length} {content.countWord}{favorites.length > 1 ? 's' : ''} {content.countSuffix}</p>
       </div>
       <div className="recipe-list">
         {favorites.map((recipe, i) => (
           <div key={recipe.id} className="fav-row">
             <RecipeCard recipe={recipe} index={i} />
-            <button className="remove-btn" onClick={() => handleRemove(recipe.id)} title="Remove">✕</button>
+            <button className="remove-btn" onClick={() => handleRemove(recipe.id)} title={content.removeLabel}>✕</button>
           </div>
         ))}
       </div>

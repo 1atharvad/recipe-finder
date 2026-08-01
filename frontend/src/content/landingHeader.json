@@ -1,0 +1,11 @@
+{
+  "logo": "Recipe Finder",
+  "featuresLink": "Features",
+  "howItWorksLink": "How it works",
+  "dashboardLabel": "Go to dashboard",
+  "dashboardTitle": "Dashboard",
+  "loginLabel": "Log in",
+  "signupLabel": "Sign up",
+  "openMenuLabel": "Open menu",
+  "closeMenuLabel": "Close menu"
+}

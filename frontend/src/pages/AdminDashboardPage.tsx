@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { adminApi } from '../api/api'
-import type { Recipe } from '../types'
-import { RecipeFormModal } from '../components/RecipeFormModal'
+import { adminApi } from '@/api/api'
+import type { Recipe } from '@/types'
+import { RecipeFormModal } from '@/components/RecipeFormModal'
+import content from '@/content/adminDashboardPage.json'
 
 export const AdminDashboardPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -19,7 +20,7 @@ export const AdminDashboardPage = () => {
   useEffect(load, [])
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Delete this recipe from the general pool?')) return
+    if (!confirm(content.deleteConfirm)) return
     try {
       await adminApi.delete(id)
       setRecipes(prev => prev.filter(r => r.id !== id))
@@ -40,29 +41,29 @@ export const AdminDashboardPage = () => {
     setShowCreate(false)
   }
 
-  if (loading) return <div className="recipe-page-loading">Loading recipes...</div>
+  if (loading) return <div className="recipe-page-loading">{content.loadingLabel}</div>
 
   return (
     <div className="page">
       <div className="page-header">
         <div>
-          <h2>Admin Dashboard</h2>
-          <p>{recipes.length} general recipes</p>
+          <h2>{content.title}</h2>
+          <p>{recipes.length} {content.countSuffix}</p>
         </div>
-        <button className="btn-primary" onClick={() => setShowCreate(true)}>+ Add Recipe</button>
+        <button className="btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeLabel}</button>
       </div>
 
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Servings</th>
-              <th>Dietary</th>
-              <th>Cuisine</th>
-              <th>Ingredients</th>
-              <th>Steps</th>
-              <th>Actions</th>
+              <th>{content.columns.name}</th>
+              <th>{content.columns.servings}</th>
+              <th>{content.columns.dietary}</th>
+              <th>{content.columns.cuisine}</th>
+              <th>{content.columns.ingredients}</th>
+              <th>{content.columns.steps}</th>
+              <th>{content.columns.actions}</th>
             </tr>
           </thead>
           <tbody>
@@ -70,13 +71,13 @@ export const AdminDashboardPage = () => {
               <tr key={recipe.id}>
                 <td>{recipe.name}</td>
                 <td>{recipe.servings}</td>
-                <td>{recipe.dietaryType?.replace('_', ' ') ?? '—'}</td>
-                <td>{recipe.cuisineType ?? '—'}</td>
+                <td>{recipe.dietaryType?.replace('_', ' ') ?? content.emptyValue}</td>
+                <td>{recipe.cuisineType ?? content.emptyValue}</td>
                 <td>{recipe.ingredients?.length ?? 0}</td>
                 <td>{recipe.steps?.length ?? 0}</td>
                 <td className="admin-actions">
-                  <button className="btn-edit" onClick={() => setEditTarget(recipe)}>Edit</button>
-                  <button className="btn-delete" onClick={() => handleDelete(recipe.id)}>Delete</button>
+                  <button className="btn-edit" onClick={() => setEditTarget(recipe)}>{content.editLabel}</button>
+                  <button className="btn-delete" onClick={() => handleDelete(recipe.id)}>{content.deleteLabel}</button>
                 </td>
               </tr>
             ))}

@@ -1,0 +1,15 @@
+{
+  "heroTitle": "Welcome back to your tastiest era",
+  "heroText": "Log in to save recipes, track meals, and keep fridge panic in the past.",
+  "cardTitle": "Log in to Recipe Finder",
+  "cardSubtitle": "Your next good meal is waiting.",
+  "defaultError": "Login failed",
+  "emailLabel": "Email",
+  "emailPlaceholder": "you@example.com",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "Enter your password",
+  "submitLabel": "Log in",
+  "submittingLabel": "Signing in…",
+  "signupPrompt": "New here?",
+  "signupLink": "Create a free account"
+}

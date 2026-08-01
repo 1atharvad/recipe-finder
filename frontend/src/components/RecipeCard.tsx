@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import content from '@/content/recipeCard.json'
 
 interface Recipe {
   id: number
@@ -17,7 +18,7 @@ export const RecipeCard = ({ recipe, index }: Props) => {
     <div className="recipe-card" onClick={() => navigate(`/recipe/${recipe.id}`)}>
       {index !== undefined && <span className="card-index">{index + 1}</span>}
       <span className="card-name">{recipe.name}</span>
-      <span className="card-arrow">→</span>
+      <span className="card-arrow">{content.arrow}</span>
     </div>
   )
 }

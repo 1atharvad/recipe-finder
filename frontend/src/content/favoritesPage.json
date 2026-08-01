@@ -1,0 +1,11 @@
+{
+  "loadingLabel": "Loading favorites...",
+  "emptyIcon": "♡",
+  "emptyTitle": "No saved recipes yet",
+  "emptyText": "Open any recipe and save the ones you like.",
+  "browseLabel": "Browse Recipes",
+  "title": "Saved Recipes",
+  "countWord": "recipe",
+  "countSuffix": "saved",
+  "removeLabel": "Remove"
+}

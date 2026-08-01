@@ -1,0 +1,39 @@
+{
+  "titleCreate": "Add Recipe",
+  "titleEdit": "Edit Recipe",
+  "closeLabel": "✕",
+  "defaultError": "Save failed",
+  "nameLabel": "Name *",
+  "namePlaceholder": "Recipe name",
+  "servingsLabel": "Servings",
+  "dietaryLabel": "Dietary",
+  "cuisineLabel": "Cuisine",
+  "dietaryOptions": [
+    { "value": "", "label": "— Any —" },
+    { "value": "VEGETARIAN", "label": "VEGETARIAN" },
+    { "value": "VEGAN", "label": "VEGAN" },
+    { "value": "NON_VEGETARIAN", "label": "NON VEGETARIAN" }
+  ],
+  "cuisineOptions": [
+    { "value": "", "label": "— Any —" },
+    { "value": "ITALIAN", "label": "ITALIAN" },
+    { "value": "INDIAN", "label": "INDIAN" },
+    { "value": "ASIAN", "label": "ASIAN" },
+    { "value": "MEXICAN", "label": "MEXICAN" },
+    { "value": "OTHER", "label": "OTHER" }
+  ],
+  "videoUrlLabel": "Video URL (optional)",
+  "videoUrlPlaceholder": "https://youtube.com/watch?v=...",
+  "publicCheckboxLabel": "Make this recipe public (visible to everyone, not just you)",
+  "ingredientsLegend": "Ingredients",
+  "ingredientQuantityPlaceholder": "Quantity",
+  "ingredientNamePlaceholder": "Ingredient name",
+  "addIngredientLabel": "+ Add Ingredient",
+  "stepsLegend": "Steps",
+  "stepPlaceholderPrefix": "Step",
+  "addStepLabel": "+ Add Step",
+  "cancelLabel": "Cancel",
+  "createLabel": "Create",
+  "saveLabel": "Save Changes",
+  "savingLabel": "Saving…"
+}

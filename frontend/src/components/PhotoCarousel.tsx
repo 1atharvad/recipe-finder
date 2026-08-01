@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useMotionValue, animate, type AnimationPlaybackControls } from 'framer-motion'
-import { handleImageFallback } from '../assets/imageFallback'
-import { recipeApi } from '../api/api'
+import { handleImageFallback } from '@/assets/imageFallback'
+import { recipeApi } from '@/api/api'
+import pageContent from '@/content/photoCarousel.json'
 
 interface PhotoCard {
   img: string
@@ -63,7 +64,7 @@ export const PhotoCarousel = ({ cards }: Props) => {
             <>
               <img
                 src={`https://images.unsplash.com/${card.img}?w=480&h=480&fit=crop&q=80`}
-                alt={card.name ?? 'Recipe ingredients'}
+                alt={card.name ?? pageContent.fallbackAlt}
                 loading="lazy"
                 onError={handleImageFallback}
               />
