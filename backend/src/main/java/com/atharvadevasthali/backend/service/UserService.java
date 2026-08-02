@@ -1,5 +1,6 @@
 package com.atharvadevasthali.backend.service;
 
+import com.atharvadevasthali.backend.dto.AdminUserDTO;
 import com.atharvadevasthali.backend.dto.AuthRequest;
 import com.atharvadevasthali.backend.dto.AuthResponse;
 import com.atharvadevasthali.backend.dto.ChangePasswordRequest;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -51,11 +53,12 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                List.of(new SimpleGrantedAuthority(user.getRole()))
-        );
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .disabled(!user.isEnabled())
+                .authorities(List.of(new SimpleGrantedAuthority(user.getRole())))
+                .build();
     }
 
     public AuthResponse signup(SignupRequest request) {
@@ -89,6 +92,9 @@ public class UserService implements UserDetailsService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        }
+        if (!user.isEnabled()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "This account has been disabled");
         }
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
@@ -153,6 +159,22 @@ public class UserService implements UserDetailsService {
         prefs.setDietaryType(request.getDietaryType());
         prefs.setCuisineType(request.getCuisineType());
         return preferencesRepository.save(prefs);
+    }
+
+    // ── Admin: user management ─────────────────────────────────────────────
+
+    public List<AdminUserDTO> getAllUsersForAdmin() {
+        return userRepository.findAll().stream()
+                .map(u -> new AdminUserDTO(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(),
+                        u.getRole(), u.isEnabled(), u.getCreatedAt()))
+                .collect(Collectors.toList());
+    }
+
+    public void setUserEnabled(Long userId, boolean enabled) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        user.setEnabled(enabled);
+        userRepository.save(user);
     }
 
     // Internal identity only — never surfaced to the user or the API (see User.username's @JsonIgnore).

@@ -3,6 +3,8 @@ package com.atharvadevasthali.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -35,6 +37,22 @@ public class User {
     @Column(nullable = false)
     private String role;
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean enabled = true;
+
+    // No columnDefinition here — Hibernate would keep re-issuing an invalid
+    // "ALTER COLUMN ... SET DATA TYPE ... DEFAULT ..." on every boot trying to
+    // reconcile it (Postgres doesn't allow a type change and default in the same
+    // clause). The DB-level default from the original migration is enough;
+    // @PrePersist below guarantees new rows get a value regardless.
+    @Column(nullable = false)
+    private Instant createdAt;
+
+    // @JsonIgnore breaks a real infinite-recursion bug: User -> preferences ->
+    // UserPreferences.user -> back to this same User -> preferences -> ...
+    // Nothing needs preferences nested inside a serialized User anyway — the
+    // dedicated /api/v1/preferences endpoint returns UserPreferences directly.
+    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserPreferences preferences;
 
@@ -49,6 +67,11 @@ public class User {
         this.role = role;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) createdAt = Instant.now();
+    }
+
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getFirstName() { return firstName; }
@@ -56,6 +79,8 @@ public class User {
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public String getRole() { return role; }
+    public boolean isEnabled() { return enabled; }
+    public Instant getCreatedAt() { return createdAt; }
     public UserPreferences getPreferences() { return preferences; }
 
     public void setId(Long id) { this.id = id; }
@@ -65,5 +90,7 @@ public class User {
     public void setEmail(String email) { this.email = email; }
     public void setPassword(String password) { this.password = password; }
     public void setRole(String role) { this.role = role; }
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public void setPreferences(UserPreferences preferences) { this.preferences = preferences; }
 }

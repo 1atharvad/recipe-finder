@@ -39,6 +39,11 @@ public class Recipe {
     @Column(length = 500)
     private String videoUrl;
 
+    // User/admin-supplied image URL. Falls back to a name-keyed Unsplash lookup
+    // (and then a generic placeholder) on the frontend when this is unset.
+    @Column(length = 500)
+    private String imageUrl;
+
     // Only meaningful when owner is set — lets a user opt a private recipe
     // into the general/search pool while keeping their ownership/edit rights.
     // Explicit default so Hibernate's schema update can add this NOT NULL
@@ -74,6 +79,7 @@ public class Recipe {
     public DietaryType getDietaryType() { return dietaryType; }
     public CuisineType getCuisineType() { return cuisineType; }
     public String getVideoUrl() { return videoUrl; }
+    public String getImageUrl() { return imageUrl; }
     public boolean getIsPublic() { return isPublic; }
 
     public void setId(Long id) { this.id = id; }
@@ -85,5 +91,6 @@ public class Recipe {
     public void setDietaryType(DietaryType dietaryType) { this.dietaryType = dietaryType; }
     public void setCuisineType(CuisineType cuisineType) { this.cuisineType = cuisineType; }
     public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public void setIsPublic(boolean isPublic) { this.isPublic = isPublic; }
 }

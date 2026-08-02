@@ -1,10 +1,13 @@
 package com.atharvadevasthali.backend.service;
 
+import com.atharvadevasthali.backend.dto.EmbeddingStatusDTO;
+import com.atharvadevasthali.backend.dto.RecipeRefDTO;
 import com.atharvadevasthali.backend.model.Ingredient;
 import com.atharvadevasthali.backend.model.Recipe;
 import com.atharvadevasthali.backend.repository.RecipeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,6 +103,18 @@ public class RecipeEmbeddingService {
             "ORDER BY re.embedding <=> ?::vector LIMIT ?",
             Long.class, vectorLiteral, MAX_RELEVANT_DISTANCE, vectorLiteral, limit
         );
+    }
+
+    /** Admin visibility into how much of the visible pool is actually indexed. */
+    @Transactional(readOnly = true)
+    public EmbeddingStatusDTO getStatus() {
+        List<Long> embeddedIds = jdbcTemplate.queryForList("SELECT recipe_id FROM recipe_embeddings", Long.class);
+        List<Recipe> indexable = recipeRepository.findByOwnerIsNullOrIsPublicTrue(Pageable.unpaged()).getContent();
+        List<RecipeRefDTO> missing = indexable.stream()
+                .filter(r -> !embeddedIds.contains(r.getId()))
+                .map(r -> new RecipeRefDTO(r.getId(), r.getName()))
+                .collect(Collectors.toList());
+        return new EmbeddingStatusDTO(geminiClient.isConfigured(), indexable.size(), embeddedIds.size(), missing);
     }
 
     private String toVectorLiteral(float[] vector) {

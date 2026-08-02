@@ -29,13 +29,20 @@ public class DataInitializer {
         return new Ingredient(name, quantity);
     }
 
+    // Seed recipes ship with a real photo so the catalog doesn't look bare on
+    // first run — admins can override any recipe's image via the edit form.
+    private static Recipe withImage(Recipe recipe, String unsplashId) {
+        recipe.setImageUrl("https://images.unsplash.com/" + unsplashId + "?w=800&h=640&fit=crop&q=80");
+        return recipe;
+    }
+
     @PostConstruct
     public void loadData() {
         setupVectorStore();
 
         if (recipeRepository.findByOwnerIsNull().isEmpty()) {
         recipeRepository.saveAll(List.of(
-            new Recipe("Tomato Pasta", 2,
+            withImage(new Recipe("Tomato Pasta", 2,
                 List.of(ing("pasta", "200 g"), ing("tomatoes", "3, chopped"), ing("onion", "1, diced"),
                         ing("garlic", "3 cloves, minced"), ing("olive oil", "2 tbsp"), ing("salt & pepper", "to taste")),
                 List.of(
@@ -45,8 +52,8 @@ public class DataInitializer {
                     "Toss the drained pasta into the sauce. Add a splash of pasta water if needed. Serve immediately."
                 ),
                 DietaryType.VEGETARIAN, CuisineType.ITALIAN
-            ),
-            new Recipe("Veggie Salad", 2,
+            ), "photo-1473093295043-cdd812d0e601"),
+            withImage(new Recipe("Veggie Salad", 2,
                 List.of(ing("lettuce", "1 head, torn"), ing("tomatoes", "2, diced"), ing("cucumber", "1, sliced"),
                         ing("olive oil", "3 tbsp"), ing("lemon juice", "1 tbsp"), ing("salt & pepper", "to taste")),
                 List.of(
@@ -57,8 +64,8 @@ public class DataInitializer {
                     "Drizzle dressing over the salad just before serving and toss gently."
                 ),
                 DietaryType.VEGAN, CuisineType.OTHER
-            ),
-            new Recipe("Garlic Bread", 4,
+            ), "photo-1512621776951-a57141f2eefd"),
+            withImage(new Recipe("Garlic Bread", 4,
                 List.of(ing("bread loaf", "1, sliced"), ing("butter", "4 tbsp, softened"),
                         ing("garlic", "4 cloves, minced"), ing("parsley", "2 tbsp, chopped")),
                 List.of(
@@ -69,8 +76,8 @@ public class DataInitializer {
                     "Serve hot as a side dish or starter."
                 ),
                 DietaryType.VEGETARIAN, CuisineType.ITALIAN
-            ),
-            new Recipe("Classic Omelette", 1,
+            ), "photo-1549834125-82d3c68f3a31"),
+            withImage(new Recipe("Classic Omelette", 1,
                 List.of(ing("eggs", "3, beaten"), ing("onion", "½, finely diced"), ing("tomato", "1, diced"),
                         ing("butter", "1 tbsp"), ing("salt & pepper", "to taste")),
                 List.of(
@@ -81,8 +88,8 @@ public class DataInitializer {
                     "Once the edges set, fold the omelette in half and cook for 30 more seconds. Slide onto a plate."
                 ),
                 DietaryType.VEGETARIAN, CuisineType.OTHER
-            ),
-            new Recipe("Chicken Stir Fry", 3,
+            ), "photo-1525351484163-7529414344d8"),
+            withImage(new Recipe("Chicken Stir Fry", 3,
                 List.of(ing("chicken breast", "400 g, sliced thin"), ing("garlic", "4 cloves, minced"),
                         ing("onion", "1, sliced"), ing("bell pepper", "1, sliced"), ing("soy sauce", "3 tbsp"),
                         ing("sesame oil", "1 tbsp"), ing("oil", "2 tbsp")),
@@ -94,8 +101,8 @@ public class DataInitializer {
                     "Drizzle sesame oil, toss everything together, and serve over steamed rice."
                 ),
                 DietaryType.NON_VEGETARIAN, CuisineType.ASIAN
-            ),
-            new Recipe("Cucumber Raita", 4,
+            ), "photo-1598515213692-3ba0f02fe85a"),
+            withImage(new Recipe("Cucumber Raita", 4,
                 List.of(ing("cucumber", "1 large, grated"), ing("yogurt", "2 cups"), ing("garlic", "1 clove, minced"),
                         ing("cumin powder", "½ tsp"), ing("salt", "to taste"), ing("fresh mint", "a few leaves")),
                 List.of(
@@ -106,8 +113,8 @@ public class DataInitializer {
                     "Serve chilled alongside biryani, curry, or grilled meats."
                 ),
                 DietaryType.VEGETARIAN, CuisineType.INDIAN
-            ),
-            new Recipe("Pasta Aglio e Olio", 2,
+            ), "photo-1565557623262-b51c2513a641"),
+            withImage(new Recipe("Pasta Aglio e Olio", 2,
                 List.of(ing("spaghetti", "200 g"), ing("garlic", "6 cloves, thinly sliced"),
                         ing("olive oil", "4 tbsp"), ing("red chilli flakes", "½ tsp"), ing("parsley", "3 tbsp, chopped"),
                         ing("parmesan", "to serve"), ing("salt", "to taste")),
@@ -119,8 +126,8 @@ public class DataInitializer {
                     "Remove from heat, stir in chopped parsley, and serve with grated parmesan."
                 ),
                 DietaryType.VEGAN, CuisineType.ITALIAN
-            ),
-            new Recipe("Egg Fried Rice", 3,
+            ), "photo-1473093295043-cdd812d0e601"),
+            withImage(new Recipe("Egg Fried Rice", 3,
                 List.of(ing("cooked rice", "3 cups, day-old"), ing("eggs", "3, beaten"), ing("onion", "1, diced"),
                         ing("soy sauce", "2 tbsp"), ing("sesame oil", "1 tsp"), ing("oil", "2 tbsp"),
                         ing("spring onion", "2 stalks, chopped")),
@@ -133,8 +140,8 @@ public class DataInitializer {
                     "Finish with sesame oil and garnish with spring onions. Serve hot."
                 ),
                 DietaryType.NON_VEGETARIAN, CuisineType.ASIAN
-            ),
-            new Recipe("Banana Pancakes", 2,
+            ), "photo-1603133872878-684f208fb84b"),
+            withImage(new Recipe("Banana Pancakes", 2,
                 List.of(ing("ripe bananas", "2, mashed"), ing("eggs", "2"), ing("flour", "½ cup"),
                         ing("milk", "¼ cup"), ing("baking powder", "1 tsp"), ing("butter", "for frying")),
                 List.of(
@@ -145,8 +152,8 @@ public class DataInitializer {
                     "Cook 2 minutes per side until golden brown. Serve with honey or maple syrup."
                 ),
                 DietaryType.VEGETARIAN, CuisineType.OTHER
-            ),
-            new Recipe("Tomato Soup", 4,
+            ), "photo-1528207776546-365bb710ee93"),
+            withImage(new Recipe("Tomato Soup", 4,
                 List.of(ing("tomatoes", "6 large, halved"), ing("onion", "1, chopped"), ing("garlic", "4 cloves"),
                         ing("vegetable broth", "2 cups"), ing("butter", "1 tbsp"), ing("cream", "¼ cup"),
                         ing("fresh basil", "a handful"), ing("salt & pepper", "to taste")),
@@ -158,7 +165,7 @@ public class DataInitializer {
                     "Simmer for 5 more minutes. Ladle into bowls and garnish with fresh basil leaves."
                 ),
                 DietaryType.VEGETARIAN, CuisineType.OTHER
-            )
+            ), "photo-1547592166-23ac45744acd")
         ));
         }
 

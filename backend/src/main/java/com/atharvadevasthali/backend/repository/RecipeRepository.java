@@ -33,4 +33,11 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     // Admin's own CRUD scope stays strictly the curated pool — public user
     // recipes are not admin-editable.
     List<Recipe> findByOwnerIsNull();
+
+    long countByOwnerIsNull();
+
+    // Admin moderation scope: user-owned recipes the owner has made public.
+    List<Recipe> findByOwnerIsNotNullAndIsPublicTrue();
+
+    long countByOwnerIsNotNullAndIsPublicTrue();
 }

@@ -2,6 +2,7 @@ package com.atharvadevasthali.backend.service;
 
 import com.atharvadevasthali.backend.dto.ChatMessageDTO;
 import com.atharvadevasthali.backend.dto.ChatResponse;
+import com.atharvadevasthali.backend.dto.PublicRecipeDTO;
 import com.atharvadevasthali.backend.dto.RecipeRequest;
 import com.atharvadevasthali.backend.model.*;
 import com.atharvadevasthali.backend.repository.*;
@@ -232,6 +233,33 @@ public class RecipeService {
         recipeRepository.delete(recipe);
     }
 
+    // ── Admin: public recipe moderation ────────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public List<PublicRecipeDTO> getPublicUserRecipes() {
+        return recipeRepository.findByOwnerIsNotNullAndIsPublicTrue().stream()
+                .map(r -> new PublicRecipeDTO(
+                        r.getId(), r.getName(), r.getServings(),
+                        r.getDietaryType() != null ? r.getDietaryType().name() : null,
+                        r.getCuisineType() != null ? r.getCuisineType().name() : null,
+                        r.getOwner().getId(),
+                        r.getOwner().getFirstName() + " " + r.getOwner().getLastName()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    /** Revokes public visibility on a user's recipe without deleting it or affecting ownership. */
+    public void unpublishRecipe(Long id) {
+        Recipe recipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
+        if (recipe.getOwner() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a user recipe");
+        }
+        recipe.setIsPublic(false);
+        recipeRepository.save(recipe);
+        embeddingService.deleteEmbedding(recipe.getId());
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     /** Keeps the vector index in sync: indexed when visible (general or public), removed otherwise. */
@@ -260,6 +288,7 @@ public class RecipeService {
         recipe.setDietaryType(req.getDietaryType());
         recipe.setCuisineType(req.getCuisineType());
         recipe.setVideoUrl(req.getVideoUrl());
+        recipe.setImageUrl(req.getImageUrl());
         recipe.setIsPublic(req.getIsPublic());
         if (req.getIngredients() != null) {
             recipe.setIngredients(req.getIngredients().stream()
