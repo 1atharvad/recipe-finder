@@ -10,6 +10,7 @@ export const LandingFooter = () => (
       </div>
       <div className="footer-links">
         <a href={content.githubUrl} target="_blank" rel="noreferrer">{content.githubLabel}</a>
+        <a href={content.paperUrl} target="_blank" rel="noreferrer">{content.paperLabel}</a>
         <a href="/features">{content.featuresLink}</a>
         <a href="/how-it-works">{content.howItWorksLink}</a>
       </div>

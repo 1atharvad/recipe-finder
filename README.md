@@ -1,4 +1,4 @@
-# Recipe Finder
+# CookMate
 
 A full-stack recipe management app with user authentication, personalised recommendations, and an admin panel.
 

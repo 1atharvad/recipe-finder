@@ -2,7 +2,7 @@
   "hero": {
     "eyebrow": "YOUR KITCHEN, BUT SMARTER",
     "title": "What's in your kitchen?",
-    "text": "Turn a handful of ingredients into your next favorite meal. Recipe Finder helps you discover, save, and actually cook the good stuff.",
+    "text": "Turn a handful of ingredients into your next favorite meal. CookMate helps you discover, save, and actually cook the good stuff.",
     "ctaLabel": "Let's Cook!",
     "howItWorksLink": "See how it works ↓",
     "previewPlaceholder": "Try \"chickpeas + lemon\"",
@@ -13,7 +13,7 @@
   },
   "featuresSection": {
     "title": "A little magic for every meal",
-    "subtext": "From first search to last bite, Recipe Finder keeps the fun in the kitchen.",
+    "subtext": "From first search to last bite, CookMate keeps the fun in the kitchen.",
     "moreLink": "See all features →"
   },
   "howItWorksSection": {

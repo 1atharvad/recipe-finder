@@ -1,9 +1,11 @@
 {
-  "brand": "Recipe Finder",
+  "brand": "CookMate",
   "tagline": "Good food starts with a little curiosity.",
   "githubLabel": "GitHub",
   "githubUrl": "https://github.com/1atharvad/recipe-finder",
+  "paperLabel": "Research Paper",
+  "paperUrl": "https://link.springer.com/chapter/10.1007/978-981-15-5258-8_50",
   "featuresLink": "Features",
   "howItWorksLink": "How it works",
-  "copyrightSuffix": "Recipe Finder — made for hungry humans."
+  "copyrightSuffix": "CookMate — made for hungry humans."
 }

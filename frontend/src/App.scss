@@ -2790,6 +2790,11 @@ h1, h2, h3, .navbar-brand, .section-label, .book-title, .page-header h2 {
     @media (min-width: $bp-lg) { font-size: $fs-card-title-lg; }
   }
 
+  .feature-card-badge {
+    display: inline-block;
+    margin-top: $sp-3;
+  }
+
   p {
     color: $text;
     opacity: 0.75;
