@@ -19,7 +19,7 @@ interface SpeechRecognitionInstance extends EventTarget {
 
 type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance
 
-function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | null {
+const getSpeechRecognitionConstructor = (): SpeechRecognitionConstructor | null => {
   const w = window as unknown as {
     SpeechRecognition?: SpeechRecognitionConstructor
     webkitSpeechRecognition?: SpeechRecognitionConstructor
@@ -32,7 +32,9 @@ export const useSpeechToText = (onResult: (transcript: string) => void) => {
   const [listening, setListening] = useState(false)
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null)
   const onResultRef = useRef(onResult)
-  onResultRef.current = onResult
+  useEffect(() => {
+    onResultRef.current = onResult
+  }, [onResult])
 
   const supported = getSpeechRecognitionConstructor() !== null
 

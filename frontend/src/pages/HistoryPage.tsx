@@ -67,7 +67,7 @@ export const HistoryPage = () => {
   )
 }
 
-function formatDate(dateStr: string): string {
+const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr + 'T00:00:00')
   const today = new Date()
   const yesterday = new Date(today)

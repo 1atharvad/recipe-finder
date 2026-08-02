@@ -1,4 +1,4 @@
-export function getYouTubeEmbedUrl(url: string): string | null {
+export const getYouTubeEmbedUrl = (url: string): string | null => {
   try {
     const parsed = new URL(url)
     let videoId: string | null = null
