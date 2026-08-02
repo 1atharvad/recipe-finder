@@ -41,49 +41,53 @@ export const AdminDashboardPage = () => {
     setShowCreate(false)
   }
 
-  if (loading) return <div className="recipe-page-loading">{content.loadingLabel}</div>
-
   return (
     <div className="page">
       <div className="page-header">
         <div>
           <h2>{content.title}</h2>
-          <p>{recipes.length} {content.countSuffix}</p>
+          {!loading && <p>{recipes.length} {content.countSuffix}</p>}
         </div>
-        <button className="btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeLabel}</button>
+        <button className="btn-pill btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeLabel}</button>
       </div>
 
-      <div className="admin-table-wrap">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>{content.columns.name}</th>
-              <th>{content.columns.servings}</th>
-              <th>{content.columns.dietary}</th>
-              <th>{content.columns.cuisine}</th>
-              <th>{content.columns.ingredients}</th>
-              <th>{content.columns.steps}</th>
-              <th>{content.columns.actions}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recipes.map(recipe => (
-              <tr key={recipe.id}>
-                <td>{recipe.name}</td>
-                <td>{recipe.servings}</td>
-                <td>{recipe.dietaryType?.replace('_', ' ') ?? content.emptyValue}</td>
-                <td>{recipe.cuisineType ?? content.emptyValue}</td>
-                <td>{recipe.ingredients?.length ?? 0}</td>
-                <td>{recipe.steps?.length ?? 0}</td>
-                <td className="admin-actions">
-                  <button className="btn-edit" onClick={() => setEditTarget(recipe)}>{content.editLabel}</button>
-                  <button className="btn-delete" onClick={() => handleDelete(recipe.id)}>{content.deleteLabel}</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {loading ? (
+        <div className="recipe-page-loading">{content.loadingLabel}</div>
+      ) : (
+        <div className="admin-card">
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>{content.columns.name}</th>
+                  <th>{content.columns.servings}</th>
+                  <th>{content.columns.dietary}</th>
+                  <th>{content.columns.cuisine}</th>
+                  <th>{content.columns.ingredients}</th>
+                  <th>{content.columns.steps}</th>
+                  <th>{content.columns.actions}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recipes.map(recipe => (
+                  <tr key={recipe.id}>
+                    <td>{recipe.name}</td>
+                    <td>{recipe.servings}</td>
+                    <td>{recipe.dietaryType?.replace('_', ' ') ?? content.emptyValue}</td>
+                    <td>{recipe.cuisineType ?? content.emptyValue}</td>
+                    <td>{recipe.ingredients?.length ?? 0}</td>
+                    <td>{recipe.steps?.length ?? 0}</td>
+                    <td className="admin-actions">
+                      <button className="btn-pill btn-small btn-edit" onClick={() => setEditTarget(recipe)}>{content.editLabel}</button>
+                      <button className="btn-pill btn-small btn-delete" onClick={() => handleDelete(recipe.id)}>{content.deleteLabel}</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {showCreate && (
         <RecipeFormModal

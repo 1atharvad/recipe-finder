@@ -13,6 +13,7 @@ export interface Recipe {
   cuisineType?: 'ITALIAN' | 'INDIAN' | 'ASIAN' | 'MEXICAN' | 'OTHER' | null
   owner?: { id: number; firstName: string } | null
   videoUrl?: string | null
+  imageUrl?: string | null
   isPublic?: boolean
 }
 
@@ -83,6 +84,7 @@ export interface RecipeRequest {
   dietaryType?: string | null
   cuisineType?: string | null
   videoUrl?: string | null
+  imageUrl?: string | null
   isPublic?: boolean
 }
 
@@ -108,4 +110,53 @@ export interface ChangePasswordRequest {
   currentPassword: string
   newPassword: string
   confirmNewPassword: string
+}
+
+// ── Admin ────────────────────────────────────────────────────────────────────
+export interface AdminUser {
+  id: number
+  firstName: string
+  lastName: string
+  email: string
+  role: string
+  enabled: boolean
+  createdAt: string
+}
+
+export interface PublicRecipe {
+  id: number
+  name: string
+  servings: number
+  dietaryType: string | null
+  cuisineType: string | null
+  ownerId: number
+  ownerName: string
+}
+
+export interface RecipeCount {
+  recipeId: number
+  recipeName: string
+  count: number
+}
+
+export interface Analytics {
+  totalUsers: number
+  totalGeneralRecipes: number
+  totalPublicUserRecipes: number
+  totalFavorites: number
+  totalHistoryEntries: number
+  topFavorited: RecipeCount[]
+  topCooked: RecipeCount[]
+}
+
+export interface RecipeRef {
+  id: number
+  name: string
+}
+
+export interface EmbeddingStatus {
+  geminiConfigured: boolean
+  totalIndexable: number
+  totalEmbedded: number
+  missing: RecipeRef[]
 }

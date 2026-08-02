@@ -4,12 +4,13 @@ import type {
   EatingHistoryEntry, UserPreferences, PreferencesRequest,
   ChatMessage, ChatResponse,
   UserProfile, UpdateProfileRequest, ChangePasswordRequest,
+  AdminUser, PublicRecipe, Analytics, EmbeddingStatus,
 } from '@/types'
 
 const BASE = `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1`
 const AUTH_KEY = 'recipe-auth'
 
-function getToken(): string | null {
+const getToken = (): string | null => {
   try {
     const raw = localStorage.getItem(AUTH_KEY)
     if (!raw) return null
@@ -19,7 +20,7 @@ function getToken(): string | null {
   }
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+const request = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
   const token = getToken()
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -115,4 +116,17 @@ export const adminApi = {
     request<Recipe>(`/admin/recipes/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
   delete: (id: number) =>
     request<void>(`/admin/recipes/${id}`, { method: 'DELETE' }),
+
+  getPublicRecipes: () => request<PublicRecipe[]>('/admin/public-recipes'),
+  unpublishRecipe: (id: number) =>
+    request<void>(`/admin/public-recipes/${id}/unpublish`, { method: 'PUT' }),
+
+  getUsers: () => request<AdminUser[]>('/admin/users'),
+  setUserEnabled: (id: number, enabled: boolean) =>
+    request<void>(`/admin/users/${id}/enabled`, { method: 'PUT', body: JSON.stringify({ enabled }) }),
+
+  getAnalytics: () => request<Analytics>('/admin/analytics'),
+
+  getEmbeddingStatus: () => request<EmbeddingStatus>('/admin/embeddings/status'),
+  triggerBackfill: () => request<void>('/admin/embeddings/backfill', { method: 'POST' }),
 }

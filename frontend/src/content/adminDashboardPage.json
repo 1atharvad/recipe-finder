@@ -1,6 +1,6 @@
 {
   "loadingLabel": "Loading recipes...",
-  "title": "Admin Dashboard",
+  "title": "Recipe pool",
   "countSuffix": "general recipes",
   "addRecipeLabel": "+ Add Recipe",
   "deleteConfirm": "Delete this recipe from the general pool?",

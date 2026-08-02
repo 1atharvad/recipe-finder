@@ -18,20 +18,26 @@ import { RecipePage } from '@/pages/RecipePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { SignupPage } from '@/pages/SignupPage'
 import { AdminLoginPage } from '@/pages/AdminLoginPage'
+import { AdminLayout } from '@/components/AdminLayout'
 import { AdminDashboardPage } from '@/pages/AdminDashboardPage'
+import { AdminPublicRecipesPage } from '@/pages/AdminPublicRecipesPage'
+import { AdminUsersPage } from '@/pages/AdminUsersPage'
+import { AdminAnalyticsPage } from '@/pages/AdminAnalyticsPage'
+import { AdminEmbeddingsPage } from '@/pages/AdminEmbeddingsPage'
 import { MyRecipesPage } from '@/pages/MyRecipesPage'
 import { HistoryPage } from '@/pages/HistoryPage'
 
 // These routes render their own LandingHeader (or DashboardLayout) instead
 // of the app-wide Navbar.
-const LANDING_STYLED_PATHS = ['/', '/how-it-works', '/features', '/login', '/signup']
+const LANDING_STYLED_PATHS = ['/', '/how-it-works', '/features', '/login', '/signup', '/admin/login']
 
 const AppNavbar = () => {
   const location = useLocation()
   if (
     LANDING_STYLED_PATHS.includes(location.pathname) ||
     location.pathname.startsWith('/recipe/') ||
-    location.pathname.startsWith('/dashboard')
+    location.pathname.startsWith('/dashboard') ||
+    location.pathname.startsWith('/admin')
   ) return null
   return <Navbar />
 }
@@ -52,7 +58,13 @@ export const App = () => {
 
           {/* Admin — discrete, no nav link */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="public-recipes" element={<AdminPublicRecipesPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="analytics" element={<AdminAnalyticsPage />} />
+            <Route path="embeddings" element={<AdminEmbeddingsPage />} />
+          </Route>
 
           {/* Dashboard portal — requires login, own sidebar layout */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>

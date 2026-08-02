@@ -1,4 +1,6 @@
 {
+  "heroTitle": "Admin access",
+  "heroText": "A discrete, separately authenticated panel for managing the general recipe pool.",
   "title": "Admin",
   "errorMessage": "Invalid admin credentials",
   "usernameLabel": "Username",

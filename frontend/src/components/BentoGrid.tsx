@@ -5,6 +5,7 @@ import { getRecipeImage } from '@/assets/recipeImages'
 interface Recipe {
   id: number
   name: string
+  imageUrl?: string | null
 }
 
 interface Props {
@@ -28,7 +29,7 @@ export const BentoGrid = ({ recipes }: Props) => {
           aria-label={recipe.name}
         >
           <img
-            src={getRecipeImage(recipe.name, i === 0)}
+            src={getRecipeImage(recipe.imageUrl)}
             alt={recipe.name}
             className="bento-img"
             loading="lazy"

@@ -132,7 +132,7 @@ export const RecipePage = () => {
         <article className="recipe-card-detail">
           <img
             className="recipe-hero-img"
-            src={getRecipeImage(recipe.name, true)}
+            src={getRecipeImage(recipe.imageUrl)}
             alt={recipe.name}
             onError={handleImageFallback}
           />

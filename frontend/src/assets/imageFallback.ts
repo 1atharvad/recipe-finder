@@ -13,7 +13,7 @@ export const FALLBACK_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(`
 </svg>
 `)}`
 
-export function handleImageFallback(e: SyntheticEvent<HTMLImageElement>) {
+export const handleImageFallback = (e: SyntheticEvent<HTMLImageElement>) => {
   const img = e.currentTarget
   if (img.src !== FALLBACK_IMAGE) {
     img.onerror = null

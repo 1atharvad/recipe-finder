@@ -19,6 +19,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
   const [dietaryType, setDietaryType] = useState<string>(initial?.dietaryType ?? '')
   const [cuisineType, setCuisineType] = useState<string>(initial?.cuisineType ?? '')
   const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? '')
+  const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? '')
   const [isPublic, setIsPublic] = useState(initial?.isPublic ?? false)
   const [ingredients, setIngredients] = useState<{ name: string; quantity: string }[]>(
     initial?.ingredients?.length ? initial.ingredients : [{ name: '', quantity: '' }]
@@ -60,6 +61,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
       dietaryType: dietaryType || null,
       cuisineType: cuisineType || null,
       videoUrl: videoUrl.trim() || null,
+      imageUrl: imageUrl.trim() || null,
       isPublic: context === 'user' ? isPublic : undefined,
     }
 
@@ -110,6 +112,18 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
             <FormField label={content.servingsLabel} type="number" value={servings} onChange={v => setServings(Number(v))} min={1} />
             <SelectField label={content.dietaryLabel} value={dietaryType} onChange={setDietaryType} options={content.dietaryOptions} />
             <SelectField label={content.cuisineLabel} value={cuisineType} onChange={setCuisineType} options={content.cuisineOptions} />
+          </div>
+
+          <div className="form-row">
+            <label className="form-label-full">
+              {content.imageUrlLabel}
+              <input
+                type="url"
+                value={imageUrl}
+                onChange={e => setImageUrl(e.target.value)}
+                placeholder={content.imageUrlPlaceholder}
+              />
+            </label>
           </div>
 
           <div className="form-row">

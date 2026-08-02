@@ -1,0 +1,14 @@
+{
+  "loadingLabel": "Loading analytics...",
+  "title": "Analytics",
+  "stats": {
+    "totalUsers": "Total users",
+    "totalGeneralRecipes": "Curated recipes",
+    "totalPublicUserRecipes": "Public user recipes",
+    "totalFavorites": "Favorites saved",
+    "totalHistoryEntries": "Meals logged"
+  },
+  "topFavoritedTitle": "Most favorited",
+  "topCookedTitle": "Most cooked",
+  "emptyText": "Not enough data yet."
+}

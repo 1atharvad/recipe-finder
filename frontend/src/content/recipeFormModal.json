@@ -22,6 +22,8 @@
     { "value": "MEXICAN", "label": "MEXICAN" },
     { "value": "OTHER", "label": "OTHER" }
   ],
+  "imageUrlLabel": "Image URL (optional)",
+  "imageUrlPlaceholder": "https://images.unsplash.com/photo-...",
   "videoUrlLabel": "Video URL (optional)",
   "videoUrlPlaceholder": "https://youtube.com/watch?v=...",
   "publicCheckboxLabel": "Make this recipe public (visible to everyone, not just you)",

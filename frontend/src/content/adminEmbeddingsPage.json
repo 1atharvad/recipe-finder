@@ -1,0 +1,13 @@
+{
+  "loadingLabel": "Loading embedding status...",
+  "title": "Embeddings",
+  "geminiConfiguredLabel": "Gemini configured",
+  "geminiNotConfiguredLabel": "Gemini not configured — smart search and chat are disabled",
+  "indexedLabel": "Indexed",
+  "ofSuffix": "of",
+  "backfillLabel": "Backfill missing embeddings",
+  "backfillingLabel": "Backfilling…",
+  "backfillDone": "Backfill triggered — refresh in a moment to see updated status.",
+  "allIndexedText": "Every eligible recipe is indexed.",
+  "missingTitle": "Missing embeddings"
+}

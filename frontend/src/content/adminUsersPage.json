@@ -1,0 +1,18 @@
+{
+  "loadingLabel": "Loading users...",
+  "title": "Users",
+  "countSuffix": "registered",
+  "columns": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "joined": "Joined",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "enabledLabel": "Active",
+  "disabledLabel": "Disabled",
+  "disableLabel": "Disable",
+  "enableLabel": "Enable",
+  "disableConfirm": "Disable this user? They won't be able to log in until re-enabled."
+}

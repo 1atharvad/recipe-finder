@@ -1,0 +1,13 @@
+{
+  "logo": "CookMate Admin",
+  "openMenuLabel": "Open menu",
+  "closeMenuLabel": "Close menu",
+  "logoutLabel": "Logout",
+  "navItems": [
+    { "to": "/admin", "label": "Recipes", "icon": "BowlSteam", "end": true },
+    { "to": "/admin/public-recipes", "label": "Public Recipes", "icon": "Globe", "end": false },
+    { "to": "/admin/users", "label": "Users", "icon": "Users", "end": false },
+    { "to": "/admin/analytics", "label": "Analytics", "icon": "ChartBar", "end": false },
+    { "to": "/admin/embeddings", "label": "Embeddings", "icon": "Brain", "end": false }
+  ]
+}

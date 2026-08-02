@@ -1,0 +1,18 @@
+{
+  "loadingLabel": "Loading public recipes...",
+  "title": "Public Recipes",
+  "countSuffix": "made public by users",
+  "emptyTitle": "No public user recipes",
+  "emptyText": "Recipes users have opted to make public will show up here for review.",
+  "columns": {
+    "name": "Name",
+    "owner": "Owner",
+    "servings": "Servings",
+    "dietary": "Dietary",
+    "cuisine": "Cuisine",
+    "actions": "Actions"
+  },
+  "emptyValue": "—",
+  "unpublishLabel": "Unpublish",
+  "unpublishConfirm": "Unpublish this recipe? It stays with its owner but leaves the public search pool."
+}
