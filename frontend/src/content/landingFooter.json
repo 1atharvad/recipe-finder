@@ -7,5 +7,16 @@
   "paperUrl": "https://link.springer.com/chapter/10.1007/978-981-15-5258-8_50",
   "featuresLink": "Features",
   "howItWorksLink": "How it works",
+  "resourcesTitle": "Resources",
+  "legalTitle": "Legal",
+  "privacyLink": "Privacy Policy",
+  "termsLink": "Terms & Conditions",
+  "creditsPrefix": "Recipe inspiration and content sourced from",
+  "creditsSources": [
+    { "name": "Allrecipes", "url": "https://www.allrecipes.com/" },
+    { "name": "Sanjeev Kapoor Recipes", "url": "https://www.sanjeevkapoor.com/" },
+    { "name": "TarlaDalal", "url": "https://www.tarladalal.com/" }
+  ],
+  "creditsSuffix": ".",
   "copyrightSuffix": "CookMate — made for hungry humans."
 }

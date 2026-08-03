@@ -1,0 +1,351 @@
+@use 'tokens' as *;
+
+// ── Page wrapper ─────────────────────────────────────────
+.page {
+  max-width: $bp-lg;
+  margin: 0 auto;
+  padding: $sp-4 $sp-4 $sp-16;
+
+  @media (min-width: $bp-md) { padding: $sp-6 $sp-6 $sp-16; }
+  @media (min-width: $bp-lg) { padding: $sp-8 $sp-6 $sp-16; }
+}
+
+// ── Hero ─────────────────────────────────────────────────
+// ── Search bar ────────────────────────────────────────────
+.search-bar {
+  display: flex;
+  gap: $sp-2;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+
+  .search-bar-icon {
+    position: absolute;
+    left: $sp-4;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.1em;
+    height: 1.1em;
+    color: $muted;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.82rem 2.6rem 0.82rem 2.6rem;
+    border: 1.5px solid $border;
+    border-radius: 999px;
+    font-family: $font-body;
+    font-size: 0.95rem;
+    font-weight: 400;
+    outline: none;
+    background: $card-bg;
+    color: $text;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &::placeholder { color: #c4b8ac; }
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 4px rgba($primary, 0.1);
+    }
+  }
+}
+
+.search-bar-clear {
+  position: absolute;
+  right: $sp-2;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.7rem;
+  height: 1.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: $muted;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  svg { width: 0.85em; height: 0.85em; }
+
+  &:hover {
+    background: $primary-light;
+    color: $primary-dark;
+  }
+}
+
+// ── Quick-search chips ────────────────────────────────────
+.search-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $sp-2;
+  justify-content: center;
+  margin-top: $sp-4;
+}
+
+.chip {
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 999px;
+  padding: 0.35rem $sp-3;
+  font-family: $font-body;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: $muted;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: $primary;
+    color: $primary-dark;
+    background: $primary-light;
+    transform: translateY(-1px);
+  }
+}
+
+.smart-search-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: $sp-3;
+
+  &.active {
+    border-color: $primary;
+    color: $primary-dark;
+    background: $primary-light;
+  }
+}
+
+// ── Clear / back button ───────────────────────────────────
+.clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: $sp-1;
+  margin-top: $sp-3;
+
+  svg { width: 1em; height: 1em; }
+}
+
+// ── Results container ─────────────────────────────────────
+.results {
+  margin-top: $sp-2;
+}
+
+.results-count {
+  font-size: 0.88rem;
+  color: $muted;
+  margin-bottom: $sp-4;
+}
+
+.msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $sp-2;
+  text-align: center;
+  color: $muted;
+  font-family: $font-body;
+  padding: 3rem 0;
+
+  svg { width: 1.1em; height: 1.1em; flex-shrink: 0; }
+
+  &.error { color: #c0392b; }
+  &.success { color: #2e7d32; }
+}
+
+.auth-form .msg {
+  padding: 0;
+  justify-content: flex-start;
+  font-size: 0.85rem;
+}
+
+// ── Section label ─────────────────────────────────────────
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: $sp-3;
+  font-family: $font-display;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $muted;
+  margin-bottom: $sp-4;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $border;
+  }
+}
+
+// ── Bento grid ────────────────────────────────────────────
+.bento-grid {
+  // Mobile: simple 2-col even grid
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  // Desktop: asymmetric bento layout
+  @media (min-width: $bp-md) {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 220px 220px 170px;
+    gap: 12px;
+  }
+}
+
+.bento-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #e8ddd0;
+  height: 155px; // mobile fixed height
+  transition: box-shadow 0.25s, transform 0.25s;
+
+  @media (min-width: $bp-md) {
+    border-radius: 14px;
+    height: auto; // desktop rows drive height
+  }
+
+  // Hero card — desktop only
+  @media (min-width: $bp-md) {
+    &-0 {
+      grid-column: 1 / 3;
+      grid-row: 1 / 3;
+
+      .bento-name {
+        font-size: 1.5rem;
+        letter-spacing: -0.02em;
+        bottom: 1.5rem;
+        left: 1.5rem;
+        right: 1.5rem;
+      }
+    }
+  }
+
+  &:hover {
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.22);
+    transform: translateY(-2px);
+
+    .bento-img { transform: scale(1.07); }
+  }
+
+  // Arrow badge that appears on hover
+  &::after {
+    content: '→';
+    position: absolute;
+    top: $sp-3;
+    right: $sp-3;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 0.82rem;
+    text-align: center;
+    line-height: 28px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  &:hover::after { opacity: 1; }
+}
+
+.bento-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.bento-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.74) 0%,
+    rgba(0, 0, 0, 0.14) 52%,
+    transparent 100%
+  );
+}
+
+.bento-name {
+  position: absolute;
+  bottom: $sp-3;
+  left: $sp-3;
+  right: $sp-3;
+  color: #fff;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.88rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  z-index: 1;
+
+  @media (min-width: $bp-md) { font-size: 0.95rem; }
+}
+
+// ── Recipe list (search results) ──────────────────────────
+.recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+}
+
+.recipe-card {
+  display: flex;
+  align-items: center;
+  gap: $sp-3;
+  background: $card-bg;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: $sp-3 $sp-4;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+
+  @media (min-width: $bp-md) { padding: $sp-4 1.2rem; }
+
+  &:hover {
+    background: #fff8f0;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    transform: translateX(3px);
+  }
+
+  .card-index {
+    font-family: $font-display;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: $primary;
+    min-width: 1.3rem;
+    text-align: center;
+  }
+
+  .card-name {
+    flex: 1;
+    font-family: $font-body;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: $text;
+  }
+
+  .card-arrow {
+    font-size: 1rem;
+    color: #ccc;
+    transition: color 0.15s;
+  }
+
+  &:hover .card-arrow { color: $primary; }
+}

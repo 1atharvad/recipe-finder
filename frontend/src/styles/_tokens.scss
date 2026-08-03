@@ -1,0 +1,110 @@
+// ── advi-ui theme (project-owned, not a built-in advi-ui theme) ──────────
+// Maps this app's own palette (below) onto advi-ui's semantic variable
+// contract — see advi-ui's THEMING.md. Values are HSL triplets with no
+// hsl() wrapper, as advi-ui's components expect.
+:root {
+  --background: 41.7 100.0% 95.5%;
+  --foreground: 30.6 34.3% 26.9%;
+  --card: 0.0 0.0% 100.0%;
+  --card-foreground: 30.6 34.3% 26.9%;
+  --popover: 0.0 0.0% 100.0%;
+  --popover-foreground: 30.6 34.3% 26.9%;
+  --primary: 7.3 80.4% 56.1%;
+  --primary-foreground: 41.7 100.0% 95.5%;
+  --secondary: 47.0 91.8% 66.5%;
+  --secondary-foreground: 30.6 34.3% 26.9%;
+  --muted: 37.1 36.8% 88.8%;
+  --muted-foreground: 30.6 26.8% 35.9%;
+  --accent: 92.0 36.6% 92.0%;
+  --accent-foreground: 14.1 16.8% 19.8%;
+  --destructive: 5.6 63.4% 46.1%;
+  --destructive-foreground: 41.7 100.0% 95.5%;
+  --border: 37.1 36.8% 88.8%;
+  --input: 37.1 36.8% 88.8%;
+  --ring: 7.3 80.4% 56.1%;
+  --radius: 0.625rem;
+}
+
+// ── Fonts ────────────────────────────────────────────────
+$font-display:    'Raleway', sans-serif;
+$font-playful:    'Baloo 2', sans-serif;
+$font-body:       'Rubik', sans-serif;
+$font-devanagari: 'Rajdhani', sans-serif;
+
+// ── Colors ───────────────────────────────────────────────
+// Matched to the Framer marketing site's palette.
+$primary:       #e94b35; // tomato red
+$primary-dark:  #d95d39; // burnt tomato
+$primary-light: rgba(233, 75, 53, 0.09);
+$bg:            #fff8e8; // warm cream
+$card-bg:       #ffffff;
+$text:          #5c452d; // dark cocoa
+$muted:         #745c43; // soft brown
+$border:        #ede5d8;
+$accent-yellow: #f8d65b; // mustard
+$accent-green:  #a9c79b; // leafy sage
+$accent-peach:  #f5c7b9;
+$pale-sage:     #eaf2e3;
+$muted-tan:     #9a8062;
+$deep-brown:    #3b2e2a;
+$muted-green:   #6f8f59;
+$how-it-works-bg: #fff2c7;
+
+// ── Spacing scale ────────────────────────────────────────
+$sp-1:  0.25rem;
+$sp-2:  0.5rem;
+$sp-3:  0.75rem;
+$sp-4:  1rem;
+$sp-5:  1.25rem;
+$sp-6:  1.5rem;
+$sp-8:  2rem;
+$sp-10: 2.5rem;
+$sp-12: 3rem;
+$sp-16: 4rem;
+$sp-20: 5rem;
+
+// ── Landing type scale (mobile base / $bp-md tablet / $bp-lg desktop) ────
+// Each pair is [smaller, larger]; use the *-md / *-lg variables in
+// @media (min-width: $bp-md) / $bp-lg) blocks respectively.
+$fs-hero:            2.625rem; // 42px
+$fs-hero-md:         3.5rem;   // 56px
+$fs-hero-lg:         4.5rem;   // 72px
+
+$fs-h2:              2rem;     // 32px
+$fs-h2-md:           2.5rem;   // 40px
+$fs-h2-lg:           3rem;     // 48px
+
+$fs-card-title:      1.25rem;  // 20px
+$fs-card-title-md:   1.375rem; // 22px
+$fs-card-title-lg:   1.5rem;   // 24px
+
+$fs-body:            1.0625rem; // 17px
+$fs-body-md:         1.125rem;  // 18px
+$fs-body-lg:         1.25rem;   // 20px
+
+$fs-card-desc:       0.9375rem; // 15px
+$fs-card-desc-lg:    1rem;      // 16px (same at mobile/tablet)
+
+$fs-label:           0.8125rem; // 13px
+$fs-label-md:        0.875rem;  // 14px
+$fs-label-lg:        1rem;      // 16px
+
+$fs-button:          0.9375rem; // 15px
+$fs-button-lg:       1rem;      // 16px (same at mobile/tablet)
+
+$fs-footer:          0.875rem;  // 14px
+$fs-footer-md:       0.9375rem; // 15px
+$fs-footer-lg:       1rem;      // 16px
+
+$fs-story:           1.25rem;  // 20px
+$fs-story-md:        1.5rem;   // 24px
+$fs-story-lg:        1.75rem;  // 28px
+
+$fs-step-number:     1.75rem;  // 28px
+$fs-step-number-md:  2.125rem; // 34px
+$fs-step-number-lg:  2.5rem;   // 40px
+
+// ── Breakpoints ──────────────────────────────────────────
+$bp-sm: 480px;
+$bp-md: 640px;
+$bp-lg: 960px;

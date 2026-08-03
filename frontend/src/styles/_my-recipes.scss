@@ -1,0 +1,64 @@
+@use 'tokens' as *;
+
+// ── My Recipes list ───────────────────────────────────────────────────────────
+.my-recipes-list {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+}
+
+.my-recipe-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: $sp-3 $sp-4;
+  gap: $sp-4;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: $primary; }
+}
+
+.my-recipe-info {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-1;
+}
+
+.my-recipe-name {
+  font-family: $font-display;
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text;
+  display: inline-flex;
+  align-items: center;
+  gap: $sp-2;
+}
+
+.visibility-badge {
+  display: inline-block;
+  font-family: $font-body;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  padding: 2px $sp-2;
+
+  &.is-public  { background: $accent-green; color: $deep-brown; }
+  &.is-private { background: $bg; color: $muted; border: 1px solid $border; }
+}
+
+.my-recipe-meta {
+  font-family: $font-body;
+  font-size: 0.8rem;
+  color: $muted;
+}
+
+.my-recipe-actions {
+  display: flex;
+  gap: $sp-2;
+  flex-shrink: 0;
+}

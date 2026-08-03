@@ -1,0 +1,128 @@
+@use 'tokens' as *;
+
+// ── Recommendations ───────────────────────────────────────────────────────────
+// ── Recommender page ───────────────────────────────────────────────────
+.recommender-page {
+  max-width: $bp-lg;
+  margin: 0 auto;
+}
+
+.recommender-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $sp-4;
+  margin-bottom: $sp-8;
+
+  h1 {
+    font-size: $fs-h2;
+    color: $text;
+    margin-bottom: $sp-2;
+
+    @media (min-width: $bp-md) { font-size: $fs-h2-md; }
+  }
+
+  p {
+    color: $muted;
+    font-size: $fs-body;
+    max-width: 480px;
+  }
+}
+
+.rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-4;
+}
+
+.rec-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $sp-4;
+  width: 100%;
+  background: $bg;
+  border: 1.5px solid $border;
+  border-radius: 18px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+  padding: $sp-5;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
+  }
+}
+
+.rec-top-badge {
+  position: absolute;
+  top: -$sp-3;
+  left: $sp-5;
+  display: inline-flex;
+  align-items: center;
+  gap: $sp-1;
+  background: $accent-yellow;
+  color: $deep-brown;
+  border-radius: 999px;
+  padding: 0.25rem $sp-3;
+  font-size: $fs-footer;
+  font-weight: 700;
+
+  svg { width: 1em; height: 1em; }
+}
+
+.rec-info {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+  min-width: 0;
+}
+
+.rec-name {
+  font-family: $font-playful;
+  font-size: $fs-card-title;
+  font-weight: 700;
+  color: $text;
+}
+
+.rec-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $sp-2;
+}
+
+.rec-score-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: $primary-light;
+  border-radius: 12px;
+  padding: $sp-2 $sp-4;
+  flex-shrink: 0;
+  min-width: 68px;
+}
+
+.rec-score-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $muted;
+}
+
+.rec-score-value {
+  font-family: $font-playful;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: $primary;
+}
+
+.empty-icon-svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: $primary;
+}

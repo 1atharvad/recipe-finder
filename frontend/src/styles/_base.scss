@@ -1,0 +1,28 @@
+@use 'tokens' as *;
+
+// ── Reset ────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// ── Base ─────────────────────────────────────────────────
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $font-body;
+  background: $bg;
+  color: $text;
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, .navbar-brand, .section-label, .book-title, .page-header h2 {
+  font-family: $font-display;
+}

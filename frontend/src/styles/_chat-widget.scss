@@ -1,0 +1,424 @@
+@use 'tokens' as *;
+
+// ── Conversational search (chat widget) ────────────────────────────────────
+.chatbot-widget {
+  position: fixed;
+  right: $sp-5;
+  bottom: $sp-5;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $sp-3;
+}
+
+.chatbot-launcher {
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  border: none;
+  background: $primary;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s;
+
+  &:hover { transform: translateY(-2px); }
+}
+
+.chatbot-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(360px, calc(100vw - #{$sp-8}));
+  max-height: min(560px, calc(100vh - 140px));
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 18px;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.chatbot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $sp-3 $sp-4;
+  border-bottom: 1.5px solid $border;
+  background: $bg;
+  flex-shrink: 0;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: $sp-2;
+    font-family: $font-playful;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: $text;
+
+    svg { color: $primary; }
+  }
+}
+
+.chatbot-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: $muted;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  svg { width: 0.9em; height: 0.9em; }
+
+  &:hover {
+    background: $primary-light;
+    color: $primary-dark;
+  }
+}
+
+.chatbot-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: $sp-4;
+  display: flex;
+  flex-direction: column;
+  gap: $sp-3;
+}
+
+.chatbot-starter {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-3;
+
+  p {
+    color: $muted;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .search-chips {
+    justify-content: flex-start;
+    margin-top: 0;
+  }
+}
+
+.chatbot-results {
+  border-top: 1.5px dashed $border;
+  padding-top: $sp-3;
+
+  .recipe-list { gap: $sp-2; }
+  .recipe-card { padding: 0.6rem 0.85rem; }
+}
+
+.chatbot-body .msg {
+  padding: $sp-2 0;
+  font-size: 0.82rem;
+  text-align: left;
+  justify-content: flex-start;
+
+  &.error { color: $primary-dark; }
+}
+
+.chatbot-panel .chat-input-bar {
+  margin: 0;
+  padding: $sp-3 $sp-4;
+  border-top: 1.5px solid $border;
+  flex-shrink: 0;
+}
+
+.chatbot-mic-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 1.5px solid $border;
+  border-radius: 50%;
+  background: $bg;
+  color: $muted;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  svg { width: 1.1em; height: 1.1em; }
+
+  &:hover { border-color: $primary; color: $primary-dark; }
+
+  &.listening {
+    background: $primary;
+    border-color: $primary;
+    color: #fff;
+    animation: mic-pulse 1.4s infinite;
+  }
+
+  &:disabled { opacity: 0.5; cursor: default; }
+}
+
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba($primary, 0.35); }
+  50% { box-shadow: 0 0 0 6px rgba($primary, 0); }
+}
+
+@keyframes skel-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skel-block {
+  display: block;
+  width: 100%;
+  height: 1em;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba($muted, 0.14) 25%, rgba($muted, 0.24) 37%, rgba($muted, 0.14) 63%);
+  background-size: 400% 100%;
+  animation: skel-shimmer 1.4s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel-block { animation: none; }
+}
+
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-3;
+}
+
+.chat-message {
+  display: flex;
+
+  &.user { justify-content: flex-end; }
+  &.assistant { justify-content: flex-start; }
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 0.65rem 1rem;
+  border-radius: 16px;
+  font-family: $font-body;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+
+  .chat-message.user & {
+    background: $primary;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-message.assistant & {
+    background: $bg;
+    border: 1.5px solid $border;
+    color: $text;
+    border-bottom-left-radius: 4px;
+  }
+
+  b { font-weight: 700; }
+  i { font-style: italic; }
+
+  .hl {
+    background: $primary-light;
+    color: $primary-dark;
+    font-weight: 600;
+    padding: 0.05rem 0.35rem;
+    border-radius: 6px;
+  }
+}
+
+.chat-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.85rem 1rem;
+
+  span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $muted;
+    opacity: 0.5;
+    animation: chat-typing-bounce 1.1s infinite ease-in-out;
+
+    &:nth-child(2) { animation-delay: 0.15s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+  }
+}
+
+@keyframes chat-typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+
+.chat-input-bar {
+  display: flex;
+  gap: $sp-2;
+  margin-top: $sp-2;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid $border;
+    border-radius: 999px;
+    font-family: $font-body;
+    font-size: 0.9rem;
+    outline: none;
+    background: $bg;
+    color: $text;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &::placeholder { color: #c4b8ac; }
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 4px rgba($primary, 0.1);
+    }
+
+    &:disabled { opacity: 0.6; }
+  }
+
+  .btn-icon-only {
+    flex-shrink: 0;
+    width: 2.7rem;
+    height: 2.7rem;
+  }
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $sp-10;
+  align-items: center;
+  text-align: center;
+
+  @media (min-width: $bp-lg) {
+    grid-template-columns: 1fr 1fr;
+    text-align: left;
+    gap: $sp-12;
+  }
+}
+
+// Canonical eyebrow style — used on every hero-style section (landing hero,
+// real-life, search, features, how-it-works, etc). Previously duplicated
+// per-section with drifting inconsistencies; consolidated here so any
+// section can use the bare .hero-eyebrow class directly.
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: $sp-1;
+  color: $muted-green;
+  font-weight: 700;
+  font-size: $fs-label;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  margin-bottom: $sp-4;
+
+  @media (min-width: $bp-md) { font-size: $fs-label-md; }
+  @media (min-width: $bp-lg) { font-size: $fs-label-lg; }
+
+  svg { width: 1em; height: 1em; flex-shrink: 0; }
+}
+
+.hero-copy {
+  h1 {
+    font-size: $fs-hero;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    color: $text;
+    margin-bottom: $sp-4;
+
+    @media (min-width: $bp-md) { font-size: $fs-hero-md; }
+    @media (min-width: $bp-lg) { font-size: $fs-hero-lg; }
+  }
+
+  > p {
+    color: $muted;
+    max-width: 500px;
+    margin: 0 auto $sp-6;
+    font-size: $fs-body;
+    line-height: 1.4;
+
+    @media (min-width: $bp-md) { font-size: $fs-body-md; }
+    @media (min-width: $bp-lg) { font-size: $fs-body-lg; margin: 0 0 $sp-6; }
+  }
+}
+
+.landing-cta-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $sp-3;
+
+  @media (min-width: $bp-sm) { flex-direction: row; justify-content: center; }
+  @media (min-width: $bp-lg) { justify-content: flex-start; }
+}
+
+.hero-preview-card {
+  background: $accent-yellow;
+  border-radius: 28px;
+  padding: $sp-10 $sp-8;
+  text-align: center;
+  transform: rotate(3deg);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+
+  .hero-preview-icon {
+    width: 4.5rem;
+    height: 4.5rem;
+    color: $primary;
+    display: block;
+    margin: 0 auto $sp-6;
+  }
+
+  .hero-preview-input {
+    background: #fff;
+    border-radius: 14px;
+    padding: $sp-5 $sp-6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: $muted-tan;
+    font-size: $fs-card-desc;
+    line-height: 1.4;
+    margin-bottom: $sp-6;
+
+    @media (min-width: $bp-lg) { font-size: $fs-card-desc-lg; }
+
+    .hero-preview-search-btn {
+      width: 1.4rem;
+      height: 1.4rem;
+      color: $primary;
+      flex-shrink: 0;
+    }
+  }
+
+  .hero-preview-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $sp-2;
+    font-family: $font-playful;
+    font-weight: 700;
+    font-size: $fs-card-title;
+    line-height: 1.1;
+    color: $deep-brown;
+
+    @media (min-width: $bp-md) { font-size: $fs-card-title-md; }
+    @media (min-width: $bp-lg) { font-size: $fs-card-title-lg; }
+
+    svg { width: 1.1em; height: 1.1em; flex-shrink: 0; }
+  }
+}

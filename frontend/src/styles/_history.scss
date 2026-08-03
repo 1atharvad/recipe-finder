@@ -1,0 +1,561 @@
+@use 'tokens' as *;
+
+// ── History ───────────────────────────────────────────────────────────────────
+// ── View toggle (History page header) ─────────────────────
+.view-toggle {
+  display: flex;
+  gap: $sp-1;
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: 999px;
+  padding: 3px;
+  flex-shrink: 0;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: $sp-1;
+    font-family: $font-body;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $muted;
+    background: none;
+    border: none;
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    svg { width: 1em; height: 1em; }
+
+    &.active {
+      background: $primary;
+      color: #fff;
+    }
+
+    &:not(.active):hover { color: $text; }
+  }
+}
+
+// ── History timeline ───────────────────────────────────────
+.history-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-5;
+  position: relative;
+  padding-left: $sp-5;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 5px;
+    width: 2px;
+    background: $border;
+  }
+}
+
+.history-day-group {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+  position: relative;
+}
+
+.history-day-marker {
+  display: flex;
+  align-items: center;
+  gap: $sp-2;
+}
+
+.history-day-dot {
+  position: absolute;
+  left: calc(-#{$sp-5} + 1px);
+  top: 4px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: $primary;
+  border: 2px solid $bg;
+  box-shadow: 0 0 0 2px $primary;
+}
+
+.history-day-label {
+  font-family: $font-display;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $muted;
+}
+
+.history-day-entries {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+}
+
+.history-entry {
+  display: flex;
+  align-items: center;
+  gap: $sp-2;
+  width: 100%;
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: $sp-1 $sp-2 $sp-1 $sp-3;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: $primary;
+    background: #fffaf5;
+  }
+}
+
+.history-entry-link {
+  display: flex;
+  align-items: center;
+  gap: $sp-3;
+  flex: 1;
+  min-width: 0;
+  padding: $sp-1 0;
+  text-decoration: none;
+  color: $text;
+  font-family: $font-body;
+  font-size: 0.9rem;
+
+  .history-entry-icon {
+    width: 1.1em;
+    height: 1.1em;
+    color: $primary;
+    flex-shrink: 0;
+  }
+
+  .history-entry-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .history-entry-time {
+    font-size: 0.78rem;
+    color: $muted;
+    flex-shrink: 0;
+  }
+}
+
+// ── Reminders (scheduled recipes) ────────────────────────────────────────
+.reminder-entry {
+  flex-direction: column;
+  align-items: stretch;
+
+  &.overdue { border-color: $accent-peach; }
+}
+
+.reminder-entry-top {
+  display: flex;
+  align-items: center;
+  gap: $sp-2;
+}
+
+.reminder-entry-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $sp-2;
+  padding: 0 $sp-2 $sp-1 calc(1.1em + #{$sp-3} + #{$sp-1});
+}
+
+.reminder-note {
+  font-family: $font-body;
+  font-size: 0.8rem;
+  color: $muted;
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ── History calendar ───────────────────────────────────────
+.history-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-5;
+  background: $card-bg;
+  border: 1px solid $border;
+  border-radius: 20px;
+  padding: $sp-4;
+  box-shadow: 0 4px 24px rgba(59, 46, 42, 0.06);
+
+  @media (min-width: $bp-sm) { padding: $sp-6; }
+}
+
+.history-calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $sp-6;
+  font-family: $font-display;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: $text;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    color: $muted;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover { background: $bg; color: $primary; }
+  }
+}
+
+.history-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: $sp-1;
+
+  &.with-events { gap: $sp-2; }
+}
+
+.history-calendar-weekday {
+  text-align: center;
+  font-family: $font-body;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $muted;
+  padding-bottom: $sp-2;
+}
+
+// No borders/backgrounds by default — every day is just a small day-number
+// chip floating in its own grid cell, wireframe-style. Only days with
+// entries get a filled card (below); everything else stays understated.
+.history-calendar-cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border-radius: 12px;
+  border: none;
+  background: none;
+  font-family: $font-body;
+  color: $text;
+  cursor: default;
+  transition: background 0.15s, box-shadow 0.15s;
+
+  &.empty { visibility: hidden; }
+
+  .history-calendar-daynum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.7em;
+    height: 1.7em;
+    padding: 0 0.2em;
+    border-radius: 50%;
+    background: $bg;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $muted;
+  }
+
+  &.today .history-calendar-daynum {
+    background: $primary;
+    color: #fff;
+  }
+
+  &.has-entries {
+    cursor: pointer;
+
+    &:hover { box-shadow: 0 4px 14px rgba(59, 46, 42, 0.1); }
+  }
+
+  &.selected {
+    box-shadow: 0 0 0 2px $primary inset;
+  }
+
+  &:disabled { cursor: default; }
+}
+
+// Month-grid cells that show event chips (History's own calendar, not the
+// plain day-picker in the Mark as Eaten modal) need to be taller rectangles
+// instead of squares, with the day number tucked in a corner.
+.history-calendar-grid.with-events .history-calendar-cell {
+  aspect-ratio: unset;
+  min-height: 68px;
+
+  @media (min-width: $bp-sm) { min-height: 96px; }
+  @media (min-width: $bp-md) { min-height: 120px; }
+
+  padding: 6px;
+  gap: 4px;
+
+  &.has-entries {
+    background: $accent-peach;
+
+    .history-calendar-daynum { background: rgba(255, 255, 255, 0.7); color: $deep-brown; }
+    &.today .history-calendar-daynum { background: $primary; color: #fff; }
+  }
+
+  &.selected {
+    background: $primary;
+    box-shadow: none;
+
+    .history-calendar-daynum { background: rgba(255, 255, 255, 0.9); color: $primary; }
+    &.today .history-calendar-daynum { background: #fff; color: $primary; }
+  }
+}
+
+.history-calendar-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  margin-top: auto;
+}
+
+.history-calendar-chip {
+  display: block;
+  width: 100%;
+  font-family: $font-body;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: $deep-brown;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.more {
+    font-weight: 700;
+    opacity: 0.75;
+  }
+}
+
+.history-calendar-cell.selected .history-calendar-chip {
+  color: #fff;
+}
+
+.history-calendar-selected {
+  border-top: 1px solid $border;
+  padding-top: $sp-4;
+}
+
+// ── Mark as Eaten modal ──────────────────────────────────────
+.mark-eaten-body {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+  padding: $sp-5 $sp-6;
+
+  .day-picker { margin-bottom: $sp-4; }
+}
+
+.schedule-recipe-name {
+  font-family: $font-display;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: $text;
+  margin-bottom: $sp-2;
+}
+
+.schedule-note-input {
+  font-family: $font-body;
+  font-size: 0.9rem;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  padding: $sp-2 $sp-3;
+  background: $card-bg;
+  color: $text;
+  outline: none;
+  resize: vertical;
+
+  &:focus { border-color: $primary; }
+}
+
+// ── History / Reminder detail modals ─────────────────────────────────────
+.entry-detail-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: $sp-2;
+  padding: $sp-5 $sp-6;
+}
+
+.entry-detail-img {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: $sp-2;
+}
+
+.entry-detail-name {
+  display: inline-flex;
+  align-items: center;
+  gap: $sp-1;
+  font-family: $font-display;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: $text;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  svg { width: 0.9em; height: 0.9em; color: $primary; }
+
+  &:hover { color: $primary; }
+}
+
+.entry-detail-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: $sp-2;
+  font-family: $font-body;
+  font-size: 0.85rem;
+  color: $muted;
+}
+
+.entry-detail-note {
+  font-family: $font-body;
+  font-size: 0.9rem;
+  color: $text;
+  font-style: italic;
+  border-top: 1px solid $border;
+  padding-top: $sp-3;
+  margin-top: $sp-1;
+  width: 100%;
+}
+
+.entry-detail-footer {
+  justify-content: space-between;
+
+  .btn-primary, .btn-secondary { display: inline-flex; align-items: center; gap: $sp-1; }
+}
+
+.day-picker {
+  background: $bg;
+  border-radius: 16px;
+  padding: $sp-3;
+
+  .history-calendar-nav {
+    gap: $sp-4;
+    font-size: 1rem;
+    margin-bottom: $sp-2;
+
+    button {
+      width: 30px;
+      height: 30px;
+
+      &:hover { background: $card-bg; }
+      &:disabled { opacity: 0.35; pointer-events: none; }
+    }
+  }
+
+  .history-calendar-cell {
+    align-items: center;
+    justify-content: center;
+
+    &.empty { visibility: hidden; }
+
+    .history-calendar-daynum { background: $card-bg; }
+
+    &:disabled .history-calendar-daynum { opacity: 0.35; }
+
+    &.has-entries:hover .history-calendar-daynum { background: $primary-light; color: $primary; }
+
+    // Same specificity as the base .today rule and declared later, so
+    // without restating it here the plain white background above would win
+    // while the base rule's white text stayed — white text on white.
+    &.today .history-calendar-daynum { background: $primary; color: #fff; }
+
+    &.selected {
+      box-shadow: none;
+
+      .history-calendar-daynum { background: $primary; color: #fff; }
+    }
+  }
+}
+
+.time-wheel-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 220px;
+}
+
+.wheel-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 1.5px solid $primary;
+  border-radius: 10px;
+  background: $primary-light;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wheel-column {
+  position: relative;
+  z-index: 1;
+  width: 60px;
+  height: 220px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 32%, black 68%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 32%, black 68%, transparent);
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.wheel-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  font-family: $font-display;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: $muted;
+  cursor: pointer;
+  transition: color 0.15s;
+
+  &.selected {
+    color: $text;
+    font-weight: 700;
+  }
+}
+
+.wheel-separator {
+  font-family: $font-display;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: $muted;
+  z-index: 1;
+  padding: 0 2px;
+}

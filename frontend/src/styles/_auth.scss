@@ -1,0 +1,195 @@
+@use 'tokens' as *;
+
+// ── Auth pages ────────────────────────────────────────────────────────────────
+.auth-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $sp-6 $sp-4;
+}
+
+.auth-card {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: $sp-8 $sp-8;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.06);
+
+  h2 {
+    font-family: $font-display;
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: $text;
+    margin-bottom: $sp-1;
+  }
+
+  &--admin h2 {
+    color: $primary;
+  }
+}
+
+.auth-sub {
+  font-family: $font-body;
+  font-size: 0.9rem;
+  color: $muted;
+  margin-bottom: $sp-5;
+}
+
+.auth-error {
+  background: #fff2f0;
+  border: 1px solid #ffb3b3;
+  border-radius: 8px;
+  padding: $sp-2 $sp-3;
+  font-family: $font-body;
+  font-size: 0.85rem;
+  color: #c0392b;
+  margin-bottom: $sp-4;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-4;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: $sp-1;
+    font-family: $font-body;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $muted;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  input {
+    font-family: $font-body;
+    font-size: 0.95rem;
+    border: 1.5px solid $border;
+    border-radius: 8px;
+    padding: $sp-2 $sp-3;
+    background: $bg;
+    color: $text;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: $primary;
+    }
+  }
+}
+
+.auth-link {
+  font-family: $font-body;
+  font-size: 0.88rem;
+  color: $muted;
+  text-align: center;
+  margin-top: $sp-4;
+
+  a {
+    color: $primary;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// ── Auth pages (Login/Signup) — playful treatment ──────────────────────────
+// Scoped under .landing so AdminLoginPage (plain .auth-card, no wrapper)
+// keeps the original minimal style untouched.
+.landing {
+  .auth-hero {
+    background: $bg;
+    text-align: center;
+    padding: $sp-10 $sp-4 0;
+
+    @media (min-width: $bp-lg) { padding: $sp-12 $sp-4 0; }
+
+    h1 {
+      font-size: $fs-h2;
+      font-weight: 800;
+      line-height: 1.1;
+      color: $text;
+      margin-bottom: $sp-3;
+
+      @media (min-width: $bp-md) { font-size: $fs-h2-md; }
+      @media (min-width: $bp-lg) { font-size: $fs-h2-lg; }
+    }
+
+    p {
+      color: $muted;
+      font-size: $fs-card-desc;
+      line-height: 1.4;
+      max-width: 480px;
+      margin: 0 auto;
+
+      @media (min-width: $bp-lg) { font-size: $fs-card-desc-lg; }
+    }
+  }
+
+  .auth-page {
+    min-height: auto;
+    padding: $sp-10 $sp-4 $sp-16;
+
+    @media (min-width: $bp-lg) { padding: $sp-12 $sp-4 $sp-20; }
+  }
+
+  .auth-card {
+    position: relative;
+    background: $bg;
+    border: 1.5px solid $border;
+    border-radius: 26px;
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
+    padding: $sp-10 $sp-8 $sp-8;
+    text-align: center;
+
+    h2 {
+      font-size: $fs-card-title;
+      line-height: 1.1;
+      margin-bottom: $sp-1;
+
+      @media (min-width: $bp-md) { font-size: $fs-card-title-md; }
+      @media (min-width: $bp-lg) { font-size: $fs-card-title-lg; }
+    }
+  }
+
+  .auth-sub {
+    text-align: center;
+    color: $muted-green;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .auth-form {
+    text-align: left;
+
+    label {
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: 600;
+      color: $text;
+      font-size: $fs-card-desc;
+      line-height: 1.2;
+    }
+
+    input {
+      border-radius: 12px;
+      padding: 0.7rem $sp-4;
+      font-size: $fs-card-desc;
+      line-height: 1.2;
+
+      &:focus { box-shadow: 0 0 0 4px rgba($primary, 0.1); }
+    }
+
+    .btn-pill {
+      width: 100%;
+      justify-content: center;
+      margin-top: $sp-2;
+    }
+  }
+}

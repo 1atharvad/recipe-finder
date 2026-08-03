@@ -1,0 +1,189 @@
+@use 'tokens' as *;
+
+// ── Admin dashboard ───────────────────────────────────────────────────────────
+.admin-hero-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $sp-4;
+  margin-top: $sp-2;
+  text-align: left;
+
+  p {
+    color: $muted;
+    font-size: $fs-body;
+    margin: 0;
+  }
+}
+
+.admin-hero {
+  text-align: left;
+
+  .section-inner { text-align: left; }
+}
+
+.admin-card {
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 18px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.06);
+  padding: $sp-4;
+  margin-bottom: $sp-4;
+
+  h3 {
+    font-family: $font-display;
+    font-size: 1rem;
+    color: $text;
+    margin-bottom: $sp-3;
+  }
+
+  // A card that's just a table wrapper shouldn't have its own padding — the
+  // table fills it flush so the card border is the table's border, with no
+  // gutter and no corner mismatch between the card's radius and the table's.
+  &.admin-card--table {
+    padding: 0;
+    overflow: hidden;
+  }
+}
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: $sp-3;
+  margin-bottom: $sp-4;
+}
+
+.admin-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 14px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);
+  padding: $sp-3 $sp-4;
+
+  .admin-stat-value {
+    font-family: $font-display;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $primary;
+  }
+
+  .admin-stat-label {
+    font-family: $font-body;
+    font-size: 0.78rem;
+    color: $muted;
+  }
+}
+
+.admin-analytics-lists {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $sp-4;
+
+  @media (min-width: $bp-md) { grid-template-columns: 1fr 1fr; }
+}
+
+.admin-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $sp-2 $sp-3;
+    background: $bg;
+    border-radius: 8px;
+    font-family: $font-body;
+    font-size: 0.88rem;
+    color: $text;
+  }
+
+  .admin-rank-count {
+    font-weight: 700;
+    color: $primary;
+  }
+}
+
+.admin-empty-text {
+  color: $muted;
+  font-size: 0.88rem;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+// .btn-pill sets border:none, which would otherwise strip these buttons'
+// outline — restore it with a combined selector (specificity beats source order).
+.btn-pill.btn-edit {
+  background: #fff8f0;
+  color: $primary;
+  border: 1.5px solid $primary;
+  box-shadow: none;
+
+  &:hover { background: #ffeedd; }
+}
+
+.btn-pill.btn-delete {
+  background: #fff0f0;
+  color: #c0392b;
+  border: 1.5px solid #ffb3b3;
+  box-shadow: none;
+
+  &:hover { background: #ffe0e0; }
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: $font-body;
+  font-size: 0.88rem;
+
+  // inset box-shadow instead of border-bottom: a border-collapse table can
+  // render adjacent cells' borders with a 1px sub-pixel offset when one cell
+  // holds a flex button row (Actions) and its neighbors hold plain text —
+  // box-shadow draws at the exact same coordinate for every cell regardless
+  // of what's inside, so the line is guaranteed pixel-identical across a row.
+  $row-divider: inset 0 -1px 0 rgba(92, 69, 45, 0.16);
+
+  th {
+    text-align: left;
+    background: $bg;
+    padding: $sp-3 $sp-4;
+    font-weight: 700;
+    color: $muted;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    box-shadow: $row-divider;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: $sp-3 $sp-4;
+    color: $text;
+    box-shadow: $row-divider;
+    vertical-align: middle;
+    // Cells that can wrap (long recipe names, "NON VEGETARIAN") make some
+    // rows taller than others, breaking the divider rhythm down the table —
+    // keep every row a single line and let the wrap scroll horizontally instead.
+    white-space: nowrap;
+  }
+
+  tr:last-child td { box-shadow: none; }
+  tr:hover td { background: #fffaf5; }
+
+  .admin-actions {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+    white-space: nowrap;
+  }
+}

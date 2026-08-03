@@ -1,0 +1,93 @@
+@use 'tokens' as *;
+@use "sass:color";
+
+// ── Shared buttons ────────────────────────────────────────────────────────────
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-display;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: $primary;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: $sp-2 $sp-5;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover { background: color.adjust($primary, $lightness: -8%); }
+  &:active { transform: scale(0.98); }
+  &:disabled { opacity: 0.55; cursor: default; }
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-body;
+  font-size: 0.88rem;
+  font-weight: 500;
+  background: transparent;
+  color: $text;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  padding: $sp-2 $sp-4;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: $primary; color: $primary; }
+}
+
+// ── Page header ───────────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $sp-4;
+  margin-bottom: $sp-6;
+
+  h2 {
+    font-family: $font-display;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $text;
+  }
+
+  p {
+    font-family: $font-body;
+    font-size: 0.88rem;
+    color: $muted;
+    margin-top: $sp-1;
+  }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $sp-12 $sp-4;
+  text-align: center;
+  gap: $sp-3;
+
+  .empty-icon {
+    font-size: 3rem;
+  }
+
+  h2 {
+    font-family: $font-display;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: $text;
+  }
+
+  p {
+    font-family: $font-body;
+    font-size: 0.9rem;
+    color: $muted;
+    max-width: 280px;
+  }
+}

@@ -1,0 +1,327 @@
+@use 'tokens' as *;
+
+// ── Dashboard (authenticated portal) ────────────────────────────────────
+.dashboard-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  @media (min-width: $bp-lg) { flex-direction: row; }
+}
+
+// ── Mobile top bar (logo + hamburger) ──────────────────────────────────────
+.dashboard-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $sp-4;
+  background: $bg;
+  border-bottom: 1.5px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  @media (min-width: $bp-lg) { display: none; }
+}
+
+.dashboard-menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  width: 1.7rem;
+  height: 1.7rem;
+  color: $text;
+  cursor: pointer;
+
+  svg { width: 100%; height: 100%; }
+}
+
+.dashboard-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 65;
+
+  @media (min-width: $bp-lg) { display: none; }
+}
+
+// ── Sidebar: off-canvas drawer on mobile, static column on desktop ────────
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-6;
+  background: $bg;
+  padding: $sp-5 $sp-4;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: min(280px, 82vw);
+  z-index: 70;
+  border-right: 1.5px solid $border;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  overflow-y: auto;
+
+  &.open { transform: translateX(0); }
+
+  @media (min-width: $bp-lg) {
+    width: 250px;
+    flex-shrink: 0;
+    padding: $sp-6 $sp-5;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: auto;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+.dashboard-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: $sp-2;
+  font-family: $font-playful;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: $text;
+  text-decoration: none;
+
+  svg { width: 1.3rem; height: 1.3rem; color: $primary; }
+}
+
+.dashboard-nav {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-1;
+}
+
+.dashboard-nav-link {
+  display: flex;
+  align-items: center;
+  gap: $sp-2;
+  padding: $sp-2 $sp-3;
+  border-radius: 10px;
+  font-family: $font-body;
+  font-weight: 600;
+  font-size: $fs-footer;
+  color: $muted;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+
+  svg { width: 1.1em; height: 1.1em; flex-shrink: 0; }
+
+  &:hover { background: $primary-light; color: $primary-dark; }
+
+  &.active {
+    background: $primary;
+    color: #fff;
+  }
+}
+
+.dashboard-sidebar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $sp-3;
+  margin-top: auto;
+  padding-top: $sp-5;
+  padding-bottom: $sp-2;
+  border-top: 1.5px solid $border;
+
+  // Admin sidebar has just the one logout row (no profile menu to balance
+  // against), so let it fill the row like a nav item instead of floating
+  // small and left-aligned under space-between with nothing to space against.
+  &.dashboard-sidebar-footer--admin {
+    justify-content: stretch;
+  }
+}
+
+.dashboard-logout-link {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+
+  &:hover { background: $accent-peach; color: $deep-brown; }
+}
+
+.dashboard-user-menu {
+  position: relative;
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-user {
+  display: flex;
+  align-items: center;
+  gap: $sp-2;
+  min-width: 0;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+
+  .dashboard-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: $primary;
+    color: #fff;
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .dashboard-username {
+    font-size: $fs-footer;
+    font-weight: 600;
+    color: $text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.dashboard-user-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+
+.dashboard-user-dropdown {
+  position: absolute;
+  bottom: calc(100% + #{$sp-2});
+  left: 0;
+  z-index: 71;
+  display: flex;
+  flex-direction: column;
+  gap: $sp-1;
+  min-width: 160px;
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  padding: $sp-2;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: $sp-2;
+    padding: $sp-2 $sp-3;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    font-family: $font-body;
+    font-weight: 600;
+    font-size: $fs-footer;
+    color: $text;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover { background: $primary-light; color: $primary-dark; }
+  }
+}
+
+.dashboard-main {
+  flex: 1;
+  min-width: 0;
+  padding: $sp-8 $sp-4 $sp-16;
+
+  @media (min-width: $bp-md) { padding: $sp-8 $sp-6 $sp-16; }
+}
+
+.dashboard-home {
+  max-width: $bp-lg;
+  margin: 0 auto;
+  text-align: left;
+
+  h1 {
+    font-size: $fs-h2;
+    color: $text;
+    margin: $sp-2 0 $sp-2;
+
+    @media (min-width: $bp-md) { font-size: $fs-h2-md; }
+  }
+
+  .dashboard-home-sub {
+    color: $muted;
+    font-size: $fs-body;
+    margin-bottom: $sp-8;
+  }
+
+  .dashboard-home-card {
+    text-align: left;
+    width: 100%;
+    border: none;
+    font-family: $font-body;
+    cursor: pointer;
+  }
+}
+
+.profile-page {
+  max-width: 480px;
+
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: $sp-2;
+
+    svg { color: $primary; width: 1.6rem; height: 1.6rem; }
+  }
+}
+
+.profile-card {
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 18px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.06);
+  padding: $sp-6;
+  margin-bottom: $sp-6;
+
+  h2 {
+    font-family: $font-display;
+    font-size: 1.1rem;
+    color: $text;
+    margin-bottom: $sp-4;
+  }
+}
+
+.dashboard-placeholder {
+  max-width: 480px;
+  margin: $sp-16 auto;
+  text-align: center;
+
+  .dashboard-placeholder-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: $primary;
+    margin-bottom: $sp-4;
+  }
+
+  h1 {
+    font-size: $fs-h2;
+    color: $text;
+    margin-bottom: $sp-3;
+  }
+
+  p {
+    color: $muted;
+    font-size: $fs-body;
+    line-height: 1.4;
+    margin-bottom: $sp-5;
+  }
+}
