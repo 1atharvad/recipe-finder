@@ -39,10 +39,26 @@ public class Recipe {
     @Column(length = 500)
     private String videoUrl;
 
+    private Integer prepTimeMinutes;
+
+    private Integer cookTimeMinutes;
+
+    @Enumerated(EnumType.STRING)
+    private Difficulty difficulty;
+
     // User/admin-supplied image URL. Falls back to a name-keyed Unsplash lookup
     // (and then a generic placeholder) on the frontend when this is unset.
     @Column(length = 500)
     private String imageUrl;
+
+    // Attribution for a recipe adapted from an external site (e.g. Allrecipes,
+    // Sanjeev Kapoor Recipes, TarlaDalal) — optional, shown on the recipe page
+    // when set. Not meaningful for genuinely original user-written recipes.
+    @Column(length = 200)
+    private String sourceName;
+
+    @Column(length = 500)
+    private String sourceUrl;
 
     // Only meaningful when owner is set — lets a user opt a private recipe
     // into the general/search pool while keeping their ownership/edit rights.
@@ -80,7 +96,12 @@ public class Recipe {
     public CuisineType getCuisineType() { return cuisineType; }
     public String getVideoUrl() { return videoUrl; }
     public String getImageUrl() { return imageUrl; }
+    public String getSourceName() { return sourceName; }
+    public String getSourceUrl() { return sourceUrl; }
     public boolean getIsPublic() { return isPublic; }
+    public Integer getPrepTimeMinutes() { return prepTimeMinutes; }
+    public Integer getCookTimeMinutes() { return cookTimeMinutes; }
+    public Difficulty getDifficulty() { return difficulty; }
 
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
@@ -92,5 +113,10 @@ public class Recipe {
     public void setCuisineType(CuisineType cuisineType) { this.cuisineType = cuisineType; }
     public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public void setSourceName(String sourceName) { this.sourceName = sourceName; }
+    public void setSourceUrl(String sourceUrl) { this.sourceUrl = sourceUrl; }
     public void setIsPublic(boolean isPublic) { this.isPublic = isPublic; }
+    public void setPrepTimeMinutes(Integer prepTimeMinutes) { this.prepTimeMinutes = prepTimeMinutes; }
+    public void setCookTimeMinutes(Integer cookTimeMinutes) { this.cookTimeMinutes = cookTimeMinutes; }
+    public void setDifficulty(Difficulty difficulty) { this.difficulty = difficulty; }
 }

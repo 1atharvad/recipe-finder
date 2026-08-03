@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserFavoriteRepository extends JpaRepository<UserFavorite, Long> {
+    // JOIN FETCH so `.getRecipe()` returns an initialized entity, not a lazy
+    // proxy — Jackson can't serialize an uninitialized Hibernate proxy
+    // directly (it tries to serialize the proxy's own internal fields).
+    @Query("SELECT f FROM UserFavorite f JOIN FETCH f.recipe WHERE f.user = :user ORDER BY f.savedAt DESC")
     List<UserFavorite> findByUser(User user);
     Optional<UserFavorite> findByUserAndRecipe(User user, Recipe recipe);
     boolean existsByUserAndRecipe(User user, Recipe recipe);

@@ -6,6 +6,7 @@ import com.atharvadevasthali.backend.dto.EmbeddingStatusDTO;
 import com.atharvadevasthali.backend.dto.PublicRecipeDTO;
 import com.atharvadevasthali.backend.dto.RecipeRequest;
 import com.atharvadevasthali.backend.dto.UpdateEnabledRequest;
+import com.atharvadevasthali.backend.dto.UpdatePremiumAccessRequest;
 import com.atharvadevasthali.backend.model.Recipe;
 import com.atharvadevasthali.backend.service.AdminAnalyticsService;
 import com.atharvadevasthali.backend.service.RecipeEmbeddingService;
@@ -83,6 +84,12 @@ public class AdminController {
     @PutMapping("/users/{id}/enabled")
     public ResponseEntity<Void> setUserEnabled(@PathVariable Long id, @RequestBody UpdateEnabledRequest req) {
         userService.setUserEnabled(id, req.isEnabled());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/users/{id}/premium")
+    public ResponseEntity<Void> setUserPremiumAccess(@PathVariable Long id, @RequestBody UpdatePremiumAccessRequest req) {
+        userService.setUserPremiumAccess(id, req.isPremiumAccess());
         return ResponseEntity.noContent().build();
     }
 

@@ -30,6 +30,16 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     // plus any user recipe its owner has opted to make public.
     Page<Recipe> findByOwnerIsNullOrIsPublicTrue(Pageable pageable);
 
+    // "Top recipes" ranked by actual popularity — favorites + times cooked —
+    // rather than arbitrary DB order. r.id ASC is just a stable tiebreaker
+    // for recipes tied on score (e.g. everything at 0 on a fresh install).
+    @Query("SELECT r FROM Recipe r WHERE r.owner IS NULL OR r.isPublic = true " +
+           "ORDER BY (" +
+           "  (SELECT COUNT(f) FROM UserFavorite f WHERE f.recipe = r) + " +
+           "  (SELECT COUNT(h) FROM EatingHistory h WHERE h.recipe = r)" +
+           ") DESC, r.id ASC")
+    Page<Recipe> findTopGeneralByScore(Pageable pageable);
+
     // Admin's own CRUD scope stays strictly the curated pool — public user
     // recipes are not admin-editable.
     List<Recipe> findByOwnerIsNull();

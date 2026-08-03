@@ -3,9 +3,11 @@ package com.atharvadevasthali.backend.service;
 import com.atharvadevasthali.backend.dto.ChatMessageDTO;
 import com.atharvadevasthali.backend.dto.ChatResponse;
 import com.atharvadevasthali.backend.dto.PublicRecipeDTO;
+import com.atharvadevasthali.backend.dto.RecipeDraftResponse;
 import com.atharvadevasthali.backend.dto.RecipeRequest;
 import com.atharvadevasthali.backend.model.*;
 import com.atharvadevasthali.backend.repository.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,25 +28,28 @@ public class RecipeService {
     private final EatingHistoryRepository historyRepository;
     private final RecipeEmbeddingService embeddingService;
     private final GeminiClient geminiClient;
+    private final ObjectMapper objectMapper;
 
     public RecipeService(RecipeRepository recipeRepository,
                          UserRepository userRepository,
                          UserFavoriteRepository favoriteRepository,
                          EatingHistoryRepository historyRepository,
                          RecipeEmbeddingService embeddingService,
-                         GeminiClient geminiClient) {
+                         GeminiClient geminiClient,
+                         ObjectMapper objectMapper) {
         this.recipeRepository = recipeRepository;
         this.userRepository = userRepository;
         this.favoriteRepository = favoriteRepository;
         this.historyRepository = historyRepository;
         this.embeddingService = embeddingService;
         this.geminiClient = geminiClient;
+        this.objectMapper = objectMapper;
     }
 
     // ── Public ──────────────────────────────────────────────────────────────
 
     public List<Recipe> getTopGeneralRecipes() {
-        return recipeRepository.findByOwnerIsNullOrIsPublicTrue(PageRequest.of(0, 6)).getContent();
+        return recipeRepository.findTopGeneralByScore(PageRequest.of(0, 6)).getContent();
     }
 
     public List<Recipe> searchPublic(String q) {
@@ -107,6 +113,65 @@ public class RecipeService {
 
         String reply = geminiClient.generate(prompt.toString());
         return new ChatResponse(reply, candidates);
+    }
+
+    // Conversational recipe drafting — mirrors chat()'s back-and-forth shape rather
+    // than a one-shot form. The user doesn't have to describe the whole dish in one
+    // message: "hi" gets a clarifying question back, not a fabricated recipe; once
+    // there's enough to work with (here or built up over prior turns), the assistant
+    // drafts or updates the recipe. Never writes to the database itself — the
+    // frontend only fills RecipeFormModal's fields for review; saving stays separate.
+    public RecipeDraftResponse draftRecipe(String message, List<ChatMessageDTO> history) {
+        if (!geminiClient.isConfigured()) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "AI drafting is not configured");
+        }
+
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("You are a recipe-writing assistant helping a user create a new recipe through conversation. ")
+              .append("You are NOT the same assistant that recommends existing recipes — your job is to help WRITE a new one.\n\n")
+              .append("Figure out if you have enough information to draft a real, specific dish (a dish concept — ")
+              .append("exact measurements aren't required, the user can refine those after).\n")
+              .append("- If the latest message is a greeting, small talk, or too vague to identify a dish (e.g. just ")
+              .append("\"hi\" or \"make me something\"), do NOT invent a random recipe. Respond with a short, friendly ")
+              .append("question inviting them to describe what they'd like to cook, and set \"recipe\" to null.\n")
+              .append("- If a specific dish is identifiable (from this message or earlier in the conversation), write ")
+              .append("a complete recipe for it and set \"recipe\" to that recipe. If this is a refinement to a recipe ")
+              .append("already drafted earlier in the conversation (e.g. \"make it vegan\", \"double it\", \"less spicy\"), ")
+              .append("update that recipe rather than starting over.\n\n")
+              .append("Respond with ONLY a single JSON object, no markdown code fences, no surrounding text, shaped ")
+              .append("EXACTLY like this:\n")
+              .append("{\n")
+              .append("  \"reply\": \"<short, friendly message — either your clarifying question, or a one-line confirmation of what you drafted>\",\n")
+              .append("  \"recipe\": null OR {\n")
+              .append("    \"name\": string,\n")
+              .append("    \"servings\": integer,\n")
+              .append("    \"ingredients\": [{\"name\": string, \"quantity\": string}],\n")
+              .append("    \"steps\": [string, ...] (each a clear, detailed instruction; no leading numbers),\n")
+              .append("    \"dietaryType\": one of VEGETARIAN, VEGAN, NON_VEGETARIAN,\n")
+              .append("    \"cuisineType\": one of ITALIAN, INDIAN, ASIAN, MEXICAN, OTHER,\n")
+              .append("    \"prepTimeMinutes\": integer,\n")
+              .append("    \"cookTimeMinutes\": integer,\n")
+              .append("    \"difficulty\": one of EASY, MEDIUM, HARD\n")
+              .append("  }\n")
+              .append("}\n\n");
+
+        if (history != null) {
+            for (ChatMessageDTO m : history) {
+                prompt.append(m.getRole()).append(": ").append(m.getContent()).append("\n");
+            }
+        }
+        prompt.append("user: ").append(message).append("\nassistant:");
+
+        String raw = geminiClient.generate(prompt.toString()).trim();
+        String json = raw.startsWith("```")
+                ? raw.replaceFirst("^```[a-zA-Z]*\\n?", "").replaceFirst("```\\s*$", "").trim()
+                : raw;
+
+        try {
+            return objectMapper.readValue(json, RecipeDraftResponse.class);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Could not reach the drafting assistant — try again");
+        }
     }
 
     public Recipe getById(Long id) {
@@ -193,11 +258,36 @@ public class RecipeService {
         return historyRepository.findByUserAndRecipeOrderByEatenOnDesc(getUser(username), getById(recipeId));
     }
 
-    public EatingHistory markAsEaten(String username, Long recipeId) {
+    public EatingHistory markAsEaten(String username, Long recipeId, LocalDateTime eatenAt) {
         User user = getUser(username);
         Recipe recipe = getById(recipeId);
-        EatingHistory entry = new EatingHistory(user, recipe, LocalDate.now());
+        LocalDateTime when = eatenAt != null ? eatenAt : LocalDateTime.now();
+        EatingHistory entry = new EatingHistory(user, recipe, when.toLocalDate());
+        entry.setRecordedAt(when);
         return historyRepository.save(entry);
+    }
+
+    public EatingHistory updateHistoryEntry(String username, Long entryId, LocalDateTime eatenAt) {
+        User user = getUser(username);
+        EatingHistory entry = historyRepository.findById(entryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "History entry not found"));
+        if (!entry.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not your history entry");
+        }
+        LocalDateTime when = eatenAt != null ? eatenAt : LocalDateTime.now();
+        entry.setEatenOn(when.toLocalDate());
+        entry.setRecordedAt(when);
+        return historyRepository.save(entry);
+    }
+
+    public void deleteHistoryEntry(String username, Long entryId) {
+        User user = getUser(username);
+        EatingHistory entry = historyRepository.findById(entryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "History entry not found"));
+        if (!entry.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not your history entry");
+        }
+        historyRepository.delete(entry);
     }
 
     // ── Admin ────────────────────────────────────────────────────────────────
@@ -289,7 +379,12 @@ public class RecipeService {
         recipe.setCuisineType(req.getCuisineType());
         recipe.setVideoUrl(req.getVideoUrl());
         recipe.setImageUrl(req.getImageUrl());
+        recipe.setSourceName(req.getSourceName());
+        recipe.setSourceUrl(req.getSourceUrl());
         recipe.setIsPublic(req.getIsPublic());
+        recipe.setPrepTimeMinutes(req.getPrepTimeMinutes());
+        recipe.setCookTimeMinutes(req.getCookTimeMinutes());
+        recipe.setDifficulty(req.getDifficulty());
         if (req.getIngredients() != null) {
             recipe.setIngredients(req.getIngredients().stream()
                     .map(dto -> {

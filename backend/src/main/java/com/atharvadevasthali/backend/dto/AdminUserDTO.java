@@ -9,16 +9,18 @@ public class AdminUserDTO {
     private String email;
     private String role;
     private boolean enabled;
+    private boolean premiumAccess;
     private Instant createdAt;
 
     public AdminUserDTO(Long id, String firstName, String lastName, String email,
-                         String role, boolean enabled, Instant createdAt) {
+                         String role, boolean enabled, boolean premiumAccess, Instant createdAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
         this.enabled = enabled;
+        this.premiumAccess = premiumAccess;
         this.createdAt = createdAt;
     }
 
@@ -28,5 +30,6 @@ public class AdminUserDTO {
     public String getEmail() { return email; }
     public String getRole() { return role; }
     public boolean isEnabled() { return enabled; }
+    public boolean isPremiumAccess() { return premiumAccess; }
     public Instant getCreatedAt() { return createdAt; }
 }

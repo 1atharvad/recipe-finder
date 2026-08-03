@@ -40,6 +40,13 @@ public class User {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean enabled = true;
 
+    // Manually granted by an admin for now (product is still pre-revenue/testing) —
+    // gates the Gemini-backed features (smart search, chat) whose cost scales with
+    // usage. Meant to be set automatically by a payment webhook once billing exists;
+    // the gating check itself won't need to change when that happens.
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean premiumAccess = false;
+
     // No columnDefinition here — Hibernate would keep re-issuing an invalid
     // "ALTER COLUMN ... SET DATA TYPE ... DEFAULT ..." on every boot trying to
     // reconcile it (Postgres doesn't allow a type change and default in the same
@@ -80,6 +87,7 @@ public class User {
     public String getPassword() { return password; }
     public String getRole() { return role; }
     public boolean isEnabled() { return enabled; }
+    public boolean isPremiumAccess() { return premiumAccess; }
     public Instant getCreatedAt() { return createdAt; }
     public UserPreferences getPreferences() { return preferences; }
 
@@ -91,6 +99,7 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public void setRole(String role) { this.role = role; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    public void setPremiumAccess(boolean premiumAccess) { this.premiumAccess = premiumAccess; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public void setPreferences(UserPreferences preferences) { this.preferences = preferences; }
 }

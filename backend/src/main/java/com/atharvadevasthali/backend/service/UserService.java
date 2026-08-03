@@ -166,7 +166,7 @@ public class UserService implements UserDetailsService {
     public List<AdminUserDTO> getAllUsersForAdmin() {
         return userRepository.findAll().stream()
                 .map(u -> new AdminUserDTO(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(),
-                        u.getRole(), u.isEnabled(), u.getCreatedAt()))
+                        u.getRole(), u.isEnabled(), u.isPremiumAccess(), u.getCreatedAt()))
                 .collect(Collectors.toList());
     }
 
@@ -175,6 +175,19 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         user.setEnabled(enabled);
         userRepository.save(user);
+    }
+
+    public void setUserPremiumAccess(Long userId, boolean premiumAccess) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        user.setPremiumAccess(premiumAccess);
+        userRepository.save(user);
+    }
+
+    public boolean hasPremiumAccess(String username) {
+        return userRepository.findByUsername(username)
+                .map(User::isPremiumAccess)
+                .orElse(false);
     }
 
     // Internal identity only — never surfaced to the user or the API (see User.username's @JsonIgnore).

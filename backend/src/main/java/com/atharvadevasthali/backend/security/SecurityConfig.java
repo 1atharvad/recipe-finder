@@ -68,9 +68,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/recipes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/recipes/search").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/recipes/smart-search").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/recipes/chat").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/recipes/{id}").permitAll()
+                        // smart-search and chat call the paid Gemini API — require login so
+                        // premiumAccess can be checked (see RecipeController), unlike the
+                        // other endpoints above which are free and open to anyone.
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
