@@ -43,7 +43,7 @@ export const AdminPublicRecipesPage = () => {
           <p>{content.emptyText}</p>
         </div>
       ) : (
-        <div className="admin-card">
+        <div className="admin-card admin-card--table">
           <div className="admin-table-wrap">
             <table className="admin-table">
               <thead>

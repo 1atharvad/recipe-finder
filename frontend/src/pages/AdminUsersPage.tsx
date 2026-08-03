@@ -24,6 +24,13 @@ export const AdminUsersPage = () => {
     } catch {}
   }
 
+  const togglePremium = async (user: AdminUser) => {
+    try {
+      await adminApi.setUserPremiumAccess(user.id, !user.premiumAccess)
+      setUsers(prev => prev.map(u => u.id === user.id ? { ...u, premiumAccess: !u.premiumAccess } : u))
+    } catch {}
+  }
+
   return (
     <div className="page">
       <div className="page-header">
@@ -36,7 +43,7 @@ export const AdminUsersPage = () => {
       {loading ? (
         <div className="recipe-page-loading">{content.loadingLabel}</div>
       ) : (
-        <div className="admin-card">
+        <div className="admin-card admin-card--table">
           <div className="admin-table-wrap">
             <table className="admin-table">
               <thead>
@@ -46,6 +53,7 @@ export const AdminUsersPage = () => {
                   <th>{content.columns.role}</th>
                   <th>{content.columns.joined}</th>
                   <th>{content.columns.status}</th>
+                  <th>{content.columns.premium}</th>
                   <th>{content.columns.actions}</th>
                 </tr>
               </thead>
@@ -61,12 +69,23 @@ export const AdminUsersPage = () => {
                         {user.enabled ? content.enabledLabel : content.disabledLabel}
                       </span>
                     </td>
+                    <td>
+                      <span className={`visibility-badge ${user.premiumAccess ? 'is-public' : 'is-private'}`}>
+                        {user.premiumAccess ? content.premiumOnLabel : content.premiumOffLabel}
+                      </span>
+                    </td>
                     <td className="admin-actions">
                       <button
                         className={`btn-pill btn-small ${user.enabled ? 'btn-delete' : 'btn-edit'}`}
                         onClick={() => toggleEnabled(user)}
                       >
                         {user.enabled ? content.disableLabel : content.enableLabel}
+                      </button>
+                      <button
+                        className={`btn-pill btn-small ${user.premiumAccess ? 'btn-delete' : 'btn-edit'}`}
+                        onClick={() => togglePremium(user)}
+                      >
+                        {user.premiumAccess ? content.revokePremiumLabel : content.grantPremiumLabel}
                       </button>
                     </td>
                   </tr>

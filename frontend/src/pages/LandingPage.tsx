@@ -69,7 +69,7 @@ export const LandingPage = () => {
           <p className="features-subtext">{content.featuresSection.subtext}</p>
           <div className="features-row">
             {content.features.map(f => (
-              <FeatureCard key={f.title} tone={f.tone} icon={ICONS[f.icon]} title={f.title} text={f.text} />
+              <FeatureCard key={f.title} tone={f.tone} icon={ICONS[f.icon]} title={f.title} text={f.text} badge={f.badge} />
             ))}
           </div>
           <button

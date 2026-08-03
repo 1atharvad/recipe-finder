@@ -54,7 +54,7 @@ export const AdminDashboardPage = () => {
       {loading ? (
         <div className="recipe-page-loading">{content.loadingLabel}</div>
       ) : (
-        <div className="admin-card">
+        <div className="admin-card admin-card--table">
           <div className="admin-table-wrap">
             <table className="admin-table">
               <thead>
@@ -65,6 +65,8 @@ export const AdminDashboardPage = () => {
                   <th>{content.columns.cuisine}</th>
                   <th>{content.columns.ingredients}</th>
                   <th>{content.columns.steps}</th>
+                  <th>{content.columns.time}</th>
+                  <th>{content.columns.difficulty}</th>
                   <th>{content.columns.actions}</th>
                 </tr>
               </thead>
@@ -77,6 +79,12 @@ export const AdminDashboardPage = () => {
                     <td>{recipe.cuisineType ?? content.emptyValue}</td>
                     <td>{recipe.ingredients?.length ?? 0}</td>
                     <td>{recipe.steps?.length ?? 0}</td>
+                    <td>
+                      {recipe.prepTimeMinutes != null || recipe.cookTimeMinutes != null
+                        ? `${(recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0)}m`
+                        : content.emptyValue}
+                    </td>
+                    <td>{recipe.difficulty ?? content.emptyValue}</td>
                     <td className="admin-actions">
                       <button className="btn-pill btn-small btn-edit" onClick={() => setEditTarget(recipe)}>{content.editLabel}</button>
                       <button className="btn-pill btn-small btn-delete" onClick={() => handleDelete(recipe.id)}>{content.deleteLabel}</button>

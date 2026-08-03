@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { Sparkle, PaperPlaneRight } from '@phosphor-icons/react'
 import { recipeApi, adminApi } from '@/api/api'
 import { FormField } from '@/components/FormField'
 import { SelectField } from '@/components/SelectField'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import content from '@/content/recipeFormModal.json'
-import type { Recipe, RecipeRequest } from '@/types'
+import type { Recipe, RecipeRequest, ChatMessage } from '@/types'
 
 interface Props {
   mode: 'create' | 'edit'
@@ -20,7 +22,12 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
   const [cuisineType, setCuisineType] = useState<string>(initial?.cuisineType ?? '')
   const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? '')
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? '')
+  const [sourceName, setSourceName] = useState(initial?.sourceName ?? '')
+  const [sourceUrl, setSourceUrl] = useState(initial?.sourceUrl ?? '')
   const [isPublic, setIsPublic] = useState(initial?.isPublic ?? false)
+  const [prepTimeMinutes, setPrepTimeMinutes] = useState<number | ''>(initial?.prepTimeMinutes ?? '')
+  const [cookTimeMinutes, setCookTimeMinutes] = useState<number | ''>(initial?.cookTimeMinutes ?? '')
+  const [difficulty, setDifficulty] = useState<string>(initial?.difficulty ?? '')
   const [ingredients, setIngredients] = useState<{ name: string; quantity: string }[]>(
     initial?.ingredients?.length ? initial.ingredients : [{ name: '', quantity: '' }]
   )
@@ -29,6 +36,12 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [draftMessages, setDraftMessages] = useState<ChatMessage[]>([])
+  const [draftInput, setDraftInput] = useState('')
+  const [drafting, setDrafting] = useState(false)
+  const [draftError, setDraftError] = useState('')
+
+  useBodyScrollLock()
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -48,6 +61,39 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
     setSteps(prev => prev.map((s, idx) => idx === i ? val : s))
   }
 
+  const handleDraft = async () => {
+    const text = draftInput.trim()
+    if (!text || drafting) return
+    const historyForRequest = draftMessages
+
+    setDraftMessages(prev => [...prev, { role: 'user', content: text }])
+    setDraftInput('')
+    setDrafting(true)
+    setDraftError('')
+
+    try {
+      const res = await recipeApi.draft(text, historyForRequest)
+      setDraftMessages(prev => [...prev, { role: 'assistant', content: res.reply }])
+      const draft = res.recipe
+      if (draft) {
+        setName(draft.name)
+        setServings(draft.servings)
+        setDietaryType(draft.dietaryType ?? '')
+        setCuisineType(draft.cuisineType ?? '')
+        setPrepTimeMinutes(draft.prepTimeMinutes ?? '')
+        setCookTimeMinutes(draft.cookTimeMinutes ?? '')
+        setDifficulty(draft.difficulty ?? '')
+        setIngredients(draft.ingredients.length ? draft.ingredients : [{ name: '', quantity: '' }])
+        setSteps(draft.steps.length ? draft.steps : [''])
+      }
+    } catch (err: unknown) {
+      const isPremiumRequired = err instanceof Error && err.message === 'Premium access required'
+      setDraftError(isPremiumRequired ? content.draftPremiumRequiredMessage : content.draftErrorMessage)
+    } finally {
+      setDrafting(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -62,7 +108,12 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
       cuisineType: cuisineType || null,
       videoUrl: videoUrl.trim() || null,
       imageUrl: imageUrl.trim() || null,
+      sourceName: sourceName.trim() || null,
+      sourceUrl: sourceUrl.trim() || null,
       isPublic: context === 'user' ? isPublic : undefined,
+      prepTimeMinutes: prepTimeMinutes === '' ? null : prepTimeMinutes,
+      cookTimeMinutes: cookTimeMinutes === '' ? null : cookTimeMinutes,
+      difficulty: difficulty || null,
     }
 
     try {
@@ -86,7 +137,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
 
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal-card">
+      <div className="modal-card modal-card--lg">
         <div className="modal-header">
           <h3>{mode === 'create' ? content.titleCreate : content.titleEdit}</h3>
           <button className="modal-close" onClick={onClose}>{content.closeLabel}</button>
@@ -95,17 +146,62 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
         {error && <p className="auth-error">{error}</p>}
 
         <form onSubmit={handleSubmit} className="recipe-form">
+          {mode === 'create' && (
+            <div className="ai-draft-box">
+              <span className="ai-draft-label"><Sparkle weight="fill" /> {content.draftPromptLabel}</span>
+              <p className="ai-draft-hint">{content.draftHint}</p>
+
+              {draftMessages.length > 0 && (
+                <div className="chat-thread ai-draft-thread">
+                  {draftMessages.map((m, i) => (
+                    <div key={i} className={`chat-message ${m.role}`}>
+                      <div className="chat-bubble">{m.content}</div>
+                    </div>
+                  ))}
+                  {drafting && (
+                    <div className="chat-message assistant">
+                      <div className="chat-bubble chat-typing">
+                        <span></span><span></span><span></span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {draftError && <p className="auth-error">{draftError}</p>}
+
+              <div className="ai-draft-input-row">
+                <textarea
+                  value={draftInput}
+                  onChange={e => setDraftInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleDraft() } }}
+                  placeholder={draftMessages.length ? content.draftFollowUpPlaceholder : content.draftPromptPlaceholder}
+                  rows={1}
+                  disabled={drafting}
+                />
+                <button
+                  type="button"
+                  className="btn-pill btn-primary btn-icon-only"
+                  onClick={handleDraft}
+                  disabled={drafting || !draftInput.trim()}
+                  aria-label={content.draftButtonLabel}
+                >
+                  <PaperPlaneRight weight="fill" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          <p className="section-label">{content.detailsSection}</p>
+
           <div className="form-row">
-            <label className="form-label-full">
-              {content.nameLabel}
-              <input
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                required
-                placeholder={content.namePlaceholder}
-              />
-            </label>
+            <FormField
+              label={content.nameLabel}
+              value={name}
+              onChange={setName}
+              required
+              placeholder={content.namePlaceholder}
+            />
           </div>
 
           <div className="form-row form-row--3">
@@ -114,28 +210,57 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
             <SelectField label={content.cuisineLabel} value={cuisineType} onChange={setCuisineType} options={content.cuisineOptions} />
           </div>
 
-          <div className="form-row">
-            <label className="form-label-full">
-              {content.imageUrlLabel}
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={e => setImageUrl(e.target.value)}
-                placeholder={content.imageUrlPlaceholder}
-              />
-            </label>
+          <div className="form-row form-row--3">
+            <FormField
+              label={content.prepTimeLabel}
+              type="number"
+              value={prepTimeMinutes}
+              onChange={v => setPrepTimeMinutes(v === '' ? '' : Number(v))}
+              min={0}
+            />
+            <FormField
+              label={content.cookTimeLabel}
+              type="number"
+              value={cookTimeMinutes}
+              onChange={v => setCookTimeMinutes(v === '' ? '' : Number(v))}
+              min={0}
+            />
+            <SelectField label={content.difficultyLabel} value={difficulty} onChange={setDifficulty} options={content.difficultyOptions} />
           </div>
 
-          <div className="form-row">
-            <label className="form-label-full">
-              {content.videoUrlLabel}
-              <input
-                type="url"
-                value={videoUrl}
-                onChange={e => setVideoUrl(e.target.value)}
-                placeholder={content.videoUrlPlaceholder}
-              />
-            </label>
+          <p className="section-label">{content.mediaSection}</p>
+
+          <div className="form-row form-row--2">
+            <FormField
+              label={content.imageUrlLabel}
+              type="url"
+              value={imageUrl}
+              onChange={setImageUrl}
+              placeholder={content.imageUrlPlaceholder}
+            />
+            <FormField
+              label={content.videoUrlLabel}
+              type="url"
+              value={videoUrl}
+              onChange={setVideoUrl}
+              placeholder={content.videoUrlPlaceholder}
+            />
+          </div>
+
+          <div className="form-row form-row--2">
+            <FormField
+              label={content.sourceNameLabel}
+              value={sourceName}
+              onChange={setSourceName}
+              placeholder={content.sourceNamePlaceholder}
+            />
+            <FormField
+              label={content.sourceUrlLabel}
+              type="url"
+              value={sourceUrl}
+              onChange={setSourceUrl}
+              placeholder={content.sourceUrlPlaceholder}
+            />
           </div>
 
           {context === 'user' && (
@@ -149,8 +274,9 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
             </label>
           )}
 
-          <fieldset className="form-fieldset">
-            <legend>{content.ingredientsLegend}</legend>
+          <p className="section-label">{content.ingredientsLegend}</p>
+
+          <div className="form-fieldset">
             {ingredients.map((ing, i) => (
               <div key={i} className="ingredient-row">
                 <input
@@ -173,10 +299,11 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
               </div>
             ))}
             <button type="button" className="add-row-btn" onClick={addIngredient}>{content.addIngredientLabel}</button>
-          </fieldset>
+          </div>
 
-          <fieldset className="form-fieldset">
-            <legend>{content.stepsLegend}</legend>
+          <p className="section-label">{content.stepsLegend}</p>
+
+          <div className="form-fieldset">
             {steps.map((step, i) => (
               <div key={i} className="step-row">
                 <span className="step-num">{i + 1}</span>
@@ -192,7 +319,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
               </div>
             ))}
             <button type="button" className="add-row-btn" onClick={addStep}>{content.addStepLabel}</button>
-          </fieldset>
+          </div>
 
           <div className="modal-footer">
             <button type="button" className="btn-secondary" onClick={onClose}>{content.cancelLabel}</button>

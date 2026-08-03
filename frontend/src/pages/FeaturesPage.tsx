@@ -27,7 +27,7 @@ export const FeaturesPage = () => (
       <div className="section-inner">
         <div className="features-row features-row-full">
           {content.features.map(f => (
-            <FeatureCard key={f.title} tone={f.tone} icon={ICONS[f.icon]} title={f.title} text={f.text} />
+            <FeatureCard key={f.title} tone={f.tone} icon={ICONS[f.icon]} title={f.title} text={f.text} badge={f.badge} />
           ))}
         </div>
       </div>

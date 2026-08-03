@@ -1,0 +1,40 @@
+{
+  "title": "Privacy Policy",
+  "updatedLabel": "Last updated",
+  "updatedDate": "August 2026",
+  "intro": "CookMate is a personal project, currently in active development and testing. This policy explains what data the app collects and how it's used — it'll be revised as the app evolves toward a public launch.",
+  "sections": [
+    {
+      "heading": "Information we collect",
+      "html": "<p>When you create an account, we collect your first name, last name, email address, and a password (stored as a bcrypt hash — we never see or store your actual password).</p><p>When you use the app, we store the recipes you create, the recipes you favorite, your eating history (what you marked as eaten and when), and your dietary/cuisine preferences — all tied to your account so the app can show them back to you and personalize recommendations.</p>"
+    },
+    {
+      "heading": "How we use your information",
+      "html": "<p>Your data is used to operate the app: authenticating you, showing your saved recipes and history, and generating personalized recommendations from your eating history and preferences. We don't sell your data or use it for advertising.</p>"
+    },
+    {
+      "heading": "Third-party services",
+      "html": "<p>Optional AI features — smart search, the recipe chat assistant, and AI-assisted recipe drafting — are powered by Google's Gemini API. If you use these features, the text you enter is sent to Google to generate a response. These features are only available to accounts with premium access enabled; if you never use them, nothing is sent to Google on your behalf.</p><p>The app's database is hosted on Supabase (a managed PostgreSQL provider). The backend runs on Render, and the frontend is hosted on Vercel.</p>"
+    },
+    {
+      "heading": "Cookies and local storage",
+      "html": "<p>CookMate doesn't use tracking cookies or third-party analytics. Your login session is a JWT stored in your browser's local storage, used only to authenticate your own requests to the backend.</p>"
+    },
+    {
+      "heading": "Your rights",
+      "html": "<p>There's no self-service account deletion yet. If you'd like your account and associated data deleted or exported, email us (below) and we'll handle it manually.</p>"
+    },
+    {
+      "heading": "Children's privacy",
+      "html": "<p>CookMate is not directed at children under 13, and we don't knowingly collect data from them.</p>"
+    },
+    {
+      "heading": "Changes to this policy",
+      "html": "<p>As the app moves from testing toward a public launch, this policy will be updated to reflect real payment processing, hosting changes, or new features. Material changes will be reflected in the \"Last updated\" date above.</p>"
+    },
+    {
+      "heading": "Contact",
+      "html": "<p>Questions about this policy or your data? Email <a href=\"mailto:atharvadevasthali22@gmail.com\">atharvadevasthali22@gmail.com</a>.</p>"
+    }
+  ]
+}

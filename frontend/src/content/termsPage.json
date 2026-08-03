@@ -1,0 +1,40 @@
+{
+  "title": "Terms & Conditions",
+  "updatedLabel": "Last updated",
+  "updatedDate": "August 2026",
+  "intro": "CookMate is a personal project, currently in active development and testing — these terms are written for that stage, and will be revisited before any public launch.",
+  "sections": [
+    {
+      "heading": "Acceptance of terms",
+      "html": "<p>By creating an account or using CookMate, you agree to these terms. If you don't agree, please don't use the app.</p>"
+    },
+    {
+      "heading": "Your account",
+      "html": "<p>You're responsible for keeping your login credentials secure and for anything that happens under your account. Let us know if you suspect unauthorized access.</p>"
+    },
+    {
+      "heading": "Recipes you create",
+      "html": "<p>Recipes you create stay private to your account unless you explicitly mark them public. Public recipes are visible to other users and may appear in search and recommendations. You keep ownership of what you write — marking a recipe public just grants CookMate a license to display it within the app.</p><p>Don't post content you don't have the right to share, or anything unlawful, harmful, or infringing. We reserve the right to remove content that violates this.</p>"
+    },
+    {
+      "heading": "AI features",
+      "html": "<p>The recipe assistant, smart search, and AI-drafting features are powered by Google's Gemini API and can make mistakes — always use your own judgment before cooking or eating something an AI suggested, especially around allergens, food safety, and nutrition. CookMate doesn't provide medical or dietary advice.</p>"
+    },
+    {
+      "heading": "No warranty",
+      "html": "<p>CookMate is provided \"as is,\" without warranty of any kind, while it's in active development. Features may change, break, or be removed without notice, and we don't guarantee uptime or data retention at this stage.</p>"
+    },
+    {
+      "heading": "Limitation of liability",
+      "html": "<p>To the extent permitted by law, CookMate and its developer aren't liable for any damages arising from your use of the app — including anything you cook based on a recipe or suggestion found here.</p>"
+    },
+    {
+      "heading": "Changes to these terms",
+      "html": "<p>These terms may be updated as the app evolves, especially around any future paid features. Material changes will be reflected in the \"Last updated\" date above.</p>"
+    },
+    {
+      "heading": "Contact",
+      "html": "<p>Questions about these terms? Email <a href=\"mailto:atharvadevasthali22@gmail.com\">atharvadevasthali22@gmail.com</a>.</p>"
+    }
+  ]
+}

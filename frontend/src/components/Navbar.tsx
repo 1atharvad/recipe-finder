@@ -27,13 +27,13 @@ export const Navbar = () => {
             <NavLink to="/dashboard/search" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               {content.searchLabel}
             </NavLink>
-            <NavLink to="/favorites" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            <NavLink to="/dashboard/favorites" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               {content.favoritesLabel}
             </NavLink>
-            <NavLink to="/my-recipes" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            <NavLink to="/dashboard/my-recipes" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               {content.myRecipesLabel}
             </NavLink>
-            <NavLink to="/history" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            <NavLink to="/dashboard/history" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               {content.historyLabel}
             </NavLink>
             <NavLink to="/dashboard/recommender" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>

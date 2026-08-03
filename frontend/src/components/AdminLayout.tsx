@@ -59,8 +59,8 @@ export const AdminLayout = () => {
           })}
         </nav>
 
-        <div className="dashboard-sidebar-footer">
-          <button className="btn-link" onClick={handleLogout}>
+        <div className="dashboard-sidebar-footer dashboard-sidebar-footer--admin">
+          <button className="dashboard-nav-link dashboard-logout-link" onClick={handleLogout}>
             <SignOut weight="bold" /> {content.logoutLabel}
           </button>
         </div>

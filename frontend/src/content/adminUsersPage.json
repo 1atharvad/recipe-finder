@@ -8,11 +8,16 @@
     "role": "Role",
     "joined": "Joined",
     "status": "Status",
+    "premium": "Premium",
     "actions": "Actions"
   },
   "enabledLabel": "Active",
   "disabledLabel": "Disabled",
   "disableLabel": "Disable",
   "enableLabel": "Enable",
-  "disableConfirm": "Disable this user? They won't be able to log in until re-enabled."
+  "disableConfirm": "Disable this user? They won't be able to log in until re-enabled.",
+  "premiumOnLabel": "Premium",
+  "premiumOffLabel": "Free",
+  "revokePremiumLabel": "Revoke",
+  "grantPremiumLabel": "Grant"
 }

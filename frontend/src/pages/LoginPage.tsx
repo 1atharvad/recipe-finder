@@ -8,13 +8,14 @@ import { FormField } from '@/components/FormField'
 import content from '@/content/loginPage.json'
 
 export const LoginPage = () => {
-  const { isAuthenticated, login } = useAuth()
+  const { isAuthenticated, isAdmin, login } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  if (isAdmin) return <Navigate to="/admin" replace />
   if (isAuthenticated) return <Navigate to="/dashboard" replace />
 
   const handleSubmit = async (e: React.FormEvent) => {

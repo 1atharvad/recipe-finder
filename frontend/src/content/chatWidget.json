@@ -8,6 +8,7 @@
     "I have leftover rice, what can I make?"
   ],
   "errorMessage": "Could not reach the assistant. Is the backend running?",
+  "premiumRequiredMessage": "The recipe assistant is a premium feature. Ask an admin to grant you access.",
   "resultsForYouSuffix": "for you",
   "inputPlaceholder": "e.g. something with garlic...",
   "startVoiceLabel": "Start voice input",

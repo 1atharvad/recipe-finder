@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { preferencesApi } from '@/api/api'
 import { SelectField } from '@/components/SelectField'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import content from '@/content/preferencesModal.json'
 
 interface Props {
@@ -12,6 +13,8 @@ export const PreferencesModal = ({ onClose }: Props) => {
   const [cuisine, setCuisine] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+
+  useBodyScrollLock()
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }

@@ -42,8 +42,9 @@ export const ChatWidget = () => {
       const res = await recipeApi.chat(text, historyForRequest)
       setMessages(prev => [...prev, { role: 'assistant', content: res.reply }])
       setRecipes(res.recipes)
-    } catch {
-      setError(content.errorMessage)
+    } catch (err: unknown) {
+      const isPremiumRequired = err instanceof Error && err.message === 'Premium access required'
+      setError(isPremiumRequired ? content.premiumRequiredMessage : content.errorMessage)
     } finally {
       setLoading(false)
     }

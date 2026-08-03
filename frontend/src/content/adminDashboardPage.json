@@ -12,6 +12,8 @@
     "cuisine": "Cuisine",
     "ingredients": "Ingredients",
     "steps": "Steps",
+    "time": "Time",
+    "difficulty": "Difficulty",
     "actions": "Actions"
   },
   "editLabel": "Edit",
