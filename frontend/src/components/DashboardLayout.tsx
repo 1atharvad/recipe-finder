@@ -1,12 +1,18 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import type { Icon } from '@phosphor-icons/react'
-import { BowlSteam, List, X, MagnifyingGlass, Sparkle, Package, SquaresFour, SignOut, UserCircle } from '@phosphor-icons/react'
+import {
+  BowlSteam, List, X, MagnifyingGlass, Sparkle, Package, SquaresFour, SignOut, UserCircle,
+  Heart, NotePencil, ClockCounterClockwise, BellRinging, ShoppingCart, CookingPot,
+} from '@phosphor-icons/react'
 import { useAuth } from '@/context/AuthContext'
 import { ChatWidget } from '@/components/ChatWidget'
 import content from '@/content/dashboardNav.json'
 
-const ICONS: Record<string, Icon> = { MagnifyingGlass, Sparkle, Package, SquaresFour }
+const ICONS: Record<string, Icon> = {
+  MagnifyingGlass, Sparkle, Package, SquaresFour, Heart, NotePencil, ClockCounterClockwise,
+  BellRinging, ShoppingCart, CookingPot,
+}
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuth()

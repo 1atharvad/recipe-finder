@@ -1,0 +1,12 @@
+{
+  "title": "Mark as Eaten",
+  "editTitle": "Edit Entry",
+  "closeLabel": "✕",
+  "dateLabel": "Date",
+  "timeLabel": "Time",
+  "cancelLabel": "Cancel",
+  "confirmLabel": "Save",
+  "prevMonthLabel": "Previous month",
+  "nextMonthLabel": "Next month",
+  "weekdayLabels": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+}

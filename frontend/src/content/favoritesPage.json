@@ -1,11 +1,12 @@
 {
   "loadingLabel": "Loading favorites...",
-  "emptyIcon": "♡",
-  "emptyTitle": "No saved recipes yet",
-  "emptyText": "Open any recipe and save the ones you like.",
+  "emptyTitle": "No favourites yet",
+  "emptyText": "Open any recipe and tap the heart to save it here.",
   "browseLabel": "Browse Recipes",
-  "title": "Saved Recipes",
+  "title": "Favourite Recipes",
   "countWord": "recipe",
-  "countSuffix": "saved",
-  "removeLabel": "Remove"
+  "countSuffix": "favourited",
+  "removeLabel": "Remove from favourites",
+  "topSectionLabel": "Top Favourites",
+  "restSectionLabel": "More Favourites"
 }

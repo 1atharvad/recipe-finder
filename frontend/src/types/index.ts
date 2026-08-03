@@ -14,7 +14,12 @@ export interface Recipe {
   owner?: { id: number; firstName: string } | null
   videoUrl?: string | null
   imageUrl?: string | null
+  sourceName?: string | null
+  sourceUrl?: string | null
   isPublic?: boolean
+  prepTimeMinutes?: number | null
+  cookTimeMinutes?: number | null
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD' | null
 }
 
 export interface RecommendationDTO extends Recipe {
@@ -29,6 +34,11 @@ export interface ChatMessage {
 export interface ChatResponse {
   reply: string
   recipes: Recipe[]
+}
+
+export interface RecipeDraftResponse {
+  reply: string
+  recipe: RecipeRequest | null
 }
 
 export interface User {
@@ -52,9 +62,18 @@ export interface UserPreferences {
 
 export interface EatingHistoryEntry {
   id: number
-  recipe: { id: number; name: string }
+  recipe: { id: number; name: string; imageUrl?: string | null }
   eatenOn: string
   recordedAt: string
+}
+
+export interface MealSchedule {
+  id: number
+  recipe: { id: number; name: string; imageUrl?: string | null }
+  scheduledAt: string
+  note: string | null
+  completed: boolean
+  createdAt: string
 }
 
 export interface SignupRequest {
@@ -85,7 +104,12 @@ export interface RecipeRequest {
   cuisineType?: string | null
   videoUrl?: string | null
   imageUrl?: string | null
+  sourceName?: string | null
+  sourceUrl?: string | null
   isPublic?: boolean
+  prepTimeMinutes?: number | null
+  cookTimeMinutes?: number | null
+  difficulty?: string | null
 }
 
 export interface PreferencesRequest {
@@ -120,6 +144,7 @@ export interface AdminUser {
   email: string
   role: string
   enabled: boolean
+  premiumAccess: boolean
   createdAt: string
 }
 

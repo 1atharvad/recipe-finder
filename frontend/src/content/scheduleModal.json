@@ -1,0 +1,11 @@
+{
+  "title": "Schedule Recipe",
+  "editTitle": "Edit Schedule",
+  "closeLabel": "✕",
+  "dateLabel": "Date",
+  "timeLabel": "Time",
+  "noteLabel": "Note (optional)",
+  "notePlaceholder": "e.g. \"Prep the marinade the night before\"",
+  "cancelLabel": "Cancel",
+  "confirmLabel": "Save"
+}

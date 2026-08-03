@@ -1,0 +1,21 @@
+{
+  "loadingLabel": "Loading reminders...",
+  "emptyTitle": "No reminders yet",
+  "emptyText": "Open any recipe and tap \"Schedule\" to plan when you'll cook it.",
+  "browseLabel": "Browse Recipes",
+  "title": "Reminders",
+  "countWord": "reminder",
+  "todayLabel": "Today",
+  "tomorrowLabel": "Tomorrow",
+  "upcomingSectionLabel": "Upcoming",
+  "completedSectionLabel": "Completed",
+  "overdueLabel": "Overdue",
+  "completedBadgeLabel": "Done",
+  "detailTitle": "Reminder Details",
+  "closeLabel": "✕",
+  "noNoteLabel": "No note added.",
+  "markDoneLabel": "Mark Done",
+  "editLabel": "Edit",
+  "deleteLabel": "Delete",
+  "deleteConfirm": "Remove this reminder?"
+}

@@ -1,11 +1,19 @@
 import { useNavigate } from 'react-router-dom'
 import type { Icon } from '@phosphor-icons/react'
-import { MagnifyingGlass, Sparkle, Package } from '@phosphor-icons/react'
+import {
+  MagnifyingGlass, Sparkle, Package, Heart, NotePencil, ClockCounterClockwise,
+  BellRinging, ShoppingCart, CookingPot,
+} from '@phosphor-icons/react'
 import { useAuth } from '@/context/AuthContext'
 import { FeatureCard } from '@/components/FeatureCard'
 import content from '@/content/dashboardHome.json'
 
-const ICONS: Record<string, Icon> = { MagnifyingGlass, Sparkle, Package }
+const ICONS: Record<string, Icon> = {
+  MagnifyingGlass, Sparkle, Package, Heart, NotePencil, ClockCounterClockwise,
+  BellRinging, ShoppingCart, CookingPot,
+}
+
+const TONES = ['sage', 'mustard', 'peach']
 
 export const DashboardHomePage = () => {
   const navigate = useNavigate()
@@ -18,10 +26,10 @@ export const DashboardHomePage = () => {
       <p className="dashboard-home-sub">{content.subtitle}</p>
 
       <div className="features-row">
-        {content.cards.map(card => (
+        {content.cards.map((card, i) => (
           <FeatureCard
             key={card.to}
-            tone={card.tone}
+            tone={TONES[i % TONES.length]}
             icon={ICONS[card.icon]}
             title={card.title}
             text={card.text}

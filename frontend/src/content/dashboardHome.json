@@ -3,8 +3,14 @@
   "welcomeBack": "Welcome back",
   "subtitle": "Pick a starting point.",
   "cards": [
-    { "to": "/dashboard/search", "tone": "sage", "icon": "MagnifyingGlass", "title": "Search", "text": "Look up a recipe by name or ingredient." },
-    { "to": "/dashboard/recommender", "tone": "mustard", "icon": "Sparkle", "title": "Recommender", "text": "We find the recipe for you, based on your history and preferences." },
-    { "to": "/dashboard/inventory", "tone": "peach", "icon": "Package", "title": "Inventory", "text": "Track what you have on hand. Coming soon." }
+    { "to": "/dashboard/search", "icon": "MagnifyingGlass", "title": "Search", "text": "Look up a recipe by name or ingredient." },
+    { "to": "/dashboard/recommender", "icon": "Sparkle", "title": "Recommender", "text": "We find the recipe for you, based on your history and preferences." },
+    { "to": "/dashboard/favorites", "icon": "Heart", "title": "Favorites", "text": "Recipes you've saved for later." },
+    { "to": "/dashboard/my-recipes", "icon": "NotePencil", "title": "My Recipes", "text": "Create, edit, and manage your own recipes." },
+    { "to": "/dashboard/history", "icon": "ClockCounterClockwise", "title": "History", "text": "See what you've cooked, on a timeline or calendar." },
+    { "to": "/dashboard/reminders", "icon": "BellRinging", "title": "Reminders", "text": "Schedule a recipe for later and get reminded." },
+    { "to": "/dashboard/inventory", "icon": "Package", "title": "Inventory", "text": "Track what you have on hand. Coming soon." },
+    { "to": "/dashboard/shopping-list", "icon": "ShoppingCart", "title": "Shopping List", "text": "Combine recipe ingredients into one list. Coming soon." },
+    { "to": "/dashboard/meal-prep", "icon": "CookingPot", "title": "Meal Prep", "text": "Plan and prep a week of meals. Coming soon." }
   ]
 }

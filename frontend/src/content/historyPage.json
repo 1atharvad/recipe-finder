@@ -1,13 +1,22 @@
 {
   "loadingLabel": "Loading history...",
-  "emptyIcon": "📅",
   "emptyTitle": "No history yet",
   "emptyText": "Mark recipes as eaten from any recipe page to track your meals.",
   "browseLabel": "Browse Recipes",
   "title": "Eating History",
   "countWord": "meal",
   "countSuffix": "tracked",
-  "entryIcon": "🍽️",
   "todayLabel": "Today",
-  "yesterdayLabel": "Yesterday"
+  "yesterdayLabel": "Yesterday",
+  "timelineViewLabel": "Timeline",
+  "calendarViewLabel": "Calendar",
+  "prevMonthLabel": "Previous month",
+  "nextMonthLabel": "Next month",
+  "weekdayLabels": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  "moreEntriesLabel": "+{n} more",
+  "detailTitle": "Meal Details",
+  "closeLabel": "✕",
+  "editLabel": "Edit",
+  "deleteLabel": "Delete",
+  "deleteConfirm": "Remove this entry from your history?"
 }

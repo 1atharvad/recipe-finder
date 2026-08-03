@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { NotePencil } from '@phosphor-icons/react'
 import { recipeApi } from '@/api/api'
 import type { Recipe } from '@/types'
 import { RecipeFormModal } from '@/components/RecipeFormModal'
+import { SkelBlock } from '@/components/Skeleton'
 import content from '@/content/myRecipesPage.json'
 
 export const MyRecipesPage = () => {
@@ -41,7 +43,7 @@ export const MyRecipesPage = () => {
     setShowCreate(false)
   }
 
-  if (loading) return <div className="recipe-page-loading">{content.loadingLabel}</div>
+  if (loading) return <MyRecipesPageSkeleton />
 
   return (
     <div className="page">
@@ -50,15 +52,15 @@ export const MyRecipesPage = () => {
           <h2>{content.title}</h2>
           <p>{recipes.length} {content.countWord}{recipes.length !== 1 ? 's' : ''}</p>
         </div>
-        <button className="btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeLabel}</button>
+        <button className="btn-pill btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeLabel}</button>
       </div>
 
       {recipes.length === 0 ? (
         <div className="empty-state">
-          <span className="empty-icon">{content.emptyIcon}</span>
+          <NotePencil weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
-          <button className="btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeEmptyLabel}</button>
+          <button className="btn-pill btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeEmptyLabel}</button>
         </div>
       ) : (
         <div className="my-recipes-list">
@@ -78,8 +80,8 @@ export const MyRecipesPage = () => {
                 </span>
               </div>
               <div className="my-recipe-actions">
-                <button className="btn-edit" onClick={() => setEditTarget(recipe)}>{content.editLabel}</button>
-                <button className="btn-delete" onClick={() => handleDelete(recipe.id)}>{content.deleteLabel}</button>
+                <button className="btn-pill btn-small btn-edit" onClick={() => setEditTarget(recipe)}>{content.editLabel}</button>
+                <button className="btn-pill btn-small btn-delete" onClick={() => handleDelete(recipe.id)}>{content.deleteLabel}</button>
               </div>
             </div>
           ))}
@@ -106,3 +108,29 @@ export const MyRecipesPage = () => {
     </div>
   )
 }
+
+const MyRecipesPageSkeleton = () => (
+  <div className="page">
+    <div className="page-header">
+      <div>
+        <h2><SkelBlock width="9rem" /></h2>
+        <p><SkelBlock width="6rem" /></p>
+      </div>
+      <SkelBlock width="8rem" height="2.25rem" radius="999px" />
+    </div>
+    <div className="my-recipes-list">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="my-recipe-row">
+          <div className="my-recipe-info">
+            <SkelBlock width="12rem" height="1rem" />
+            <SkelBlock width="8rem" height="0.8rem" />
+          </div>
+          <div className="my-recipe-actions">
+            <SkelBlock width="4rem" height="1.8rem" radius="999px" />
+            <SkelBlock width="4rem" height="1.8rem" radius="999px" />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)

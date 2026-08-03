@@ -4,6 +4,7 @@ import { Sparkle, Sliders, Trophy } from '@phosphor-icons/react'
 import { recommendationApi } from '@/api/api'
 import type { RecommendationDTO } from '@/types'
 import { PreferencesModal } from '@/components/PreferencesModal'
+import { SkelBlock } from '@/components/Skeleton'
 import content from '@/content/recommenderPage.json'
 
 export const RecommenderPage = () => {
@@ -36,7 +37,23 @@ export const RecommenderPage = () => {
       </div>
 
       {loading ? (
-        <div className="recipe-page-loading">{content.loadingLabel}</div>
+        <div className="rec-list">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rec-card">
+              <div className="rec-info">
+                <SkelBlock width="10rem" height="1.1rem" />
+                <div className="rec-tags">
+                  <SkelBlock width="4rem" height="1.3rem" radius="999px" />
+                  <SkelBlock width="4rem" height="1.3rem" radius="999px" />
+                </div>
+              </div>
+              <div className="rec-score-badge">
+                <SkelBlock width="2.5rem" height="0.7rem" />
+                <SkelBlock width="2rem" height="1rem" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : recs.length === 0 ? (
         <div className="empty-state">
           <Sparkle weight="fill" className="empty-icon-svg" />

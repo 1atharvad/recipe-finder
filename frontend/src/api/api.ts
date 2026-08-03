@@ -2,9 +2,9 @@ import type {
   AuthResponse, AuthRequest, LoginRequest, SignupRequest,
   Recipe, RecipeRequest, RecommendationDTO,
   EatingHistoryEntry, UserPreferences, PreferencesRequest,
-  ChatMessage, ChatResponse,
+  ChatMessage, ChatResponse, RecipeDraftResponse,
   UserProfile, UpdateProfileRequest, ChangePasswordRequest,
-  AdminUser, PublicRecipe, Analytics, EmbeddingStatus,
+  AdminUser, PublicRecipe, Analytics, EmbeddingStatus, MealSchedule,
 } from '@/types'
 
 const BASE = `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1`
@@ -62,6 +62,8 @@ export const recipeApi = {
   search: (q: string) => request<Recipe[]>(`/recipes/search?q=${encodeURIComponent(q)}`),
   chat: (message: string, history: ChatMessage[]) =>
     request<ChatResponse>('/recipes/chat', { method: 'POST', body: JSON.stringify({ message, history }) }),
+  draft: (message: string, history: ChatMessage[]) =>
+    request<RecipeDraftResponse>('/recipes/draft', { method: 'POST', body: JSON.stringify({ message, history }) }),
   getById: (id: number) => request<Recipe>(`/recipes/${id}`),
   getMyRecipes: () => request<Recipe[]>('/my-recipes'),
   createMine: (body: RecipeRequest) =>
@@ -83,7 +85,30 @@ export const favoritesApi = {
 export const historyApi = {
   getAll: () => request<EatingHistoryEntry[]>('/history'),
   getForRecipe: (recipeId: number) => request<EatingHistoryEntry[]>(`/history/${recipeId}`),
-  markEaten: (id: number) => request<EatingHistoryEntry>(`/history/${id}`, { method: 'POST' }),
+  markEaten: (id: number, eatenAt?: string) => request<EatingHistoryEntry>(`/history/${id}`, {
+    method: 'POST',
+    body: JSON.stringify({ eatenAt: eatenAt ?? null }),
+  }),
+  updateEntry: (entryId: number, eatenAt: string) => request<EatingHistoryEntry>(`/history/entries/${entryId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ eatenAt }),
+  }),
+  deleteEntry: (entryId: number) => request<void>(`/history/entries/${entryId}`, { method: 'DELETE' }),
+}
+
+// ── Schedules (Reminders) ───────────────────────────────────────────────────────
+export const scheduleApi = {
+  getAll: () => request<MealSchedule[]>('/schedules'),
+  create: (recipeId: number, scheduledAt: string, note?: string) => request<MealSchedule>('/schedules', {
+    method: 'POST',
+    body: JSON.stringify({ recipeId, scheduledAt, note: note?.trim() || null }),
+  }),
+  update: (id: number, scheduledAt: string, note?: string) => request<MealSchedule>(`/schedules/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ scheduledAt, note: note?.trim() || null }),
+  }),
+  delete: (id: number) => request<void>(`/schedules/${id}`, { method: 'DELETE' }),
+  complete: (id: number) => request<EatingHistoryEntry>(`/schedules/${id}/complete`, { method: 'POST' }),
 }
 
 // ── Recommendations ───────────────────────────────────────────────────────────
@@ -124,6 +149,8 @@ export const adminApi = {
   getUsers: () => request<AdminUser[]>('/admin/users'),
   setUserEnabled: (id: number, enabled: boolean) =>
     request<void>(`/admin/users/${id}/enabled`, { method: 'PUT', body: JSON.stringify({ enabled }) }),
+  setUserPremiumAccess: (id: number, premiumAccess: boolean) =>
+    request<void>(`/admin/users/${id}/premium`, { method: 'PUT', body: JSON.stringify({ premiumAccess }) }),
 
   getAnalytics: () => request<Analytics>('/admin/analytics'),
 

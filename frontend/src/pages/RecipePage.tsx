@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, Heart, CheckCircle, Users, ListChecks, ForkKnife,
-  Printer, ShareNetwork, ClockCounterClockwise, PlayCircle,
+  Printer, ShareNetwork, ClockCounterClockwise, PlayCircle, Timer, BellRinging,
 } from '@phosphor-icons/react'
-import { recipeApi, favoritesApi, historyApi } from '@/api/api'
+import { recipeApi, favoritesApi, historyApi, scheduleApi } from '@/api/api'
 import { useAuth } from '@/context/AuthContext'
 import { LandingHeader } from '@/components/LandingHeader'
 import { LandingFooter } from '@/components/LandingFooter'
 import { RecipeCard } from '@/components/RecipeCard'
+import { MarkEatenModal } from '@/components/MarkEatenModal'
+import { ScheduleModal } from '@/components/ScheduleModal'
+import { SkelBlock } from '@/components/Skeleton'
 import { getRecipeImage } from '@/assets/recipeImages'
 import { handleImageFallback } from '@/assets/imageFallback'
 import { getYouTubeEmbedUrl } from '@/assets/youtube'
@@ -26,6 +29,9 @@ export const RecipePage = () => {
   const [cookHistory, setCookHistory] = useState<EatingHistoryEntry[]>([])
   const [similar, setSimilar] = useState<Recipe[]>([])
   const [shareMsg, setShareMsg] = useState('')
+  const [showMarkEaten, setShowMarkEaten] = useState(false)
+  const [showSchedule, setShowSchedule] = useState(false)
+  const [scheduledMsg, setScheduledMsg] = useState('')
 
   useEffect(() => {
     setStatus('loading')
@@ -70,13 +76,24 @@ export const RecipePage = () => {
     } catch {}
   }
 
-  const markEaten = async () => {
+  const markEaten = async (eatenAt: string) => {
     if (!recipe) return
+    setShowMarkEaten(false)
     try {
-      const entry = await historyApi.markEaten(recipe.id)
+      const entry = await historyApi.markEaten(recipe.id, eatenAt)
       setEatenMsg(content.markedEatenLabel)
       setCookHistory(prev => [entry, ...prev])
       setTimeout(() => setEatenMsg(''), 2000)
+    } catch {}
+  }
+
+  const schedule = async (scheduledAt: string, note: string) => {
+    if (!recipe) return
+    setShowSchedule(false)
+    try {
+      await scheduleApi.create(recipe.id, scheduledAt, note)
+      setScheduledMsg(content.scheduledLabel)
+      setTimeout(() => setScheduledMsg(''), 2000)
     } catch {}
   }
 
@@ -97,7 +114,29 @@ export const RecipePage = () => {
     return (
       <div className="landing">
         <LandingHeader />
-        <div className="recipe-page-loading">{content.loadingLabel}</div>
+        <div className="recipe-page">
+          <SkelBlock width="6rem" height="1rem" />
+          <article className="recipe-card-detail">
+            <SkelBlock radius={0} className="recipe-hero-img" />
+            <header className="book-header">
+              <div className="book-title-row">
+                <div>
+                  <SkelBlock width="16rem" height="2rem" />
+                  <SkelBlock width="8rem" height="0.9rem" />
+                </div>
+                <div className="book-actions">
+                  <SkelBlock width="5rem" height="2.25rem" radius="999px" />
+                  <SkelBlock width="5rem" height="2.25rem" radius="999px" />
+                </div>
+              </div>
+              <div className="book-meta">
+                <SkelBlock width="6rem" height="1.6rem" radius="999px" />
+                <SkelBlock width="5rem" height="1.6rem" radius="999px" />
+                <SkelBlock width="5rem" height="1.6rem" radius="999px" />
+              </div>
+            </header>
+          </article>
+        </div>
         <LandingFooter />
       </div>
     )
@@ -144,6 +183,14 @@ export const RecipePage = () => {
                 {recipe.owner && (
                   <p className="book-owner">{content.byPrefix} {recipe.owner.firstName}</p>
                 )}
+                {recipe.sourceName && (
+                  <p className="book-source">
+                    {content.adaptedFromPrefix}{' '}
+                    {recipe.sourceUrl
+                      ? <a href={recipe.sourceUrl} target="_blank" rel="noreferrer">{recipe.sourceName}</a>
+                      : recipe.sourceName}
+                  </p>
+                )}
               </div>
               <div className="book-actions">
                 <button
@@ -153,8 +200,13 @@ export const RecipePage = () => {
                   <Heart weight={favorited ? 'fill' : 'bold'} /> {favorited ? content.savedLabel : content.saveLabel}
                 </button>
                 {isAuthenticated && (
-                  <button className="btn-pill btn-small btn-eaten" onClick={markEaten}>
+                  <button className="btn-pill btn-small btn-eaten" onClick={() => setShowMarkEaten(true)}>
                     <CheckCircle weight="bold" /> {eatenMsg || content.markEatenLabel}
+                  </button>
+                )}
+                {isAuthenticated && (
+                  <button className="btn-pill btn-small btn-schedule" onClick={() => setShowSchedule(true)}>
+                    <BellRinging weight="bold" /> {scheduledMsg || content.scheduleLabel}
                   </button>
                 )}
                 <button className="btn-pill btn-small btn-icon-only" onClick={share} aria-label={content.shareLabel}>
@@ -170,11 +222,22 @@ export const RecipePage = () => {
               <span className="meta-chip"><Users weight="bold" /> {content.servesPrefix} {recipe.servings} {recipe.servings === 1 ? content.personSingular : content.personPlural}</span>
               <span className="meta-chip"><ListChecks weight="bold" /> {recipe.steps.length} {content.stepsSuffix}</span>
               <span className="meta-chip"><ForkKnife weight="bold" /> {recipe.ingredients.length} {content.ingredientsSuffix}</span>
+              {(recipe.prepTimeMinutes != null || recipe.cookTimeMinutes != null) && (
+                <span className="meta-chip">
+                  <Timer weight="bold" />
+                  {recipe.prepTimeMinutes != null && `${recipe.prepTimeMinutes}m ${content.prepLabel}`}
+                  {recipe.prepTimeMinutes != null && recipe.cookTimeMinutes != null && ' + '}
+                  {recipe.cookTimeMinutes != null && `${recipe.cookTimeMinutes}m ${content.cookLabel}`}
+                </span>
+              )}
               {recipe.dietaryType && (
                 <span className="meta-badge tone-sage">{recipe.dietaryType.replace('_', ' ')}</span>
               )}
               {recipe.cuisineType && (
                 <span className="meta-badge tone-mustard">{recipe.cuisineType}</span>
+              )}
+              {recipe.difficulty && (
+                <span className="meta-badge tone-peach">{recipe.difficulty}</span>
               )}
             </div>
 
@@ -240,6 +303,13 @@ export const RecipePage = () => {
       </div>
 
       <LandingFooter />
+
+      {showMarkEaten && (
+        <MarkEatenModal onConfirm={markEaten} onClose={() => setShowMarkEaten(false)} />
+      )}
+      {showSchedule && (
+        <ScheduleModal recipeName={recipe.name} onConfirm={schedule} onClose={() => setShowSchedule(false)} />
+      )}
     </div>
   )
 }

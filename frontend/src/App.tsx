@@ -26,10 +26,15 @@ import { AdminAnalyticsPage } from '@/pages/AdminAnalyticsPage'
 import { AdminEmbeddingsPage } from '@/pages/AdminEmbeddingsPage'
 import { MyRecipesPage } from '@/pages/MyRecipesPage'
 import { HistoryPage } from '@/pages/HistoryPage'
+import { PrivacyPolicyPage } from '@/pages/PrivacyPolicyPage'
+import { TermsPage } from '@/pages/TermsPage'
+import { RemindersPage } from '@/pages/RemindersPage'
+import { ShoppingListPage } from '@/pages/ShoppingListPage'
+import { MealPrepPage } from '@/pages/MealPrepPage'
 
 // These routes render their own LandingHeader (or DashboardLayout) instead
 // of the app-wide Navbar.
-const LANDING_STYLED_PATHS = ['/', '/how-it-works', '/features', '/login', '/signup', '/admin/login']
+const LANDING_STYLED_PATHS = ['/', '/how-it-works', '/features', '/login', '/signup', '/admin/login', '/privacy', '/terms']
 
 const AppNavbar = () => {
   const location = useLocation()
@@ -55,6 +60,8 @@ export const App = () => {
           <Route path="/recipe/:id" element={<RecipePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
 
           {/* Admin — discrete, no nav link */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -73,12 +80,13 @@ export const App = () => {
             <Route path="recommender" element={<RecommenderPage />} />
             <Route path="inventory" element={<InventoryPage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="favorites" element={<FavoritesPage />} />
+            <Route path="my-recipes" element={<MyRecipesPage />} />
+            <Route path="history" element={<HistoryPage />} />
+            <Route path="reminders" element={<RemindersPage />} />
+            <Route path="shopping-list" element={<ShoppingListPage />} />
+            <Route path="meal-prep" element={<MealPrepPage />} />
           </Route>
-
-          {/* Protected user routes */}
-          <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
-          <Route path="/my-recipes" element={<ProtectedRoute><MyRecipesPage /></ProtectedRoute>} />
-          <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

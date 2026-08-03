@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { MagnifyingGlass, X, WarningCircle, Sparkle } from '@phosphor-icons/react'
 import { RecipeCard } from '@/components/RecipeCard'
 import { BentoGrid } from '@/components/BentoGrid'
+import { SkelBlock } from '@/components/Skeleton'
 import { recipeApi } from '@/api/api'
 import type { Recipe } from '@/types'
 import content from '@/content/searchPage.json'
@@ -9,6 +10,7 @@ import content from '@/content/searchPage.json'
 export const SearchPage = () => {
   const [query, setQuery] = useState('')
   const [topRecipes, setTopRecipes] = useState<Recipe[]>([])
+  const [topLoading, setTopLoading] = useState(true)
   const [results, setResults] = useState<Recipe[]>([])
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [searched, setSearched] = useState(false)
@@ -17,6 +19,7 @@ export const SearchPage = () => {
     recipeApi.getTop()
       .then(setTopRecipes)
       .catch(() => {})
+      .finally(() => setTopLoading(false))
   }, [])
 
   const search = async (q: string) => {
@@ -91,7 +94,20 @@ export const SearchPage = () => {
             <p className="msg error"><WarningCircle weight="bold" /> {content.results.serverErrorMessage}</p>
           )}
 
-          {!searched && topRecipes.length > 0 && (
+          {!searched && topLoading && (
+            <>
+              <p className="section-label">{content.results.topRecipesLabel}</p>
+              <div className="bento-grid">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className={`bento-item bento-item-${i}`}>
+                    <SkelBlock height="100%" radius={0} />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {!searched && !topLoading && topRecipes.length > 0 && (
             <>
               <p className="section-label">{content.results.topRecipesLabel}</p>
               <BentoGrid recipes={topRecipes} />

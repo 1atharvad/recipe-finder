@@ -1,12 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  ClockCounterClockwise, ForkKnife, CalendarBlank, ListBullets,
+  CaretLeft, CaretRight,
+} from '@phosphor-icons/react'
 import { historyApi } from '@/api/api'
+import { MarkEatenModal } from '@/components/MarkEatenModal'
+import { HistoryDetailModal } from '@/components/HistoryDetailModal'
+import { TimelinePageSkeleton } from '@/components/Skeleton'
+import { formatTime } from '@/assets/dateTime'
 import type { EatingHistoryEntry } from '@/types'
 import content from '@/content/historyPage.json'
+
+type View = 'timeline' | 'calendar'
+
+const toDateKey = (d: Date) => d.toLocaleDateString('en-CA') // YYYY-MM-DD, local time
 
 export const HistoryPage = () => {
   const [history, setHistory] = useState<EatingHistoryEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const [view, setView] = useState<View>('timeline')
+  const [month, setMonth] = useState(() => { const d = new Date(); d.setDate(1); return d })
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [detailEntry, setDetailEntry] = useState<EatingHistoryEntry | null>(null)
+  const [editEntry, setEditEntry] = useState<EatingHistoryEntry | null>(null)
 
   useEffect(() => {
     historyApi.getAll()
@@ -15,54 +32,206 @@ export const HistoryPage = () => {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <div className="recipe-page-loading">{content.loadingLabel}</div>
+  const grouped = useMemo(() => {
+    return history.reduce<Record<string, EatingHistoryEntry[]>>((acc, entry) => {
+      const date = entry.eatenOn
+      if (!acc[date]) acc[date] = []
+      acc[date].push(entry)
+      return acc
+    }, {})
+  }, [history])
+
+  const handleEditSave = async (eatenAt: string) => {
+    if (!editEntry) return
+    try {
+      const updated = await historyApi.updateEntry(editEntry.id, eatenAt)
+      setHistory(prev => prev.map(e => e.id === updated.id ? updated : e))
+    } catch {}
+    setEditEntry(null)
+  }
+
+  const handleDelete = async (id: number) => {
+    if (!confirm(content.deleteConfirm)) return
+    const prev = history
+    setHistory(h => h.filter(e => e.id !== id))
+    setDetailEntry(null)
+    try {
+      await historyApi.deleteEntry(id)
+    } catch {
+      setHistory(prev)
+    }
+  }
+
+  if (loading) return <TimelinePageSkeleton />
 
   if (history.length === 0) {
     return (
       <div className="page">
         <div className="empty-state">
-          <span className="empty-icon">{content.emptyIcon}</span>
+          <ClockCounterClockwise weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
-          <Link to="/dashboard/search" className="btn-primary">{content.browseLabel}</Link>
+          <Link to="/dashboard/search" className="btn-pill btn-primary">{content.browseLabel}</Link>
         </div>
       </div>
     )
   }
-
-  // Group by date
-  const grouped = history.reduce<Record<string, EatingHistoryEntry[]>>((acc, entry) => {
-    const date = entry.eatenOn
-    if (!acc[date]) acc[date] = []
-    acc[date].push(entry)
-    return acc
-  }, {})
 
   const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
 
   return (
     <div className="page">
       <div className="page-header">
-        <h2>{content.title}</h2>
-        <p>{history.length} {content.countWord}{history.length !== 1 ? 's' : ''} {content.countSuffix}</p>
+        <div>
+          <h2>{content.title}</h2>
+          <p>{history.length} {content.countWord}{history.length !== 1 ? 's' : ''} {content.countSuffix}</p>
+        </div>
+        <div className="view-toggle">
+          <button
+            className={view === 'timeline' ? 'active' : ''}
+            onClick={() => setView('timeline')}
+          >
+            <ListBullets weight="bold" /> {content.timelineViewLabel}
+          </button>
+          <button
+            className={view === 'calendar' ? 'active' : ''}
+            onClick={() => setView('calendar')}
+          >
+            <CalendarBlank weight="bold" /> {content.calendarViewLabel}
+          </button>
+        </div>
       </div>
-      <div className="history-list">
-        {sortedDates.map(date => (
-          <div key={date} className="history-day-group">
-            <div className="history-day-label">{formatDate(date)}</div>
-            {grouped[date].map(entry => (
-              <Link
-                key={entry.id}
-                to={`/recipe/${entry.recipe.id}`}
-                className="history-entry"
-              >
-                <span className="history-entry-icon">{content.entryIcon}</span>
-                <span>{entry.recipe.name}</span>
-              </Link>
-            ))}
-          </div>
-        ))}
+
+      {view === 'timeline' ? (
+        <div className="history-timeline">
+          {sortedDates.map(date => (
+            <div key={date} className="history-day-group">
+              <div className="history-day-marker">
+                <span className="history-day-dot" />
+                <span className="history-day-label">{formatDate(date)}</span>
+              </div>
+              <div className="history-day-entries">
+                {grouped[date].map(entry => (
+                  <HistoryEntryRow key={entry.id} entry={entry} onOpen={setDetailEntry} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <HistoryCalendar
+          month={month}
+          setMonth={setMonth}
+          grouped={grouped}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          onOpen={setDetailEntry}
+        />
+      )}
+
+      {detailEntry && (
+        <HistoryDetailModal
+          entry={detailEntry}
+          onEdit={() => { setEditEntry(detailEntry); setDetailEntry(null) }}
+          onDelete={() => handleDelete(detailEntry.id)}
+          onClose={() => setDetailEntry(null)}
+        />
+      )}
+
+      {editEntry && (
+        <MarkEatenModal
+          initial={editEntry.recordedAt}
+          onConfirm={handleEditSave}
+          onClose={() => setEditEntry(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+interface EntryRowProps {
+  entry: EatingHistoryEntry
+  onOpen: (entry: EatingHistoryEntry) => void
+}
+
+const HistoryEntryRow = ({ entry, onOpen }: EntryRowProps) => (
+  <button type="button" className="history-entry" onClick={() => onOpen(entry)}>
+    <span className="history-entry-link">
+      <ForkKnife weight="bold" className="history-entry-icon" />
+      <span className="history-entry-name">{entry.recipe.name}</span>
+      <span className="history-entry-time">{formatTime(entry.recordedAt)}</span>
+    </span>
+  </button>
+)
+
+interface CalendarProps {
+  month: Date
+  setMonth: (updater: (d: Date) => Date) => void
+  grouped: Record<string, EatingHistoryEntry[]>
+  selectedDate: string | null
+  setSelectedDate: (d: string | null) => void
+  onOpen: (entry: EatingHistoryEntry) => void
+}
+
+const HistoryCalendar = ({ month, setMonth, grouped, selectedDate, setSelectedDate, onOpen }: CalendarProps) => {
+  const year = month.getFullYear()
+  const monthIndex = month.getMonth()
+  const firstDay = new Date(year, monthIndex, 1)
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate()
+  const leadingBlanks = firstDay.getDay()
+  const todayKey = toDateKey(new Date())
+
+  const cells: (string | null)[] = [
+    ...Array(leadingBlanks).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => toDateKey(new Date(year, monthIndex, i + 1))),
+  ]
+
+  const shiftMonth = (delta: number) => setMonth(d => { const n = new Date(d); n.setMonth(n.getMonth() + delta); return n })
+
+  return (
+    <div className="history-calendar">
+      <div className="history-calendar-nav">
+        <button onClick={() => shiftMonth(-1)} aria-label={content.prevMonthLabel}><CaretLeft weight="bold" /></button>
+        <span>{month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+        <button onClick={() => shiftMonth(1)} aria-label={content.nextMonthLabel}><CaretRight weight="bold" /></button>
       </div>
+
+      <div className="history-calendar-grid with-events">
+        {content.weekdayLabels.map(w => <div key={w} className="history-calendar-weekday">{w}</div>)}
+        {cells.map((dateKey, i) => {
+          if (!dateKey) return <div key={`blank-${i}`} className="history-calendar-cell empty" />
+          const entries = grouped[dateKey] ?? []
+          const isToday = dateKey === todayKey
+          const isSelected = dateKey === selectedDate
+          const visible = entries.slice(0, 3)
+          const overflow = entries.length - visible.length
+          return (
+            <button
+              key={dateKey}
+              className={`history-calendar-cell${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}${entries.length ? ' has-entries' : ''}`}
+              onClick={() => entries.length && setSelectedDate(isSelected ? null : dateKey)}
+              disabled={!entries.length}
+            >
+              <span className="history-calendar-daynum">{Number(dateKey.slice(-2))}</span>
+              <span className="history-calendar-chips">
+                {visible.map(entry => (
+                  <span key={entry.id} className="history-calendar-chip">{entry.recipe.name}</span>
+                ))}
+                {overflow > 0 && <span className="history-calendar-chip more">{content.moreEntriesLabel.replace('{n}', String(overflow))}</span>}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      {selectedDate && grouped[selectedDate] && (
+        <div className="history-day-entries history-calendar-selected">
+          <div className="history-day-label">{formatDate(selectedDate)}</div>
+          {grouped[selectedDate].map(entry => (
+            <HistoryEntryRow key={entry.id} entry={entry} onOpen={onOpen} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
