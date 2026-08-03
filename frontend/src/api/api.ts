@@ -62,8 +62,8 @@ export const recipeApi = {
   search: (q: string) => request<Recipe[]>(`/recipes/search?q=${encodeURIComponent(q)}`),
   chat: (message: string, history: ChatMessage[]) =>
     request<ChatResponse>('/recipes/chat', { method: 'POST', body: JSON.stringify({ message, history }) }),
-  draft: (message: string, history: ChatMessage[]) =>
-    request<RecipeDraftResponse>('/recipes/draft', { method: 'POST', body: JSON.stringify({ message, history }) }),
+  draft: (message: string, history: ChatMessage[], currentRecipe?: RecipeRequest) =>
+    request<RecipeDraftResponse>('/recipes/draft', { method: 'POST', body: JSON.stringify({ message, history, currentRecipe }) }),
   getById: (id: number) => request<Recipe>(`/recipes/${id}`),
   getMyRecipes: () => request<Recipe[]>('/my-recipes'),
   createMine: (body: RecipeRequest) =>

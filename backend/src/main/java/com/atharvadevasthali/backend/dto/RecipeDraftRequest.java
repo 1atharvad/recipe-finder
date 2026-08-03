@@ -15,8 +15,15 @@ public class RecipeDraftRequest {
 
     private List<ChatMessageDTO> history;
 
+    // Set only when drafting is being used to edit an already-saved recipe
+    // (RecipeFormModal in edit mode) — seeds the prompt with the recipe as it
+    // currently stands so the assistant edits it instead of starting fresh.
+    private RecipeRequest currentRecipe;
+
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
     public List<ChatMessageDTO> getHistory() { return history; }
     public void setHistory(List<ChatMessageDTO> history) { this.history = history; }
+    public RecipeRequest getCurrentRecipe() { return currentRecipe; }
+    public void setCurrentRecipe(RecipeRequest currentRecipe) { this.currentRecipe = currentRecipe; }
 }

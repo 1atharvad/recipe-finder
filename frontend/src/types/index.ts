@@ -20,6 +20,13 @@ export interface Recipe {
   prepTimeMinutes?: number | null
   cookTimeMinutes?: number | null
   difficulty?: 'EASY' | 'MEDIUM' | 'HARD' | null
+  calories?: number | null
+  proteinGrams?: number | null
+  carbsGrams?: number | null
+  fatGrams?: number | null
+  fiberGrams?: number | null
+  sugarGrams?: number | null
+  sodiumMg?: number | null
 }
 
 export interface RecommendationDTO extends Recipe {
@@ -110,6 +117,13 @@ export interface RecipeRequest {
   prepTimeMinutes?: number | null
   cookTimeMinutes?: number | null
   difficulty?: string | null
+  calories?: number | null
+  proteinGrams?: number | null
+  carbsGrams?: number | null
+  fatGrams?: number | null
+  fiberGrams?: number | null
+  sugarGrams?: number | null
+  sodiumMg?: number | null
 }
 
 export interface PreferencesRequest {

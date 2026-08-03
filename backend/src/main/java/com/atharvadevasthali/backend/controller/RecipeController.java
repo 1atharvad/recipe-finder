@@ -70,7 +70,7 @@ public class RecipeController {
     @PostMapping("/recipes/draft")
     public RecipeDraftResponse draftRecipe(@Valid @RequestBody RecipeDraftRequest req, Authentication auth) {
         requirePremium(auth);
-        return recipeService.draftRecipe(req.getMessage(), req.getHistory());
+        return recipeService.draftRecipe(req.getMessage(), req.getHistory(), req.getCurrentRecipe());
     }
 
     // Gemini-backed endpoints cost money per call — require a logged-in user with

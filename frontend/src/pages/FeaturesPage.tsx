@@ -1,6 +1,7 @@
 import type { Icon } from '@phosphor-icons/react'
 import {
   MagnifyingGlassIcon, HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon, SparkleIcon, SlidersIcon,
+  BellRingingIcon, PackageIcon, ShoppingCartIcon, CookingPotIcon,
 } from '@phosphor-icons/react'
 import { LandingHeader } from '@/components/LandingHeader'
 import { LandingFooter } from '@/components/LandingFooter'
@@ -8,7 +9,9 @@ import { FeatureCard } from '@/components/FeatureCard'
 import content from '@/content/featuresPage.json'
 
 const ICONS: Record<string, Icon> = {
-  MagnifyingGlassIcon, HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon, SparkleIcon, SlidersIcon,
+  MagnifyingGlass: MagnifyingGlassIcon, Heart: HeartIcon, NotePencil: NotePencilIcon,
+  ClockCounterClockwise: ClockCounterClockwiseIcon, Sparkle: SparkleIcon, Sliders: SlidersIcon,
+  BellRinging: BellRingingIcon, Package: PackageIcon, ShoppingCart: ShoppingCartIcon, CookingPot: CookingPotIcon,
 }
 
 export const FeaturesPage = () => (

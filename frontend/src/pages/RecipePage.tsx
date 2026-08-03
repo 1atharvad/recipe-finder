@@ -140,7 +140,44 @@ export const RecipePage = () => {
                 <SkelBlock width="5rem" height="1.6rem" radius="999px" />
               </div>
             </header>
+
+            <div className="book-body">
+              <section className="ingredients-section">
+                <h2><SkelBlock width="8rem" height="1.1rem" /></h2>
+                <ul className="ingredients-list">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <li key={i}>
+                      <SkelBlock width="3.5rem" height="0.9rem" />
+                      <SkelBlock width="9rem" height="0.9rem" />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section className="steps-section">
+                <h2><SkelBlock width="8rem" height="1.1rem" /></h2>
+                <ol className="steps-list">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <li key={i}>
+                      <SkelBlock width="30px" height="30px" radius="50%" />
+                      <SkelBlock width="90%" height="0.9rem" />
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            </div>
           </article>
+
+          <section className="similar-recipes">
+            <p className="section-label"><SkelBlock width="9rem" height="0.85rem" /></p>
+            <div className="recipe-list">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="recipe-card">
+                  <SkelBlock width="60%" height="0.95rem" />
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
         <LandingFooter />
       </div>
@@ -278,6 +315,58 @@ export const RecipePage = () => {
                 ))}
               </ol>
             </section>
+
+            {(recipe.calories != null || recipe.proteinGrams != null || recipe.carbsGrams != null || recipe.fatGrams != null
+              || recipe.fiberGrams != null || recipe.sugarGrams != null || recipe.sodiumMg != null) && (
+              <section className="nutrition-section">
+                <h2>{content.nutritionTitle}</h2>
+                <p className="nutrition-subtext">{content.nutritionSubtext}</p>
+                <div className="nutrition-stats">
+                  {recipe.calories != null && (
+                    <div className="nutrition-stat">
+                      <span className="nutrition-stat-value">{recipe.calories}</span>
+                      <span className="nutrition-stat-label">{content.caloriesLabel}</span>
+                    </div>
+                  )}
+                  {recipe.proteinGrams != null && (
+                    <div className="nutrition-stat">
+                      <span className="nutrition-stat-value">{recipe.proteinGrams}g</span>
+                      <span className="nutrition-stat-label">{content.proteinLabel}</span>
+                    </div>
+                  )}
+                  {recipe.carbsGrams != null && (
+                    <div className="nutrition-stat">
+                      <span className="nutrition-stat-value">{recipe.carbsGrams}g</span>
+                      <span className="nutrition-stat-label">{content.carbsLabel}</span>
+                    </div>
+                  )}
+                  {recipe.fatGrams != null && (
+                    <div className="nutrition-stat">
+                      <span className="nutrition-stat-value">{recipe.fatGrams}g</span>
+                      <span className="nutrition-stat-label">{content.fatLabel}</span>
+                    </div>
+                  )}
+                  {recipe.fiberGrams != null && (
+                    <div className="nutrition-stat">
+                      <span className="nutrition-stat-value">{recipe.fiberGrams}g</span>
+                      <span className="nutrition-stat-label">{content.fiberLabel}</span>
+                    </div>
+                  )}
+                  {recipe.sugarGrams != null && (
+                    <div className="nutrition-stat">
+                      <span className="nutrition-stat-value">{recipe.sugarGrams}g</span>
+                      <span className="nutrition-stat-label">{content.sugarLabel}</span>
+                    </div>
+                  )}
+                  {recipe.sodiumMg != null && (
+                    <div className="nutrition-stat">
+                      <span className="nutrition-stat-value">{recipe.sodiumMg}mg</span>
+                      <span className="nutrition-stat-label">{content.sodiumLabel}</span>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
 
             {embedUrl && (
               <section className="video-section">

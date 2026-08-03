@@ -15,7 +15,7 @@ import { useAuth } from '@/context/AuthContext'
 import type { Recipe } from '@/types'
 import content from '@/content/landingPage.json'
 
-const ICONS: Record<string, Icon> = { MagnifyingGlassIcon, HeartIcon, SparkleIcon }
+const ICONS: Record<string, Icon> = { MagnifyingGlass: MagnifyingGlassIcon, Heart: HeartIcon, Sparkle: SparkleIcon }
 
 const TODAY_WEEKDAY = new Date().toLocaleDateString('en-US', { weekday: 'long' })
 

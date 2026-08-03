@@ -4,10 +4,9 @@ A full-stack recipe management app with user authentication, personalised recomm
 
 Built with **Spring Boot 3** · **React + TypeScript** · **Supabase Postgres**
 
-Dev and prod both run the backend natively (`mvn spring-boot:run` locally, a Maven build on Render in
-prod) against a Supabase Postgres project — a free-tier project for dev, a separate one for prod. The
-frontend is a static build on Vercel in both cases (pointed at `localhost` in dev via Vite's proxy, at
-the Render URL in prod).
+Dev runs the backend natively via `mvn spring-boot:run` against a Supabase Postgres project. The
+frontend runs via Vite, pointed at `localhost` in dev via Vite's proxy. In prod, the backend runs in
+Docker on a Contabo VPS (managed via aaPanel) and the frontend is a static build on Vercel.
 
 ---
 
@@ -42,7 +41,6 @@ the Render URL in prod).
 | Database | Supabase Postgres (managed, pgvector enabled) |
 | Frontend | React 18, TypeScript, Vite, SCSS |
 | Routing | React Router v6 |
-| Backend hosting | Render |
 | Frontend hosting | Vercel |
 
 ---
@@ -52,6 +50,7 @@ the Render URL in prod).
 ```
 recipe-finder/
 ├── backend/                   # Spring Boot application
+│   ├── Dockerfile              # Multi-stage build, used by docker-compose.yml
 │   └── src/main/java/.../
 │       ├── controller/        # REST controllers
 │       ├── dto/               # Request/response DTOs
@@ -66,7 +65,7 @@ recipe-finder/
 │       ├── context/           # AuthContext (JWT + user state)
 │       ├── pages/             # All page components
 │       └── types/             # Shared TypeScript interfaces
-└── render.yaml                 # Render service definition for the backend
+└── docker-compose.yml          # Prod backend container definition (VPS deploy)
 ```
 
 ---
@@ -100,27 +99,36 @@ Other useful scripts: `npm run dev:backend` (backend only), `npm run dev:fronten
 
 ## Deploying (Prod)
 
-**Backend** deploys to [Render](https://render.com) via `render.yaml`; **database** is a separate
-Supabase project from dev; **frontend** is a static build on Vercel.
+**Database** is a separate Supabase project from dev; **backend** runs on a Contabo VPS; **frontend**
+is a static build on Vercel.
 
-### Backend (Render)
+### Backend (Contabo VPS, Docker via aaPanel)
 
-Connect the repo in the Render dashboard — it picks up `render.yaml` automatically (a Java web service
-rooted at `backend/`, building with `mvn clean package` and running the resulting jar). Set these env
-vars in the Render dashboard (not committed — `render.yaml` marks them `sync: false`):
+Runs as a Docker container, managed through aaPanel's Docker UI (or plain `docker compose` over SSH —
+both work off the same `docker-compose.yml`). aaPanel/nginx handles TLS termination and reverse-proxies
+`cookmate.atharvadevasthali.com` to the container's exposed `6754` port; the database stays external
+(prod Supabase project, not a container).
+
+```bash
+git clone <repo-url> && cd recipe-finder
+cp .env.prod.example .env      # fill in real values — see below
+docker compose up -d --build
+```
+
+None of the backend's env vars have a fallback default (see `application.properties`) — `docker compose`
+will refuse to start the container if any var below is missing from `.env`:
 
 | Variable | Description |
 |---|---|
 | `SPRING_DATASOURCE_URL` | Your **prod** Supabase project's JDBC URL (`...?sslmode=require`) |
 | `SPRING_DATASOURCE_USERNAME` | Supabase DB user (`postgres` by default) |
 | `SPRING_DATASOURCE_PASSWORD` | Supabase DB password |
-| `JWT_SECRET` | HMAC-SHA key for JWT signing |
+| `JWT_SECRET` | HMAC-SHA key for JWT signing — generate with `openssl rand -hex 32` |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Admin login credentials |
-| `ALLOWED_ORIGINS` | Your Vercel URL, e.g. `https://your-app.vercel.app` |
-| `GEMINI_API_KEY` | Optional — enables smart search / chat assistant |
+| `ALLOWED_ORIGINS` | Your frontend's URL, e.g. `https://cookmate-recipes.vercel.app` |
+| `GEMINI_API_KEY` | Enables smart search / chat assistant — required to start even if unused |
 
-Render assigns the port via its own `PORT` env var, which `server.port=${PORT:6754}` picks up
-automatically — nothing to configure there.
+To redeploy after a code change: `git pull && docker compose up -d --build`.
 
 ### Frontend (Vercel)
 
@@ -128,7 +136,7 @@ Import the `frontend/` directory as the project root in Vercel, and set the env 
 
 | Variable | Value |
 |---|---|
-| `VITE_API_BASE_URL` | Your Render service URL, e.g. `https://cookmate-backend.onrender.com` |
+| `VITE_API_BASE_URL` | Your backend's URL |
 
 `frontend/vercel.json` handles SPA routing (React Router) so all paths resolve to `index.html`.
 
@@ -138,22 +146,19 @@ Import the `frontend/` directory as the project root in Vercel, and set the env 
 
 ### Backend
 
+Copy `.env.example` (dev) or `.env.prod.example` (prod) to `.env` and fill in real values.
+
 | Variable | Default | Description |
 |---|---|---|
-| `JWT_SECRET` | (64-char hex string, dev only) | HMAC-SHA key for JWT signing — **required** in prod |
-| `ADMIN_USERNAME` | `admin` | Admin login username |
-| `ADMIN_PASSWORD` | `admin123` | Admin login password |
-| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/recipedb` | Supabase project's JDBC URL (`...?sslmode=require`) |
+| `JWT_SECRET` | *none — required* | HMAC-SHA key for JWT signing — generate with `openssl rand -hex 32` |
+| `ADMIN_USERNAME` | *none — required* | Admin login username |
+| `ADMIN_PASSWORD` | *none — required* | Admin login password |
+| `GEMINI_API_KEY` | *none — required* | Google Gemini API key, powers recipe embeddings + smart search + chat |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/recipedb` | Supabase project's JDBC URL (`...?sslmode=require`) — override for any real (Supabase) dev/prod use |
 | `SPRING_DATASOURCE_USERNAME` | `recipe_user` | DB user (`postgres` on Supabase) |
 | `SPRING_DATASOURCE_PASSWORD` | `recipe_pass` | DB password |
-| `ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated CORS-allowed origins — set to your Vercel URL in prod |
-| `GEMINI_API_KEY` | *(empty)* | Google Gemini API key, powers recipe embeddings + smart search. Optional — smart search is silently disabled if unset |
-| `PORT` | `6754` | Set automatically by Render in prod; only override locally if `6754` is taken |
-
-On Render, `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`,
-`JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ALLOWED_ORIGINS` must all be set in the
-dashboard — `render.yaml` marks them `sync: false` so nothing sensitive is committed. `GEMINI_API_KEY`
-is optional.
+| `ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated CORS-allowed origins — set to your frontend's URL in prod |
+| `PORT` | `6754` | Set automatically by most hosts in prod; only override locally if `6754` is taken |
 
 ### Frontend
 

@@ -1,0 +1,23 @@
+# Prod backend for the Contabo VPS, managed via aaPanel's Docker UI.
+# The database is Supabase (managed, external) — this only runs the backend
+# container. TLS termination and reverse-proxying to this container's exposed
+# port are handled by aaPanel/nginx, not here.
+#
+# Usage: cp .env.prod.example .env, fill in the real values, then
+#   docker compose up -d --build
+services:
+  backend:
+    build: ./backend
+    container_name: cookmate-backend
+    restart: unless-stopped
+    ports:
+      - "6754:6754"
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:?SPRING_DATASOURCE_URL is required}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:?SPRING_DATASOURCE_USERNAME is required}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:?SPRING_DATASOURCE_PASSWORD is required}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:?ADMIN_USERNAME is required}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:?ALLOWED_ORIGINS is required, e.g. https://cookmate-recipes.vercel.app}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:?GEMINI_API_KEY is required}

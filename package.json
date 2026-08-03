@@ -1,7 +1,7 @@
 {
   "name": "recipe-finder",
   "version": "1.0.0",
-  "description": "Full-stack recipe recommendation platform using Java Spring Boot, React, and Supabase Postgres, deployed on Render and Vercel",
+  "description": "Full-stack recipe recommendation platform using Java Spring Boot, React, and Supabase Postgres",
   "license": "MIT",
   "author": {
     "name": "Atharva Devasthali",

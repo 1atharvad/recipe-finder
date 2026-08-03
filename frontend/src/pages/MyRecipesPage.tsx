@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { NotePencilIcon } from '@phosphor-icons/react'
 import { toast } from 'advi-ui'
 import { recipeApi } from '@/api/api'
@@ -8,6 +9,7 @@ import { SkelBlock } from '@/components/Skeleton'
 import content from '@/content/myRecipesPage.json'
 
 export const MyRecipesPage = () => {
+  const navigate = useNavigate()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
   const [editTarget, setEditTarget] = useState<Recipe | null>(null)
@@ -69,7 +71,7 @@ export const MyRecipesPage = () => {
         <div className="my-recipes-list">
           {recipes.map(recipe => (
             <div key={recipe.id} className="my-recipe-row">
-              <div className="my-recipe-info">
+              <div className="my-recipe-info" onClick={() => navigate(`/recipe/${recipe.id}`)}>
                 <span className="my-recipe-name">
                   {recipe.name}
                   <span className={`visibility-badge ${recipe.isPublic ? 'is-public' : 'is-private'}`}>
@@ -83,8 +85,8 @@ export const MyRecipesPage = () => {
                 </span>
               </div>
               <div className="my-recipe-actions">
-                <button className="btn-pill btn-small btn-edit" onClick={() => setEditTarget(recipe)}>{content.editLabel}</button>
-                <button className="btn-pill btn-small btn-delete" onClick={() => handleDelete(recipe.id)}>{content.deleteLabel}</button>
+                <button className="btn-pill btn-small btn-edit" onClick={e => { e.stopPropagation(); setEditTarget(recipe) }}>{content.editLabel}</button>
+                <button className="btn-pill btn-small btn-delete" onClick={e => { e.stopPropagation(); handleDelete(recipe.id) }}>{content.deleteLabel}</button>
               </div>
             </div>
           ))}

@@ -182,6 +182,55 @@
     }
   }
 
+  .nutrition-section {
+    padding: $sp-6 $sp-5;
+    border-top: 1.5px solid $border;
+
+    @media (min-width: $bp-md) { padding: $sp-8; }
+
+    h2 {
+      font-size: $fs-card-title;
+      color: $text;
+      margin-bottom: $sp-1;
+    }
+
+    .nutrition-subtext {
+      color: $muted;
+      font-size: $fs-footer;
+      margin-bottom: $sp-5;
+    }
+  }
+
+  .nutrition-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-3;
+  }
+
+  .nutrition-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    background: $card-bg;
+    border: 1px solid $border;
+    border-radius: 14px;
+    padding: $sp-3 $sp-5;
+    min-width: 5.5rem;
+
+    .nutrition-stat-value {
+      font-family: $font-display;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: $primary;
+    }
+
+    .nutrition-stat-label {
+      font-size: $fs-label;
+      color: $muted;
+    }
+  }
+
   .video-section {
     padding: $sp-6 $sp-5;
     border-top: 1.5px solid $border;

@@ -23,3 +23,5 @@ node_modules/
 .DS_Store
 Thumbs.db
 .vercel
+# Added by code-review-graph
+.code-review-graph/

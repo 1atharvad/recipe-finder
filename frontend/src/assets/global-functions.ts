@@ -74,11 +74,10 @@ export const handleImageFallback = (e: SyntheticEvent<HTMLImageElement>) => {
   }
 }
 
-// Generic placeholder used only when a recipe has no imageUrl of its own —
-// per-recipe images now live in the database (Recipe.imageUrl), not here.
-const RECIPE_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836'
-
-export const getRecipeImage = (imageUrl?: string | null): string => imageUrl || RECIPE_IMAGE_FALLBACK
+// A recipe with no imageUrl gets the same neutral "Image coming soon" SVG
+// used for load failures, rather than a specific-but-unrelated stock photo
+// that could mislead someone into thinking it's a picture of that dish.
+export const getRecipeImage = (imageUrl?: string | null): string => imageUrl || FALLBACK_IMAGE
 
 // ── YouTube ──────────────────────────────────────────────────────────────
 

@@ -124,24 +124,41 @@ public class RecipeService {
     // there's enough to work with (here or built up over prior turns), the assistant
     // drafts or updates the recipe. Never writes to the database itself — the
     // frontend only fills RecipeFormModal's fields for review; saving stays separate.
-    public RecipeDraftResponse draftRecipe(String message, List<ChatMessageDTO> history) {
+    public RecipeDraftResponse draftRecipe(String message, List<ChatMessageDTO> history, RecipeRequest currentRecipe) {
         if (!geminiClient.isConfigured()) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "AI drafting is not configured");
         }
 
         StringBuilder prompt = new StringBuilder();
-        prompt.append("You are a recipe-writing assistant helping a user create a new recipe through conversation. ")
-              .append("You are NOT the same assistant that recommends existing recipes — your job is to help WRITE a new one.\n\n")
-              .append("Figure out if you have enough information to draft a real, specific dish (a dish concept — ")
-              .append("exact measurements aren't required, the user can refine those after).\n")
-              .append("- If the latest message is a greeting, small talk, or too vague to identify a dish (e.g. just ")
-              .append("\"hi\" or \"make me something\"), do NOT invent a random recipe. Respond with a short, friendly ")
-              .append("question inviting them to describe what they'd like to cook, and set \"recipe\" to null.\n")
-              .append("- If a specific dish is identifiable (from this message or earlier in the conversation), write ")
-              .append("a complete recipe for it and set \"recipe\" to that recipe. If this is a refinement to a recipe ")
-              .append("already drafted earlier in the conversation (e.g. \"make it vegan\", \"double it\", \"less spicy\"), ")
-              .append("update that recipe rather than starting over.\n\n")
-              .append("Respond with ONLY a single JSON object, no markdown code fences, no surrounding text, shaped ")
+        if (currentRecipe != null) {
+            prompt.append("You are a recipe-writing assistant helping a user EDIT an existing recipe through conversation. ")
+                  .append("You are NOT the same assistant that recommends existing recipes — your job is to help REWRITE this one.\n\n")
+                  .append("Here is the recipe as it currently stands (JSON):\n");
+            try {
+                prompt.append(objectMapper.writeValueAsString(currentRecipe)).append("\n\n");
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not serialize current recipe");
+            }
+            prompt.append("Apply the user's requested change(s) to this recipe and set \"recipe\" to the FULL updated ")
+                  .append("recipe (all fields, not just the ones that changed) — never a partial object. Recompute ")
+                  .append("nutrition to match the updated ingredients/servings.\n")
+                  .append("- If the latest message doesn't request any concrete change (e.g. it's a greeting or unclear), ")
+                  .append("do NOT modify the recipe. Respond with a short, friendly question asking what they'd like to ")
+                  .append("change, and set \"recipe\" to null.\n\n");
+        } else {
+            prompt.append("You are a recipe-writing assistant helping a user create a new recipe through conversation. ")
+                  .append("You are NOT the same assistant that recommends existing recipes — your job is to help WRITE a new one.\n\n")
+                  .append("Figure out if you have enough information to draft a real, specific dish (a dish concept — ")
+                  .append("exact measurements aren't required, the user can refine those after).\n")
+                  .append("- If the latest message is a greeting, small talk, or too vague to identify a dish (e.g. just ")
+                  .append("\"hi\" or \"make me something\"), do NOT invent a random recipe. Respond with a short, friendly ")
+                  .append("question inviting them to describe what they'd like to cook, and set \"recipe\" to null.\n")
+                  .append("- If a specific dish is identifiable (from this message or earlier in the conversation), write ")
+                  .append("a complete recipe for it and set \"recipe\" to that recipe. If this is a refinement to a recipe ")
+                  .append("already drafted earlier in the conversation (e.g. \"make it vegan\", \"double it\", \"less spicy\"), ")
+                  .append("update that recipe rather than starting over.\n\n");
+        }
+        prompt.append("Respond with ONLY a single JSON object, no markdown code fences, no surrounding text, shaped ")
               .append("EXACTLY like this:\n")
               .append("{\n")
               .append("  \"reply\": \"<short, friendly message — either your clarifying question, or a one-line confirmation of what you drafted>\",\n")
@@ -154,7 +171,14 @@ public class RecipeService {
               .append("    \"cuisineType\": one of ITALIAN, INDIAN, ASIAN, MEXICAN, OTHER,\n")
               .append("    \"prepTimeMinutes\": integer,\n")
               .append("    \"cookTimeMinutes\": integer,\n")
-              .append("    \"difficulty\": one of EASY, MEDIUM, HARD\n")
+              .append("    \"difficulty\": one of EASY, MEDIUM, HARD,\n")
+              .append("    \"calories\": integer (estimated total calories for the WHOLE recipe, all servings combined),\n")
+              .append("    \"proteinGrams\": integer (total grams, whole recipe),\n")
+              .append("    \"carbsGrams\": integer (total grams, whole recipe),\n")
+              .append("    \"fatGrams\": integer (total grams, whole recipe),\n")
+              .append("    \"fiberGrams\": integer (total grams, whole recipe),\n")
+              .append("    \"sugarGrams\": integer (total grams, whole recipe),\n")
+              .append("    \"sodiumMg\": integer (total milligrams, whole recipe)\n")
               .append("  }\n")
               .append("}\n\n");
 
@@ -414,6 +438,13 @@ public class RecipeService {
         recipe.setPrepTimeMinutes(req.getPrepTimeMinutes());
         recipe.setCookTimeMinutes(req.getCookTimeMinutes());
         recipe.setDifficulty(req.getDifficulty());
+        recipe.setCalories(req.getCalories());
+        recipe.setProteinGrams(req.getProteinGrams());
+        recipe.setCarbsGrams(req.getCarbsGrams());
+        recipe.setFatGrams(req.getFatGrams());
+        recipe.setFiberGrams(req.getFiberGrams());
+        recipe.setSugarGrams(req.getSugarGrams());
+        recipe.setSodiumMg(req.getSodiumMg());
         if (req.getIngredients() != null) {
             recipe.setIngredients(req.getIngredients().stream()
                     .map(dto -> {

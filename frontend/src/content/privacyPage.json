@@ -14,7 +14,7 @@
     },
     {
       "heading": "Third-party services",
-      "html": "<p>Optional AI features — smart search, the recipe chat assistant, and AI-assisted recipe drafting — are powered by Google's Gemini API. If you use these features, the text you enter is sent to Google to generate a response. These features are only available to accounts with premium access enabled; if you never use them, nothing is sent to Google on your behalf.</p><p>The app's database is hosted on Supabase (a managed PostgreSQL provider). The backend runs on Render, and the frontend is hosted on Vercel.</p>"
+      "html": "<p>Optional AI features — smart search, the recipe chat assistant, and AI-assisted recipe drafting — are powered by Google's Gemini API. If you use these features, the text you enter is sent to Google to generate a response. These features are only available to accounts with premium access enabled; if you never use them, nothing is sent to Google on your behalf.</p><p>The app's database is hosted on Supabase (a managed PostgreSQL provider), the backend runs on a Contabo VPS, and the frontend is hosted on Vercel.</p>"
     },
     {
       "heading": "Cookies and local storage",

@@ -4,7 +4,7 @@ import { LandingHeader } from '@/components/LandingHeader'
 import { LandingFooter } from '@/components/LandingFooter'
 import content from '@/content/howItWorksPage.json'
 
-const ICONS: Record<string, Icon> = { MagnifyingGlassIcon, HeartIcon, SparkleIcon }
+const ICONS: Record<string, Icon> = { MagnifyingGlass: MagnifyingGlassIcon, Heart: HeartIcon, Sparkle: SparkleIcon }
 
 export const HowItWorksPage = () => {
   return (

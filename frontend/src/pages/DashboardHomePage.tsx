@@ -10,8 +10,9 @@ import { pickSeeded } from '@/assets/global-functions'
 import content from '@/content/dashboardHome.json'
 
 const ICONS: Record<string, Icon> = {
-  MagnifyingGlassIcon, SparkleIcon, PackageIcon, HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon,
-  BellRingingIcon, ShoppingCartIcon, CookingPotIcon,
+  MagnifyingGlass: MagnifyingGlassIcon, Sparkle: SparkleIcon, Package: PackageIcon, Heart: HeartIcon,
+  NotePencil: NotePencilIcon, ClockCounterClockwise: ClockCounterClockwiseIcon,
+  BellRinging: BellRingingIcon, ShoppingCart: ShoppingCartIcon, CookingPot: CookingPotIcon,
 }
 
 const TONES = ['sage', 'mustard', 'peach']

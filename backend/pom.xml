@@ -89,6 +89,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+		<!-- Lets Jackson serialize lazily-loaded Hibernate proxies (e.g. Recipe.owner)
+		     instead of choking on the ByteBuddy proxy's internal fields. Spring Boot's
+		     Jackson autoconfiguration auto-registers it via ServiceLoader — no @Bean needed. -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate6</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

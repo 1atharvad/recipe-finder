@@ -28,6 +28,13 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
   const [prepTimeMinutes, setPrepTimeMinutes] = useState<number | ''>(initial?.prepTimeMinutes ?? '')
   const [cookTimeMinutes, setCookTimeMinutes] = useState<number | ''>(initial?.cookTimeMinutes ?? '')
   const [difficulty, setDifficulty] = useState<string>(initial?.difficulty ?? '')
+  const [calories, setCalories] = useState<number | ''>(initial?.calories ?? '')
+  const [proteinGrams, setProteinGrams] = useState<number | ''>(initial?.proteinGrams ?? '')
+  const [carbsGrams, setCarbsGrams] = useState<number | ''>(initial?.carbsGrams ?? '')
+  const [fatGrams, setFatGrams] = useState<number | ''>(initial?.fatGrams ?? '')
+  const [fiberGrams, setFiberGrams] = useState<number | ''>(initial?.fiberGrams ?? '')
+  const [sugarGrams, setSugarGrams] = useState<number | ''>(initial?.sugarGrams ?? '')
+  const [sodiumMg, setSodiumMg] = useState<number | ''>(initial?.sodiumMg ?? '')
   const [ingredients, setIngredients] = useState<{ name: string; quantity: string }[]>(
     initial?.ingredients?.length ? initial.ingredients : [{ name: '', quantity: '' }]
   )
@@ -61,6 +68,30 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
     setSteps(prev => prev.map((s, idx) => idx === i ? val : s))
   }
 
+  const buildRequestBody = (): RecipeRequest => ({
+    name,
+    servings,
+    ingredients: ingredients.filter(i => i.name.trim()),
+    steps: steps.filter(s => s.trim()),
+    dietaryType: dietaryType || null,
+    cuisineType: cuisineType || null,
+    videoUrl: videoUrl.trim() || null,
+    imageUrl: imageUrl.trim() || null,
+    sourceName: sourceName.trim() || null,
+    sourceUrl: sourceUrl.trim() || null,
+    isPublic: context === 'user' ? isPublic : undefined,
+    prepTimeMinutes: prepTimeMinutes === '' ? null : prepTimeMinutes,
+    cookTimeMinutes: cookTimeMinutes === '' ? null : cookTimeMinutes,
+    difficulty: difficulty || null,
+    calories: calories === '' ? null : calories,
+    proteinGrams: proteinGrams === '' ? null : proteinGrams,
+    carbsGrams: carbsGrams === '' ? null : carbsGrams,
+    fatGrams: fatGrams === '' ? null : fatGrams,
+    fiberGrams: fiberGrams === '' ? null : fiberGrams,
+    sugarGrams: sugarGrams === '' ? null : sugarGrams,
+    sodiumMg: sodiumMg === '' ? null : sodiumMg,
+  })
+
   const handleDraft = async () => {
     const text = draftInput.trim()
     if (!text || drafting) return
@@ -72,7 +103,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
     setDraftError('')
 
     try {
-      const res = await recipeApi.draft(text, historyForRequest)
+      const res = await recipeApi.draft(text, historyForRequest, mode === 'edit' ? buildRequestBody() : undefined)
       setDraftMessages(prev => [...prev, { role: 'assistant', content: res.reply }])
       const draft = res.recipe
       if (draft) {
@@ -83,6 +114,13 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
         setPrepTimeMinutes(draft.prepTimeMinutes ?? '')
         setCookTimeMinutes(draft.cookTimeMinutes ?? '')
         setDifficulty(draft.difficulty ?? '')
+        setCalories(draft.calories ?? '')
+        setProteinGrams(draft.proteinGrams ?? '')
+        setCarbsGrams(draft.carbsGrams ?? '')
+        setFatGrams(draft.fatGrams ?? '')
+        setFiberGrams(draft.fiberGrams ?? '')
+        setSugarGrams(draft.sugarGrams ?? '')
+        setSodiumMg(draft.sodiumMg ?? '')
         setIngredients(draft.ingredients.length ? draft.ingredients : [{ name: '', quantity: '' }])
         setSteps(draft.steps.length ? draft.steps : [''])
       }
@@ -99,22 +137,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
     setError('')
     setLoading(true)
 
-    const body: RecipeRequest = {
-      name,
-      servings,
-      ingredients: ingredients.filter(i => i.name.trim()),
-      steps: steps.filter(s => s.trim()),
-      dietaryType: dietaryType || null,
-      cuisineType: cuisineType || null,
-      videoUrl: videoUrl.trim() || null,
-      imageUrl: imageUrl.trim() || null,
-      sourceName: sourceName.trim() || null,
-      sourceUrl: sourceUrl.trim() || null,
-      isPublic: context === 'user' ? isPublic : undefined,
-      prepTimeMinutes: prepTimeMinutes === '' ? null : prepTimeMinutes,
-      cookTimeMinutes: cookTimeMinutes === '' ? null : cookTimeMinutes,
-      difficulty: difficulty || null,
-    }
+    const body: RecipeRequest = buildRequestBody()
 
     try {
       let saved: Recipe
@@ -146,10 +169,12 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
         {error && <p className="auth-error">{error}</p>}
 
         <form onSubmit={handleSubmit} className="recipe-form">
-          {mode === 'create' && (
+          {(
             <div className="ai-draft-box">
-              <span className="ai-draft-label"><SparkleIcon weight="fill" /> {content.draftPromptLabel}</span>
-              <p className="ai-draft-hint">{content.draftHint}</p>
+              <span className="ai-draft-label">
+                <SparkleIcon weight="fill" /> {mode === 'create' ? content.draftPromptLabel : content.draftPromptLabelEdit}
+              </span>
+              <p className="ai-draft-hint">{mode === 'create' ? content.draftHint : content.draftHintEdit}</p>
 
               {draftMessages.length > 0 && (
                 <div className="chat-thread ai-draft-thread">
@@ -175,7 +200,11 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
                   value={draftInput}
                   onChange={e => setDraftInput(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleDraft() } }}
-                  placeholder={draftMessages.length ? content.draftFollowUpPlaceholder : content.draftPromptPlaceholder}
+                  placeholder={
+                    draftMessages.length
+                      ? content.draftFollowUpPlaceholder
+                      : mode === 'create' ? content.draftPromptPlaceholder : content.draftPromptPlaceholderEdit
+                  }
                   rows={1}
                   disabled={drafting}
                 />
@@ -226,6 +255,64 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
               min={0}
             />
             <SelectField label={content.difficultyLabel} value={difficulty} onChange={setDifficulty} options={content.difficultyOptions} />
+          </div>
+
+          <p className="section-label">{content.nutritionSection}</p>
+
+          <div className="form-row form-row--3">
+            <FormField
+              label={content.caloriesLabel}
+              type="number"
+              value={calories}
+              onChange={v => setCalories(v === '' ? '' : Number(v))}
+              min={0}
+            />
+            <FormField
+              label={content.proteinLabel}
+              type="number"
+              value={proteinGrams}
+              onChange={v => setProteinGrams(v === '' ? '' : Number(v))}
+              min={0}
+            />
+            <FormField
+              label={content.carbsLabel}
+              type="number"
+              value={carbsGrams}
+              onChange={v => setCarbsGrams(v === '' ? '' : Number(v))}
+              min={0}
+            />
+          </div>
+          <div className="form-row form-row--3">
+            <FormField
+              label={content.fatLabel}
+              type="number"
+              value={fatGrams}
+              onChange={v => setFatGrams(v === '' ? '' : Number(v))}
+              min={0}
+            />
+            <FormField
+              label={content.fiberLabel}
+              type="number"
+              value={fiberGrams}
+              onChange={v => setFiberGrams(v === '' ? '' : Number(v))}
+              min={0}
+            />
+            <FormField
+              label={content.sugarLabel}
+              type="number"
+              value={sugarGrams}
+              onChange={v => setSugarGrams(v === '' ? '' : Number(v))}
+              min={0}
+            />
+          </div>
+          <div className="form-row form-row--3">
+            <FormField
+              label={content.sodiumLabel}
+              type="number"
+              value={sodiumMg}
+              onChange={v => setSodiumMg(v === '' ? '' : Number(v))}
+              min={0}
+            />
           </div>
 
           <p className="section-label">{content.mediaSection}</p>
