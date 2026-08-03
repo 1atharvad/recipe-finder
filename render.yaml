@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: cookmate-backend
+    runtime: java
+    plan: free
+    rootDir: backend
+    buildCommand: mvn -q clean package -DskipTests
+    startCommand: java -jar target/backend-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # Render injects PORT automatically; server.port reads it via
+      # ${PORT:6754} in application.properties.
+      # Supabase (prod project) connection details — set manually in the
+      # Render dashboard, not committed here. URL must include
+      # ?sslmode=require, see .env.example for the format.
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false

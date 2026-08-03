@@ -2,9 +2,12 @@
 
 A full-stack recipe management app with user authentication, personalised recommendations, and an admin panel.
 
-Built with **Spring Boot 3** · **React + TypeScript** · **PostgreSQL** · **Docker Compose** · **nginx**
+Built with **Spring Boot 3** · **React + TypeScript** · **Supabase Postgres**
 
-Dev runs Postgres + backend in Docker (backend uses an incremental `mvn spring-boot:run`, not a full rebuild, so it stays light) and the frontend natively via Vite. Prod deploys the backend + Postgres + nginx to a VPS (e.g. Contabo) via Docker, and the frontend as a static build on Vercel.
+Dev and prod both run the backend natively (`mvn spring-boot:run` locally, a Maven build on Render in
+prod) against a Supabase Postgres project — a free-tier project for dev, a separate one for prod. The
+frontend is a static build on Vercel in both cases (pointed at `localhost` in dev via Vite's proxy, at
+the Render URL in prod).
 
 ---
 
@@ -36,11 +39,11 @@ Dev runs Postgres + backend in Docker (backend uses an incremental `mvn spring-b
 |---|---|
 | Backend | Spring Boot 3.5.6, Spring Security 6, Spring Data JPA |
 | Auth | JWT (jjwt 0.12.6), BCrypt |
-| Database | PostgreSQL 16 |
+| Database | Supabase Postgres (managed, pgvector enabled) |
 | Frontend | React 18, TypeScript, Vite, SCSS |
 | Routing | React Router v6 |
-| Proxy | nginx |
-| Containers | Docker Compose |
+| Backend hosting | Render |
+| Frontend hosting | Vercel |
 
 ---
 
@@ -63,63 +66,61 @@ recipe-finder/
 │       ├── context/           # AuthContext (JWT + user state)
 │       ├── pages/             # All page components
 │       └── types/             # Shared TypeScript interfaces
-├── nginx/nginx.prod.conf      # Prod reverse proxy (API only, fronts the backend on the VPS)
-├── docker-compose.dev.yml     # Dev: Postgres + backend (mvn spring-boot:run, source bind-mounted)
-└── docker-compose.prod.yml    # Prod: Postgres + backend + nginx (deployed to the VPS)
+└── render.yaml                 # Render service definition for the backend
 ```
 
 ---
 
 ## Running Locally (Dev)
 
-Postgres and the backend run in Docker; the frontend runs natively via Vite.
+The backend runs natively via Maven; Postgres is a Supabase project (not local); the frontend runs
+natively via Vite.
 
-The backend container bind-mounts `./backend` into a plain `maven:3.9.6-eclipse-temurin-17` image and
-runs `mvn spring-boot:run` — no Dockerfile build step, no `mvn clean package` on every start. Maven's
-`~/.m2` cache is a named volume (`m2_cache`), so dependencies download once, not on every container
-start. `spring-boot-devtools` is on the classpath, so if your editor compiles `.java` files on save
-(most do), the app restarts automatically inside the container.
-
-**Prerequisites:** Docker, Node 20+ (Java is not needed on the host — it runs in the container)
+**Prerequisites:** Node 20+, Java 17, Maven, a free [Supabase](https://supabase.com) project for dev
+(enable the `vector` extension under Database > Extensions once, so pgvector is available).
 
 ```bash
 git clone <repo-url>
 cd recipe-finder
-npm install   # installs root dev tooling (concurrently)
-npm run dev   # starts Postgres + backend in Docker, and the frontend via Vite
+npm install                    # installs root dev tooling (concurrently, dotenv-cli)
+cp .env.example .env           # fill in your dev Supabase project's connection details
+npm run dev                    # starts the backend (mvn spring-boot:run) and the frontend (Vite)
 ```
 
-- Frontend: **http://localhost:5173** (Vite proxies `/api/v1` to the backend, see `frontend/vite.config.ts`)
-- Backend: **http://localhost:6754** (in Docker)
-- Postgres: **localhost:5433** (in Docker — mapped off the default 5432 to avoid clashing with other local Postgres instances)
+- Frontend: **http://localhost:5173** (Vite proxies `/api/v1` to the backend, see `frontend/vite.config.js`)
+- Backend: **http://localhost:6754**
+- Database: your Supabase dev project
 
-The database is seeded automatically with 10 general recipes on first run.
+`spring-boot-devtools` is on the classpath, so if your editor compiles `.java` files on save (most do),
+the backend restarts automatically without a full `mvn clean package`.
 
-Other useful scripts: `npm run dev:backend` (Postgres + backend only), `npm run dev:frontend`
-(frontend only), `npm run dev:down` (stop and remove the dev containers).
+Other useful scripts: `npm run dev:backend` (backend only), `npm run dev:frontend` (frontend only).
 
 ---
 
 ## Deploying (Prod)
 
-**Backend + Postgres** run on a VPS (e.g. Contabo) via Docker; **frontend** is a static build deployed
-to Vercel. They talk to each other over CORS, not a shared nginx proxy.
+**Backend** deploys to [Render](https://render.com) via `render.yaml`; **database** is a separate
+Supabase project from dev; **frontend** is a static build on Vercel.
 
-### Backend (VPS)
+### Backend (Render)
 
-```bash
-cd recipe-finder
-DB_PASSWORD=... JWT_SECRET=... ADMIN_USERNAME=... ADMIN_PASSWORD=... \
-ALLOWED_ORIGINS=https://your-app.vercel.app \
-npm run prod
-```
+Connect the repo in the Render dashboard — it picks up `render.yaml` automatically (a Java web service
+rooted at `backend/`, building with `mvn clean package` and running the resulting jar). Set these env
+vars in the Render dashboard (not committed — `render.yaml` marks them `sync: false`):
 
-This builds and starts Postgres + the Spring Boot backend + nginx (`docker-compose.prod.yml`),
-with nginx reverse-proxying `/api/v1/*` to the backend on port 8080. Point your domain's DNS at the
-VPS and put nginx behind Let's Encrypt/certbot for HTTPS (or front it with another reverse proxy
-that terminates TLS on 443 and forwards to 8080).
+| Variable | Description |
+|---|---|
+| `SPRING_DATASOURCE_URL` | Your **prod** Supabase project's JDBC URL (`...?sslmode=require`) |
+| `SPRING_DATASOURCE_USERNAME` | Supabase DB user (`postgres` by default) |
+| `SPRING_DATASOURCE_PASSWORD` | Supabase DB password |
+| `JWT_SECRET` | HMAC-SHA key for JWT signing |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Admin login credentials |
+| `ALLOWED_ORIGINS` | Your Vercel URL, e.g. `https://your-app.vercel.app` |
+| `GEMINI_API_KEY` | Optional — enables smart search / chat assistant |
 
-`npm run prod:down` stops it, `npm run prod:logs` tails logs.
+Render assigns the port via its own `PORT` env var, which `server.port=${PORT:6754}` picks up
+automatically — nothing to configure there.
 
 ### Frontend (Vercel)
 
@@ -127,7 +128,7 @@ Import the `frontend/` directory as the project root in Vercel, and set the env 
 
 | Variable | Value |
 |---|---|
-| `VITE_API_BASE_URL` | `https://api.your-domain.com` (your VPS's public URL) |
+| `VITE_API_BASE_URL` | Your Render service URL, e.g. `https://cookmate-backend.onrender.com` |
 
 `frontend/vercel.json` handles SPA routing (React Router) so all paths resolve to `index.html`.
 
@@ -142,14 +143,17 @@ Import the `frontend/` directory as the project root in Vercel, and set the env 
 | `JWT_SECRET` | (64-char hex string, dev only) | HMAC-SHA key for JWT signing — **required** in prod |
 | `ADMIN_USERNAME` | `admin` | Admin login username |
 | `ADMIN_PASSWORD` | `admin123` | Admin login password |
-| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/recipedb` | DB URL |
-| `SPRING_DATASOURCE_USERNAME` | `recipe_user` | DB user |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/recipedb` | Supabase project's JDBC URL (`...?sslmode=require`) |
+| `SPRING_DATASOURCE_USERNAME` | `recipe_user` | DB user (`postgres` on Supabase) |
 | `SPRING_DATASOURCE_PASSWORD` | `recipe_pass` | DB password |
 | `ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated CORS-allowed origins — set to your Vercel URL in prod |
 | `GEMINI_API_KEY` | *(empty)* | Google Gemini API key, powers recipe embeddings + smart search. Optional — smart search is silently disabled if unset |
+| `PORT` | `6754` | Set automatically by Render in prod; only override locally if `6754` is taken |
 
-`docker-compose.prod.yml` requires `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`,
-and `ALLOWED_ORIGINS` to be set (no insecure defaults in prod). `GEMINI_API_KEY` is optional.
+On Render, `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`,
+`JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ALLOWED_ORIGINS` must all be set in the
+dashboard — `render.yaml` marks them `sync: false` so nothing sensitive is committed. `GEMINI_API_KEY`
+is optional.
 
 ### Frontend
 
