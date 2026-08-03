@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useEffect } from 'react'
 
 const ITEM_HEIGHT = 44
 const VISIBLE_ROWS = 5
@@ -15,13 +15,25 @@ interface WheelColumnProps {
 const WheelColumn = ({ values, index, onChange }: WheelColumnProps) => {
   const ref = useRef<HTMLDivElement>(null)
   const settleTimer = useRef<ReturnType<typeof setTimeout>>()
+  // Tracks the index this column last scrolled itself to (via user drag or
+  // click) so the sync effect below can tell "index changed because we
+  // caused it" apart from "index changed externally" (e.g. a parent's
+  // "reset to now" button) — only the latter should force a re-scroll.
+  const lastOwnIndex = useRef(index)
 
   useLayoutEffect(() => {
     ref.current?.scrollTo({ top: index * ITEM_HEIGHT })
-    // Only ever sync from the initial value — after that the wheel owns its
-    // own scroll position, so this intentionally doesn't depend on `index`.
+    lastOwnIndex.current = index
+    // Intentionally mount-only — later `index` changes are handled by the
+    // sync effect below, which needs the smooth-scroll behavior this doesn't have.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (index === lastOwnIndex.current) return
+    ref.current?.scrollTo({ top: index * ITEM_HEIGHT, behavior: 'smooth' })
+    lastOwnIndex.current = index
+  }, [index])
 
   const handleScroll = () => {
     if (settleTimer.current) clearTimeout(settleTimer.current)
@@ -29,12 +41,15 @@ const WheelColumn = ({ values, index, onChange }: WheelColumnProps) => {
       const el = ref.current
       if (!el) return
       const i = Math.round(el.scrollTop / ITEM_HEIGHT)
-      onChange(Math.min(Math.max(i, 0), values.length - 1))
+      const clamped = Math.min(Math.max(i, 0), values.length - 1)
+      lastOwnIndex.current = clamped
+      onChange(clamped)
     }, 100)
   }
 
   const selectValue = (i: number) => {
     ref.current?.scrollTo({ top: i * ITEM_HEIGHT, behavior: 'smooth' })
+    lastOwnIndex.current = i
     onChange(i)
   }
 

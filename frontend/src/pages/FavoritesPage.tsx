@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Heart } from '@phosphor-icons/react'
+import { HeartIcon } from '@phosphor-icons/react'
 import { favoritesApi } from '@/api/api'
 import { FavoriteCard } from '@/components/FavoriteCard'
 import { FavoriteRow } from '@/components/FavoriteRow'
@@ -35,7 +35,7 @@ export const FavoritesPage = () => {
     return (
       <div className="page">
         <div className="empty-state">
-          <Heart weight="fill" className="empty-icon-svg" />
+          <HeartIcon weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
           <Link to="/dashboard/search" className="btn-pill btn-primary">{content.browseLabel}</Link>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Icon } from '@phosphor-icons/react'
 import {
-  BowlSteam, MagnifyingGlass, Heart, Sparkle, LockSimple, Confetti,
+  BowlSteamIcon, MagnifyingGlassIcon, HeartIcon, SparkleIcon, LockSimpleIcon, ConfettiIcon,
 } from '@phosphor-icons/react'
 import { LandingHeader } from '@/components/LandingHeader'
 import { LandingFooter } from '@/components/LandingFooter'
@@ -15,7 +15,7 @@ import { useAuth } from '@/context/AuthContext'
 import type { Recipe } from '@/types'
 import content from '@/content/landingPage.json'
 
-const ICONS: Record<string, Icon> = { MagnifyingGlass, Heart, Sparkle }
+const ICONS: Record<string, Icon> = { MagnifyingGlassIcon, HeartIcon, SparkleIcon }
 
 const TODAY_WEEKDAY = new Date().toLocaleDateString('en-US', { weekday: 'long' })
 
@@ -35,23 +35,23 @@ export const LandingPage = () => {
       <section className="landing-hero">
         <div className="section-inner hero-grid">
           <div className="hero-copy">
-            <span className="hero-eyebrow">{content.hero.eyebrow} <Sparkle weight="fill" /></span>
+            <span className="hero-eyebrow">{content.hero.eyebrow} <SparkleIcon weight="fill" /></span>
             <h1>{content.hero.title}</h1>
             <p>{content.hero.text}</p>
             <div className="landing-cta-row">
               <button className="btn-pill btn-primary" onClick={() => navigate('/dashboard/search')}>
-                {content.hero.ctaLabel} <MagnifyingGlass weight="bold" />
+                {content.hero.ctaLabel} <MagnifyingGlassIcon weight="bold" />
               </button>
               <a className="btn-link" href="#how-it-works">{content.hero.howItWorksLink}</a>
             </div>
           </div>
           <div className="hero-preview-card">
-            <BowlSteam className="hero-preview-icon" weight="duotone" />
+            <BowlSteamIcon className="hero-preview-icon" weight="duotone" />
             <div className="hero-preview-input">
               <span>{content.hero.previewPlaceholder}</span>
-              <MagnifyingGlass className="hero-preview-search-btn" weight="bold" />
+              <MagnifyingGlassIcon className="hero-preview-search-btn" weight="bold" />
             </div>
-            <p className="hero-preview-tag"><Sparkle weight="fill" /> {content.hero.previewTag}</p>
+            <p className="hero-preview-tag"><SparkleIcon weight="fill" /> {content.hero.previewTag}</p>
           </div>
         </div>
       </section>
@@ -112,7 +112,7 @@ export const LandingPage = () => {
           <span className="hero-eyebrow">{content.realLifeSection.eyebrow}</span>
           <h2>{content.realLifeSection.title}</h2>
           <p className="real-life-tags">
-            {content.realLifeSection.tagsPrefix} <Sparkle weight="fill" /> {content.realLifeSection.tagsMiddle} {TODAY_WEEKDAY} <Sparkle weight="fill" /> {content.realLifeSection.tagsSuffix}
+            {content.realLifeSection.tagsPrefix} <SparkleIcon weight="fill" /> {content.realLifeSection.tagsMiddle} {TODAY_WEEKDAY} <SparkleIcon weight="fill" /> {content.realLifeSection.tagsSuffix}
           </p>
           <p className="real-life-subtext">{content.realLifeSection.subtext}</p>
         </div>
@@ -120,7 +120,7 @@ export const LandingPage = () => {
 
       <section className="trust-strip">
         <div className="section-inner">
-          <span><LockSimple weight="bold" /> {content.trustStrip.text} <LockSimple weight="bold" /></span>
+          <span><LockSimpleIcon weight="bold" /> {content.trustStrip.text} <LockSimpleIcon weight="bold" /></span>
         </div>
       </section>
 
@@ -129,7 +129,7 @@ export const LandingPage = () => {
           <h2>{content.finalCta.title}</h2>
           <p>{content.finalCta.text}</p>
           <button className="btn-pill btn-cta" onClick={() => navigate(isAuthenticated ? '/dashboard' : '/signup')}>
-            {isAuthenticated ? content.finalCta.ctaLabelAuthenticated : content.finalCta.ctaLabelAnonymous} <Confetti weight="fill" />
+            {isAuthenticated ? content.finalCta.ctaLabelAuthenticated : content.finalCta.ctaLabelAnonymous} <ConfettiIcon weight="fill" />
           </button>
         </div>
       </section>

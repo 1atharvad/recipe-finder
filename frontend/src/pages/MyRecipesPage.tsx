@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { NotePencil } from '@phosphor-icons/react'
+import { NotePencilIcon } from '@phosphor-icons/react'
+import { toast } from 'advi-ui'
 import { recipeApi } from '@/api/api'
 import type { Recipe } from '@/types'
 import { RecipeFormModal } from '@/components/RecipeFormModal'
@@ -15,7 +16,7 @@ export const MyRecipesPage = () => {
   const load = () => {
     recipeApi.getMyRecipes()
       .then(setRecipes)
-      .catch(() => {})
+      .catch(() => toast.error(content.loadErrorMessage))
       .finally(() => setLoading(false))
   }
 
@@ -26,7 +27,9 @@ export const MyRecipesPage = () => {
     try {
       await recipeApi.deleteMine(id)
       setRecipes(prev => prev.filter(r => r.id !== id))
-    } catch {}
+    } catch {
+      toast.error(content.deleteErrorMessage)
+    }
   }
 
   const handleSaved = (recipe: Recipe) => {
@@ -57,7 +60,7 @@ export const MyRecipesPage = () => {
 
       {recipes.length === 0 ? (
         <div className="empty-state">
-          <NotePencil weight="fill" className="empty-icon-svg" />
+          <NotePencilIcon weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
           <button className="btn-pill btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeEmptyLabel}</button>

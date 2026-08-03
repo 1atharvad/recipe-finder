@@ -1,11 +1,11 @@
-import { ForkKnife } from '@phosphor-icons/react'
+import { ForkKnifeIcon } from '@phosphor-icons/react'
 import { Footer } from 'advi-ui'
 import content from '@/content/landingFooter.json'
 
 export const LandingFooter = () => (
   <Footer
     className="landing-footer"
-    logo={{ name: content.brand, image: <ForkKnife weight="bold" />, link: { url: '/' } }}
+    logo={{ name: content.brand, image: <ForkKnifeIcon weight="bold" />, link: { url: '/' } }}
     tagline={content.tagline}
     linkGroups={[
       {

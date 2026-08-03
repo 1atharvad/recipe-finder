@@ -1,9 +1,9 @@
-import { Package } from '@phosphor-icons/react'
+import { PackageIcon } from '@phosphor-icons/react'
 import content from '@/content/inventoryPage.json'
 
 export const InventoryPage = () => (
   <section className="dashboard-placeholder">
-    <Package weight="bold" className="dashboard-placeholder-icon" />
+    <PackageIcon weight="bold" className="dashboard-placeholder-icon" />
     <h1>{content.title}</h1>
     <p>{content.text}</p>
     <span className="meta-badge tone-mustard">{content.badge}</span>

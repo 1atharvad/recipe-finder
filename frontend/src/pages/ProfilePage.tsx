@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { UserCircle, CheckCircle, WarningCircle } from '@phosphor-icons/react'
+import { UserCircleIcon, CheckCircleIcon, WarningCircleIcon } from '@phosphor-icons/react'
+import { toast } from 'advi-ui'
 import { userApi } from '@/api/api'
 import { useAuth } from '@/context/AuthContext'
 import { FormField } from '@/components/FormField'
@@ -28,6 +29,7 @@ export const ProfilePage = () => {
         setLastName(p.lastName)
         setEmail(p.email)
       })
+      .catch(() => toast.error(content.loadErrorMessage))
       .finally(() => setLoading(false))
   }, [])
 
@@ -73,7 +75,7 @@ export const ProfilePage = () => {
   return (
     <section className="dashboard-home profile-page">
       <p className="section-label">{content.sectionLabel}</p>
-      <h1><UserCircle weight="fill" /> {content.title}</h1>
+      <h1><UserCircleIcon weight="fill" /> {content.title}</h1>
 
       <div className="profile-card">
         <h2>{content.infoCard.title}</h2>
@@ -83,10 +85,10 @@ export const ProfilePage = () => {
           <FormField label={content.infoCard.emailLabel} type="email" value={email} onChange={setEmail} required />
 
           {profileStatus === 'done' && (
-            <p className="msg success"><CheckCircle weight="bold" /> {content.infoCard.successMessage}</p>
+            <p className="msg success"><CheckCircleIcon weight="bold" /> {content.infoCard.successMessage}</p>
           )}
           {profileStatus === 'error' && (
-            <p className="msg error"><WarningCircle weight="bold" /> {profileError}</p>
+            <p className="msg error"><WarningCircleIcon weight="bold" /> {profileError}</p>
           )}
 
           <button type="submit" className="btn-pill btn-primary" disabled={profileStatus === 'saving'}>
@@ -103,10 +105,10 @@ export const ProfilePage = () => {
           <FormField label={content.passwordCard.confirmNewPasswordLabel} type="password" value={confirmNewPassword} onChange={setConfirmNewPassword} required minLength={6} />
 
           {passwordStatus === 'done' && (
-            <p className="msg success"><CheckCircle weight="bold" /> {content.passwordCard.successMessage}</p>
+            <p className="msg success"><CheckCircleIcon weight="bold" /> {content.passwordCard.successMessage}</p>
           )}
           {passwordStatus === 'error' && (
-            <p className="msg error"><WarningCircle weight="bold" /> {passwordError}</p>
+            <p className="msg error"><WarningCircleIcon weight="bold" /> {passwordError}</p>
           )}
 
           <button type="submit" className="btn-pill btn-primary" disabled={passwordStatus === 'saving'}>

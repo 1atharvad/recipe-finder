@@ -1,4 +1,4 @@
-import { CaretDown, Check } from '@phosphor-icons/react'
+import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react'
 import { Select } from 'advi-ui'
 
 interface Option {
@@ -21,7 +21,7 @@ export const SelectField = ({ label, value, onChange, options }: Props) => (
     value={value}
     onChange={onChange}
     options={options}
-    chevronIcon={<CaretDown />}
-    checkIcon={<Check />}
+    chevronIcon={<CaretDownIcon />}
+    checkIcon={<CheckIcon />}
   />
 )

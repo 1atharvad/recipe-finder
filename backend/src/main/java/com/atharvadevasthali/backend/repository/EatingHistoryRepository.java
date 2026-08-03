@@ -14,6 +14,7 @@ public interface EatingHistoryRepository extends JpaRepository<EatingHistory, Lo
     List<EatingHistory> findByUserOrderByEatenOnDesc(User user);
     List<EatingHistory> findByUser(User user);
     List<EatingHistory> findByUserAndRecipeOrderByEatenOnDesc(User user, Recipe recipe);
+    void deleteByRecipe(Recipe recipe);
 
     @Query("SELECT new com.atharvadevasthali.backend.dto.RecipeCountDTO(h.recipe.id, h.recipe.name, COUNT(h)) " +
            "FROM EatingHistory h GROUP BY h.recipe.id, h.recipe.name ORDER BY COUNT(h) DESC")

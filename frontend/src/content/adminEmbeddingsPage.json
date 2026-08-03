@@ -9,5 +9,7 @@
   "backfillingLabel": "Backfilling…",
   "backfillDone": "Backfill triggered — refresh in a moment to see updated status.",
   "allIndexedText": "Every eligible recipe is indexed.",
-  "missingTitle": "Missing embeddings"
+  "missingTitle": "Missing embeddings",
+  "loadErrorMessage": "Couldn't load embedding status. Please try again.",
+  "backfillErrorMessage": "Couldn't trigger the backfill. Please try again."
 }

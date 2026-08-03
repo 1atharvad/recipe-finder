@@ -89,8 +89,9 @@ public class RecipeController {
     }
 
     @GetMapping("/recipes/{id}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
-        return ResponseEntity.ok(recipeService.getById(id));
+    public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id, Authentication auth) {
+        String username = (auth != null && auth.isAuthenticated()) ? auth.getName() : null;
+        return ResponseEntity.ok(recipeService.getVisibleById(id, username));
     }
 
     // ── Favorites ────────────────────────────────────────────────────────────

@@ -21,5 +21,7 @@
   ],
   "cancelLabel": "Cancel",
   "saveLabel": "Save Preferences",
-  "savingLabel": "Saving…"
+  "savingLabel": "Saving…",
+  "loadErrorMessage": "Couldn't load your preferences. Please try again.",
+  "saveErrorMessage": "Couldn't save your preferences. Please try again."
 }

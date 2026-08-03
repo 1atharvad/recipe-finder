@@ -19,5 +19,7 @@
   "premiumOnLabel": "Premium",
   "premiumOffLabel": "Free",
   "revokePremiumLabel": "Revoke",
-  "grantPremiumLabel": "Grant"
+  "grantPremiumLabel": "Grant",
+  "loadErrorMessage": "Couldn't load users. Please try again.",
+  "actionErrorMessage": "Something went wrong. Please try again."
 }

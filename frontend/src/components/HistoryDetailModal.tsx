@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowSquareOut } from '@phosphor-icons/react'
-import { getRecipeImage } from '@/assets/recipeImages'
-import { handleImageFallback } from '@/assets/imageFallback'
+import { ArrowSquareOutIcon } from '@phosphor-icons/react'
+import { getRecipeImage, handleImageFallback, formatTime } from '@/assets/global-functions'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
-import { formatTime } from '@/assets/dateTime'
 import type { EatingHistoryEntry } from '@/types'
 import content from '@/content/historyPage.json'
 
@@ -37,7 +35,7 @@ export const HistoryDetailModal = ({ entry, onEdit, onDelete, onClose }: Props) 
             onError={handleImageFallback}
           />
           <button className="entry-detail-name" onClick={() => navigate(`/recipe/${entry.recipe.id}`)}>
-            {entry.recipe.name} <ArrowSquareOut weight="bold" />
+            {entry.recipe.name} <ArrowSquareOutIcon weight="bold" />
           </button>
           <p className="entry-detail-meta">{eatenOnLabel} · {formatTime(entry.recordedAt)}</p>
         </div>

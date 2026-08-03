@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react'
+import { toDateKey } from '@/assets/global-functions'
 import content from '@/content/markEatenModal.json'
-
-const toDateKey = (d: Date) => d.toLocaleDateString('en-CA') // YYYY-MM-DD, local time
 
 interface Props {
   value: string // YYYY-MM-DD
@@ -41,7 +40,7 @@ export const DayPicker = ({ value, onChange, mode = 'past' }: Props) => {
           aria-label={content.prevMonthLabel}
           disabled={mode === 'future' && isCurrentMonth}
         >
-          <CaretLeft weight="bold" />
+          <CaretLeftIcon weight="bold" />
         </button>
         <span>{month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
         <button
@@ -50,7 +49,7 @@ export const DayPicker = ({ value, onChange, mode = 'past' }: Props) => {
           aria-label={content.nextMonthLabel}
           disabled={mode === 'past' && isCurrentMonth}
         >
-          <CaretRight weight="bold" />
+          <CaretRightIcon weight="bold" />
         </button>
       </div>
 

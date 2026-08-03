@@ -26,6 +26,7 @@ public class RecipeService {
     private final UserRepository userRepository;
     private final UserFavoriteRepository favoriteRepository;
     private final EatingHistoryRepository historyRepository;
+    private final MealScheduleRepository scheduleRepository;
     private final RecipeEmbeddingService embeddingService;
     private final GeminiClient geminiClient;
     private final ObjectMapper objectMapper;
@@ -34,6 +35,7 @@ public class RecipeService {
                          UserRepository userRepository,
                          UserFavoriteRepository favoriteRepository,
                          EatingHistoryRepository historyRepository,
+                         MealScheduleRepository scheduleRepository,
                          RecipeEmbeddingService embeddingService,
                          GeminiClient geminiClient,
                          ObjectMapper objectMapper) {
@@ -41,6 +43,7 @@ public class RecipeService {
         this.userRepository = userRepository;
         this.favoriteRepository = favoriteRepository;
         this.historyRepository = historyRepository;
+        this.scheduleRepository = scheduleRepository;
         this.embeddingService = embeddingService;
         this.geminiClient = geminiClient;
         this.objectMapper = objectMapper;
@@ -179,6 +182,18 @@ public class RecipeService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
     }
 
+    /** Same as getById, but 404s if the recipe is private and not visible to the given (possibly anonymous) requester. */
+    public Recipe getVisibleById(Long id, String username) {
+        Recipe recipe = getById(id);
+        boolean visible = recipe.getOwner() == null
+                || recipe.getIsPublic()
+                || (username != null && recipe.getOwner().getUsername().equals(username));
+        if (!visible) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found");
+        }
+        return recipe;
+    }
+
     // ── Authenticated user search ────────────────────────────────────────────
 
     public List<Recipe> searchForUser(String q, String username) {
@@ -214,6 +229,7 @@ public class RecipeService {
         return recipe;
     }
 
+    @Transactional
     public void deleteMyRecipe(String username, Long id) {
         User user = getUser(username);
         Recipe recipe = recipeRepository.findById(id)
@@ -221,7 +237,7 @@ public class RecipeService {
         if (recipe.getOwner() == null || !recipe.getOwner().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not your recipe");
         }
-        recipeRepository.delete(recipe);
+        deleteRecipeAndDependents(recipe);
     }
 
     // ── Favorites ────────────────────────────────────────────────────────────
@@ -314,13 +330,14 @@ public class RecipeService {
         return recipe;
     }
 
+    @Transactional
     public void deleteGeneralRecipe(Long id) {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
         if (recipe.getOwner() != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a general recipe");
         }
-        recipeRepository.delete(recipe);
+        deleteRecipeAndDependents(recipe);
     }
 
     // ── Admin: public recipe moderation ────────────────────────────────────
@@ -351,6 +368,18 @@ public class RecipeService {
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+
+    /**
+     * Deletes a recipe along with every row that references it (favorites, eating history,
+     * meal schedules, embedding), since none of those FKs cascade at the DB level.
+     */
+    private void deleteRecipeAndDependents(Recipe recipe) {
+        favoriteRepository.deleteByRecipe(recipe);
+        historyRepository.deleteByRecipe(recipe);
+        scheduleRepository.deleteByRecipe(recipe);
+        embeddingService.deleteEmbedding(recipe.getId());
+        recipeRepository.delete(recipe);
+    }
 
     /** Keeps the vector index in sync: indexed when visible (general or public), removed otherwise. */
     private void syncEmbedding(Recipe recipe) {

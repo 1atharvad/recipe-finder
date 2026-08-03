@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
-  ArrowLeft, Heart, CheckCircle, Users, ListChecks, ForkKnife,
-  Printer, ShareNetwork, ClockCounterClockwise, PlayCircle, Timer, BellRinging,
+  ArrowLeftIcon, HeartIcon, CheckCircleIcon, UsersIcon, ListChecksIcon, ForkKnifeIcon,
+  PrinterIcon, ShareNetworkIcon, ClockCounterClockwiseIcon, PlayCircleIcon, TimerIcon, BellRingingIcon,
 } from '@phosphor-icons/react'
+import { toast } from 'advi-ui'
 import { recipeApi, favoritesApi, historyApi, scheduleApi } from '@/api/api'
 import { useAuth } from '@/context/AuthContext'
 import { LandingHeader } from '@/components/LandingHeader'
@@ -12,9 +13,7 @@ import { RecipeCard } from '@/components/RecipeCard'
 import { MarkEatenModal } from '@/components/MarkEatenModal'
 import { ScheduleModal } from '@/components/ScheduleModal'
 import { SkelBlock } from '@/components/Skeleton'
-import { getRecipeImage } from '@/assets/recipeImages'
-import { handleImageFallback } from '@/assets/imageFallback'
-import { getYouTubeEmbedUrl } from '@/assets/youtube'
+import { getRecipeImage, handleImageFallback, getYouTubeEmbedUrl } from '@/assets/global-functions'
 import type { Recipe, EatingHistoryEntry } from '@/types'
 import content from '@/content/recipePage.json'
 
@@ -34,10 +33,16 @@ export const RecipePage = () => {
   const [scheduledMsg, setScheduledMsg] = useState('')
 
   useEffect(() => {
+    let cancelled = false
     setStatus('loading')
     recipeApi.getById(Number(id))
-      .then(data => { setRecipe(data); setStatus('done') })
-      .catch(() => setStatus('error'))
+      .then(data => {
+        if (cancelled) return
+        setRecipe(data)
+        setStatus('done')
+      })
+      .catch(() => { if (!cancelled) setStatus('error') })
+    return () => { cancelled = true }
   }, [id])
 
   useEffect(() => {
@@ -73,7 +78,7 @@ export const RecipePage = () => {
         await favoritesApi.add(recipe.id)
         setFavorited(true)
       }
-    } catch {}
+    } catch { toast.error(content.actionErrorMessage) }
   }
 
   const markEaten = async (eatenAt: string) => {
@@ -84,7 +89,7 @@ export const RecipePage = () => {
       setEatenMsg(content.markedEatenLabel)
       setCookHistory(prev => [entry, ...prev])
       setTimeout(() => setEatenMsg(''), 2000)
-    } catch {}
+    } catch { toast.error(content.actionErrorMessage) }
   }
 
   const schedule = async (scheduledAt: string, note: string) => {
@@ -94,7 +99,7 @@ export const RecipePage = () => {
       await scheduleApi.create(recipe.id, scheduledAt, note)
       setScheduledMsg(content.scheduledLabel)
       setTimeout(() => setScheduledMsg(''), 2000)
-    } catch {}
+    } catch { toast.error(content.actionErrorMessage) }
   }
 
   const share = async () => {
@@ -107,7 +112,7 @@ export const RecipePage = () => {
       await navigator.clipboard.writeText(url)
       setShareMsg(content.linkCopiedLabel)
       setTimeout(() => setShareMsg(''), 2000)
-    } catch {}
+    } catch { toast.error(content.actionErrorMessage) }
   }
 
   if (status === 'loading') {
@@ -165,7 +170,7 @@ export const RecipePage = () => {
 
       <div className="recipe-page">
         <button className="btn-link back-btn" onClick={() => navigate(-1)}>
-          <ArrowLeft weight="bold" /> {content.backLabel}
+          <ArrowLeftIcon weight="bold" /> {content.backLabel}
         </button>
 
         <article className="recipe-card-detail">
@@ -197,34 +202,34 @@ export const RecipePage = () => {
                   className={`btn-pill btn-small ${favorited ? 'btn-save saved' : 'btn-save'}`}
                   onClick={toggleFavorite}
                 >
-                  <Heart weight={favorited ? 'fill' : 'bold'} /> {favorited ? content.savedLabel : content.saveLabel}
+                  <HeartIcon weight={favorited ? 'fill' : 'bold'} /> {favorited ? content.savedLabel : content.saveLabel}
                 </button>
                 {isAuthenticated && (
                   <button className="btn-pill btn-small btn-eaten" onClick={() => setShowMarkEaten(true)}>
-                    <CheckCircle weight="bold" /> {eatenMsg || content.markEatenLabel}
+                    <CheckCircleIcon weight="bold" /> {eatenMsg || content.markEatenLabel}
                   </button>
                 )}
                 {isAuthenticated && (
                   <button className="btn-pill btn-small btn-schedule" onClick={() => setShowSchedule(true)}>
-                    <BellRinging weight="bold" /> {scheduledMsg || content.scheduleLabel}
+                    <BellRingingIcon weight="bold" /> {scheduledMsg || content.scheduleLabel}
                   </button>
                 )}
                 <button className="btn-pill btn-small btn-icon-only" onClick={share} aria-label={content.shareLabel}>
-                  <ShareNetwork weight="bold" />
+                  <ShareNetworkIcon weight="bold" />
                 </button>
                 <button className="btn-pill btn-small btn-icon-only" onClick={() => window.print()} aria-label={content.printLabel}>
-                  <Printer weight="bold" />
+                  <PrinterIcon weight="bold" />
                 </button>
               </div>
             </div>
             {shareMsg && <p className="share-msg">{shareMsg}</p>}
             <div className="book-meta">
-              <span className="meta-chip"><Users weight="bold" /> {content.servesPrefix} {recipe.servings} {recipe.servings === 1 ? content.personSingular : content.personPlural}</span>
-              <span className="meta-chip"><ListChecks weight="bold" /> {recipe.steps.length} {content.stepsSuffix}</span>
-              <span className="meta-chip"><ForkKnife weight="bold" /> {recipe.ingredients.length} {content.ingredientsSuffix}</span>
+              <span className="meta-chip"><UsersIcon weight="bold" /> {content.servesPrefix} {recipe.servings} {recipe.servings === 1 ? content.personSingular : content.personPlural}</span>
+              <span className="meta-chip"><ListChecksIcon weight="bold" /> {recipe.steps.length} {content.stepsSuffix}</span>
+              <span className="meta-chip"><ForkKnifeIcon weight="bold" /> {recipe.ingredients.length} {content.ingredientsSuffix}</span>
               {(recipe.prepTimeMinutes != null || recipe.cookTimeMinutes != null) && (
                 <span className="meta-chip">
-                  <Timer weight="bold" />
+                  <TimerIcon weight="bold" />
                   {recipe.prepTimeMinutes != null && `${recipe.prepTimeMinutes}m ${content.prepLabel}`}
                   {recipe.prepTimeMinutes != null && recipe.cookTimeMinutes != null && ' + '}
                   {recipe.cookTimeMinutes != null && `${recipe.cookTimeMinutes}m ${content.cookLabel}`}
@@ -243,7 +248,7 @@ export const RecipePage = () => {
 
             {cookHistory.length > 0 && (
               <p className="cook-history-note">
-                <ClockCounterClockwise weight="bold" /> {content.cookedPrefix} {cookHistory.length} {cookHistory.length !== 1 ? content.timePlural : content.timeSingular}
+                <ClockCounterClockwiseIcon weight="bold" /> {content.cookedPrefix} {cookHistory.length} {cookHistory.length !== 1 ? content.timePlural : content.timeSingular}
                 {' '}{content.lastOnPrefix} {new Date(cookHistory[0].eatenOn).toLocaleDateString()}.
               </p>
             )}
@@ -276,7 +281,7 @@ export const RecipePage = () => {
 
             {embedUrl && (
               <section className="video-section">
-                <h2><PlayCircle weight="bold" /> {content.watchItMadeTitle}</h2>
+                <h2><PlayCircleIcon weight="bold" /> {content.watchItMadeTitle}</h2>
                 <div className="video-embed">
                   <iframe
                     src={embedUrl}

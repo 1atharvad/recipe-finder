@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { handleImageFallback } from '@/assets/imageFallback'
-import { getRecipeImage } from '@/assets/recipeImages'
+import { handleImageFallback, getRecipeImage } from '@/assets/global-functions'
 
 interface Recipe {
   id: number

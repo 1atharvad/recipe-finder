@@ -13,6 +13,7 @@ export const PreferencesModal = ({ onClose }: Props) => {
   const [cuisine, setCuisine] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   useBodyScrollLock()
 
@@ -25,7 +26,7 @@ export const PreferencesModal = ({ onClose }: Props) => {
         setDietary(prefs.dietaryType ?? '')
         setCuisine(prefs.cuisineType ?? '')
       })
-      .catch(() => {})
+      .catch(() => setError(content.loadErrorMessage))
       .finally(() => setLoading(false))
 
     return () => window.removeEventListener('keydown', onKey)
@@ -33,13 +34,16 @@ export const PreferencesModal = ({ onClose }: Props) => {
 
   const handleSave = async () => {
     setSaving(true)
+    setError('')
     try {
       await preferencesApi.save({
         dietaryType: dietary || null,
         cuisineType: cuisine || null,
       })
       onClose()
-    } catch {} finally {
+    } catch {
+      setError(content.saveErrorMessage)
+    } finally {
       setSaving(false)
     }
   }
@@ -61,6 +65,7 @@ export const PreferencesModal = ({ onClose }: Props) => {
               <SelectField label={content.dietaryLabel} value={dietary} onChange={setDietary} options={content.dietaryOptions} />
               <SelectField label={content.cuisineLabel} value={cuisine} onChange={setCuisine} options={content.cuisineOptions} />
             </div>
+            {error && <p className="auth-error">{error}</p>}
             <div className="modal-footer">
               <button className="btn-secondary" onClick={onClose}>{content.cancelLabel}</button>
               <button className="btn-primary" onClick={handleSave} disabled={saving}>

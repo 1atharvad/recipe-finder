@@ -14,5 +14,7 @@
   },
   "emptyValue": "—",
   "unpublishLabel": "Unpublish",
-  "unpublishConfirm": "Unpublish this recipe? It stays with its owner but leaves the public search pool."
+  "unpublishConfirm": "Unpublish this recipe? It stays with its owner but leaves the public search pool.",
+  "loadErrorMessage": "Couldn't load public recipes. Please try again.",
+  "unpublishErrorMessage": "Couldn't unpublish this recipe. Please try again."
 }

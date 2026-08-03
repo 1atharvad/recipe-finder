@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { MagnifyingGlass, X, WarningCircle, Sparkle } from '@phosphor-icons/react'
+import { MagnifyingGlassIcon, XIcon, WarningCircleIcon, SparkleIcon } from '@phosphor-icons/react'
 import { RecipeCard } from '@/components/RecipeCard'
 import { BentoGrid } from '@/components/BentoGrid'
 import { SkelBlock } from '@/components/Skeleton'
@@ -46,13 +46,13 @@ export const SearchPage = () => {
     <>
       <section className="search-hero">
         <div className="section-inner">
-          <span className="hero-eyebrow">{content.hero.eyebrow} <Sparkle weight="fill" /></span>
+          <span className="hero-eyebrow">{content.hero.eyebrow} <SparkleIcon weight="fill" /></span>
           <h1>{content.hero.title}</h1>
           <p>{content.hero.text}</p>
 
           <div className="search-bar">
             <div className="search-input-wrap">
-              <MagnifyingGlass className="search-bar-icon" weight="bold" />
+              <MagnifyingGlassIcon className="search-bar-icon" weight="bold" />
               <input
                 type="text"
                 placeholder={content.hero.placeholder}
@@ -63,7 +63,7 @@ export const SearchPage = () => {
               />
               {query && (
                 <button type="button" className="search-bar-clear" onClick={clearSearch} aria-label={content.hero.clearLabel}>
-                  <X weight="bold" />
+                  <XIcon weight="bold" />
                 </button>
               )}
             </div>
@@ -91,7 +91,7 @@ export const SearchPage = () => {
       <section className="search-results">
         <div className="section-inner">
           {status === 'error' && (
-            <p className="msg error"><WarningCircle weight="bold" /> {content.results.serverErrorMessage}</p>
+            <p className="msg error"><WarningCircleIcon weight="bold" /> {content.results.serverErrorMessage}</p>
           )}
 
           {!searched && topLoading && (

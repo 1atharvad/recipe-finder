@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { ToastProvider } from 'advi-ui'
 import './App.scss'
 import { AuthProvider } from '@/context/AuthContext'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
@@ -51,43 +52,45 @@ export const App = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppNavbar />
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/recipe/:id" element={<RecipePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
+        <ToastProvider>
+          <AppNavbar />
+          <Routes>
+            {/* Public */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/recipe/:id" element={<RecipePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
 
-          {/* Admin — discrete, no nav link */}
-          <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-            <Route index element={<AdminDashboardPage />} />
-            <Route path="public-recipes" element={<AdminPublicRecipesPage />} />
-            <Route path="users" element={<AdminUsersPage />} />
-            <Route path="analytics" element={<AdminAnalyticsPage />} />
-            <Route path="embeddings" element={<AdminEmbeddingsPage />} />
-          </Route>
+            {/* Admin — discrete, no nav link */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+              <Route index element={<AdminDashboardPage />} />
+              <Route path="public-recipes" element={<AdminPublicRecipesPage />} />
+              <Route path="users" element={<AdminUsersPage />} />
+              <Route path="analytics" element={<AdminAnalyticsPage />} />
+              <Route path="embeddings" element={<AdminEmbeddingsPage />} />
+            </Route>
 
-          {/* Dashboard portal — requires login, own sidebar layout */}
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-            <Route index element={<DashboardHomePage />} />
-            <Route path="search" element={<SearchPage />} />
-            <Route path="recommender" element={<RecommenderPage />} />
-            <Route path="inventory" element={<InventoryPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="favorites" element={<FavoritesPage />} />
-            <Route path="my-recipes" element={<MyRecipesPage />} />
-            <Route path="history" element={<HistoryPage />} />
-            <Route path="reminders" element={<RemindersPage />} />
-            <Route path="shopping-list" element={<ShoppingListPage />} />
-            <Route path="meal-prep" element={<MealPrepPage />} />
-          </Route>
-        </Routes>
+            {/* Dashboard portal — requires login, own sidebar layout */}
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+              <Route index element={<DashboardHomePage />} />
+              <Route path="search" element={<SearchPage />} />
+              <Route path="recommender" element={<RecommenderPage />} />
+              <Route path="inventory" element={<InventoryPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="favorites" element={<FavoritesPage />} />
+              <Route path="my-recipes" element={<MyRecipesPage />} />
+              <Route path="history" element={<HistoryPage />} />
+              <Route path="reminders" element={<RemindersPage />} />
+              <Route path="shopping-list" element={<ShoppingListPage />} />
+              <Route path="meal-prep" element={<MealPrepPage />} />
+            </Route>
+          </Routes>
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   )

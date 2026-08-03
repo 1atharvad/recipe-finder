@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowSquareOut, CheckCircle } from '@phosphor-icons/react'
-import { getRecipeImage } from '@/assets/recipeImages'
-import { handleImageFallback } from '@/assets/imageFallback'
+import { ArrowSquareOutIcon, CheckCircleIcon } from '@phosphor-icons/react'
+import { getRecipeImage, handleImageFallback, formatTime } from '@/assets/global-functions'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
-import { formatTime } from '@/assets/dateTime'
 import type { MealSchedule } from '@/types'
 import content from '@/content/remindersPage.json'
 
@@ -39,7 +37,7 @@ export const ReminderDetailModal = ({ schedule, onComplete, onEdit, onDelete, on
             onError={handleImageFallback}
           />
           <button className="entry-detail-name" onClick={() => navigate(`/recipe/${schedule.recipe.id}`)}>
-            {schedule.recipe.name} <ArrowSquareOut weight="bold" />
+            {schedule.recipe.name} <ArrowSquareOutIcon weight="bold" />
           </button>
           <p className="entry-detail-meta">
             {scheduledDateLabel} · {formatTime(schedule.scheduledAt)}
@@ -55,7 +53,7 @@ export const ReminderDetailModal = ({ schedule, onComplete, onEdit, onDelete, on
             <>
               <button type="button" className="btn-secondary" onClick={onEdit}>{content.editLabel}</button>
               <button type="button" className="btn-primary" onClick={onComplete}>
-                <CheckCircle weight="bold" /> {content.markDoneLabel}
+                <CheckCircleIcon weight="bold" /> {content.markDoneLabel}
               </button>
             </>
           )}

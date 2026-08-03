@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { BellRinging, ForkKnife } from '@phosphor-icons/react'
+import { BellRingingIcon, ForkKnifeIcon } from '@phosphor-icons/react'
+import { toast } from 'advi-ui'
 import { scheduleApi } from '@/api/api'
 import { ScheduleModal } from '@/components/ScheduleModal'
 import { ReminderDetailModal } from '@/components/ReminderDetailModal'
 import { TimelinePageSkeleton } from '@/components/Skeleton'
-import { formatTime } from '@/assets/dateTime'
+import { formatTime, toDateKey } from '@/assets/global-functions'
 import type { MealSchedule } from '@/types'
 import content from '@/content/remindersPage.json'
 
@@ -18,7 +19,7 @@ export const RemindersPage = () => {
   useEffect(() => {
     scheduleApi.getAll()
       .then(setSchedules)
-      .catch(() => {})
+      .catch(() => toast.error(content.actionErrorMessage))
       .finally(() => setLoading(false))
   }, [])
 
@@ -46,6 +47,7 @@ export const RemindersPage = () => {
       await scheduleApi.complete(id)
     } catch {
       setSchedules(prev)
+      toast.error(content.actionErrorMessage)
     }
   }
 
@@ -58,6 +60,7 @@ export const RemindersPage = () => {
       await scheduleApi.delete(id)
     } catch {
       setSchedules(prev)
+      toast.error(content.actionErrorMessage)
     }
   }
 
@@ -66,7 +69,9 @@ export const RemindersPage = () => {
     try {
       const updated = await scheduleApi.update(editTarget.id, scheduledAt, note)
       setSchedules(prev => prev.map(s => s.id === updated.id ? updated : s))
-    } catch {}
+    } catch {
+      toast.error(content.actionErrorMessage)
+    }
     setEditTarget(null)
   }
 
@@ -76,7 +81,7 @@ export const RemindersPage = () => {
     return (
       <div className="page">
         <div className="empty-state">
-          <BellRinging weight="fill" className="empty-icon-svg" />
+          <BellRingingIcon weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
           <Link to="/dashboard/search" className="btn-pill btn-primary">{content.browseLabel}</Link>
@@ -158,7 +163,7 @@ const ReminderRow = ({ schedule, onOpen }: ReminderRowProps) => {
     <button type="button" className={`history-entry reminder-entry${overdue ? ' overdue' : ''}`} onClick={() => onOpen(schedule)}>
       <span className="reminder-entry-top">
         <span className="history-entry-link">
-          <ForkKnife weight="bold" className="history-entry-icon" />
+          <ForkKnifeIcon weight="bold" className="history-entry-icon" />
           <span className="history-entry-name">{schedule.recipe.name}</span>
           <span className="history-entry-time">{formatTime(schedule.scheduledAt)}</span>
         </span>
@@ -180,8 +185,8 @@ const formatDayLabel = (dateStr: string): string => {
   const tomorrow = new Date(today)
   tomorrow.setDate(today.getDate() + 1)
 
-  if (dateStr === today.toISOString().split('T')[0]) return content.todayLabel
-  if (dateStr === tomorrow.toISOString().split('T')[0]) return content.tomorrowLabel
+  if (dateStr === toDateKey(today)) return content.todayLabel
+  if (dateStr === toDateKey(tomorrow)) return content.tomorrowLabel
 
   return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 }

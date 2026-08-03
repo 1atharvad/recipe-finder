@@ -3,37 +3,49 @@ package com.atharvadevasthali.backend.dto;
 import com.atharvadevasthali.backend.model.CuisineType;
 import com.atharvadevasthali.backend.model.DietaryType;
 import com.atharvadevasthali.backend.model.Difficulty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
 public class RecipeRequest {
 
     @NotBlank
+    @Size(max = 255)
     private String name;
 
+    @Min(0)
     private int servings;
 
+    @Valid
     private List<IngredientDTO> ingredients;
 
-    private List<String> steps;
+    private List<@Size(max = 1000) String> steps;
 
     private DietaryType dietaryType;
 
     private CuisineType cuisineType;
 
+    @Size(max = 500)
     private String videoUrl;
 
+    @Size(max = 500)
     private String imageUrl;
 
+    @Size(max = 200)
     private String sourceName;
 
+    @Size(max = 500)
     private String sourceUrl;
 
     private boolean isPublic;
 
+    @Min(0)
     private Integer prepTimeMinutes;
 
+    @Min(0)
     private Integer cookTimeMinutes;
 
     private Difficulty difficulty;

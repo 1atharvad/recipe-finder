@@ -25,8 +25,8 @@ export const AdminLoginPage = () => {
       const res = await authApi.adminLogin({ username, password })
       login(res)
       navigate('/admin')
-    } catch {
-      setError(content.errorMessage)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : content.errorMessage)
     } finally {
       setLoading(false)
     }

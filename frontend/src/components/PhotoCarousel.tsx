@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useMotionValue, animate, type AnimationPlaybackControls } from 'framer-motion'
-import { handleImageFallback } from '@/assets/imageFallback'
+import { handleImageFallback } from '@/assets/global-functions'
 import { recipeApi } from '@/api/api'
 import pageContent from '@/content/photoCarousel.json'
 

@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import type { Icon } from '@phosphor-icons/react'
-import { BowlSteam, List, X, Globe, Users, ChartBar, Brain, SignOut } from '@phosphor-icons/react'
+import { BowlSteamIcon, ListIcon, XIcon, GlobeIcon, UsersIcon, ChartBarIcon, BrainIcon, SignOutIcon } from '@phosphor-icons/react'
 import { useAuth } from '@/context/AuthContext'
 import content from '@/content/adminNav.json'
 
-const ICONS: Record<string, Icon> = { BowlSteam, Globe, Users, ChartBar, Brain }
+const ICONS: Record<string, Icon> = { BowlSteamIcon, GlobeIcon, UsersIcon, ChartBarIcon, BrainIcon }
 
 export const AdminLayout = () => {
   const { logout } = useAuth()
@@ -21,7 +21,7 @@ export const AdminLayout = () => {
     <div className="landing dashboard-shell">
       <div className="dashboard-topbar">
         <NavLink to="/admin" className="dashboard-logo">
-          <BowlSteam weight="duotone" /> {content.logo}
+          <BowlSteamIcon weight="duotone" /> {content.logo}
         </NavLink>
         <button
           className="dashboard-menu-toggle"
@@ -29,7 +29,7 @@ export const AdminLayout = () => {
           aria-label={menuOpen ? content.closeMenuLabel : content.openMenuLabel}
           aria-expanded={menuOpen}
         >
-          {menuOpen ? <X weight="bold" /> : <List weight="bold" />}
+          {menuOpen ? <XIcon weight="bold" /> : <ListIcon weight="bold" />}
         </button>
       </div>
 
@@ -39,7 +39,7 @@ export const AdminLayout = () => {
 
       <aside className={menuOpen ? 'dashboard-sidebar open' : 'dashboard-sidebar'}>
         <NavLink to="/admin" className="dashboard-logo">
-          <BowlSteam weight="duotone" /> {content.logo}
+          <BowlSteamIcon weight="duotone" /> {content.logo}
         </NavLink>
 
         <nav className="dashboard-nav">
@@ -61,7 +61,7 @@ export const AdminLayout = () => {
 
         <div className="dashboard-sidebar-footer dashboard-sidebar-footer--admin">
           <button className="dashboard-nav-link dashboard-logout-link" onClick={handleLogout}>
-            <SignOut weight="bold" /> {content.logoutLabel}
+            <SignOutIcon weight="bold" /> {content.logoutLabel}
           </button>
         </div>
       </aside>

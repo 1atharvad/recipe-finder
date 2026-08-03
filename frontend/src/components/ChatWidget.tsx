@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import DOMPurify from 'dompurify'
-import { ChatCircleDots, X, PaperPlaneRight, WarningCircle, Microphone } from '@phosphor-icons/react'
+import { ChatCircleDotsIcon, XIcon, PaperPlaneRightIcon, WarningCircleIcon, MicrophoneIcon } from '@phosphor-icons/react'
 import { RecipeCard } from '@/components/RecipeCard'
 import { recipeApi } from '@/api/api'
 import { useSpeechToText } from '@/hooks/useSpeechToText'
@@ -57,9 +57,9 @@ export const ChatWidget = () => {
       {open && (
         <div className="chatbot-panel">
           <div className="chatbot-header">
-            <span><ChatCircleDots weight="duotone" /> {content.title}</span>
+            <span><ChatCircleDotsIcon weight="duotone" /> {content.title}</span>
             <button className="chatbot-close" onClick={() => setOpen(false)} aria-label={content.closeLabel}>
-              <X weight="bold" />
+              <XIcon weight="bold" />
             </button>
           </div>
 
@@ -100,7 +100,7 @@ export const ChatWidget = () => {
             )}
 
             {error && (
-              <p className="msg error"><WarningCircle weight="bold" /> {error}</p>
+              <p className="msg error"><WarningCircleIcon weight="bold" /> {error}</p>
             )}
 
             {recipes.length > 0 && (
@@ -133,7 +133,7 @@ export const ChatWidget = () => {
                 disabled={loading}
                 aria-label={listening ? content.stopVoiceLabel : content.startVoiceLabel}
               >
-                <Microphone weight={listening ? 'fill' : 'bold'} />
+                <MicrophoneIcon weight={listening ? 'fill' : 'bold'} />
               </button>
             )}
             <button
@@ -142,7 +142,7 @@ export const ChatWidget = () => {
               disabled={!input.trim() || loading}
               aria-label={content.sendLabel}
             >
-              <PaperPlaneRight weight="fill" />
+              <PaperPlaneRightIcon weight="fill" />
             </button>
           </div>
         </div>
@@ -154,7 +154,7 @@ export const ChatWidget = () => {
           onClick={() => setOpen(true)}
           aria-label={content.openLabel}
         >
-          <ChatCircleDots weight="fill" />
+          <ChatCircleDotsIcon weight="fill" />
         </button>
       )}
     </div>

@@ -1,10 +1,10 @@
 import type { Icon } from '@phosphor-icons/react'
-import { MagnifyingGlass, Heart, Sparkle } from '@phosphor-icons/react'
+import { MagnifyingGlassIcon, HeartIcon, SparkleIcon } from '@phosphor-icons/react'
 import { LandingHeader } from '@/components/LandingHeader'
 import { LandingFooter } from '@/components/LandingFooter'
 import content from '@/content/howItWorksPage.json'
 
-const ICONS: Record<string, Icon> = { MagnifyingGlass, Heart, Sparkle }
+const ICONS: Record<string, Icon> = { MagnifyingGlassIcon, HeartIcon, SparkleIcon }
 
 export const HowItWorksPage = () => {
   return (
@@ -13,7 +13,7 @@ export const HowItWorksPage = () => {
 
       <section className="landing-hero how-it-works-hero">
         <div className="section-inner">
-          <span className="hero-eyebrow">{content.hero.eyebrow} <Sparkle weight="fill" /></span>
+          <span className="hero-eyebrow">{content.hero.eyebrow} <SparkleIcon weight="fill" /></span>
           <h1>{content.hero.title}</h1>
           <p>{content.hero.text}</p>
         </div>

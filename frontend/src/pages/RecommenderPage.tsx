@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Sparkle, Sliders, Trophy } from '@phosphor-icons/react'
+import { SparkleIcon, SlidersIcon, TrophyIcon } from '@phosphor-icons/react'
 import { recommendationApi } from '@/api/api'
 import type { RecommendationDTO } from '@/types'
 import { PreferencesModal } from '@/components/PreferencesModal'
@@ -27,12 +27,12 @@ export const RecommenderPage = () => {
     <section className="recommender-page">
       <div className="recommender-header">
         <div>
-          <span className="hero-eyebrow">{content.eyebrow} <Sparkle weight="fill" /></span>
+          <span className="hero-eyebrow">{content.eyebrow} <SparkleIcon weight="fill" /></span>
           <h1>{content.title}</h1>
           <p>{content.text}</p>
         </div>
         <button className="btn-pill btn-small btn-icon-only" onClick={() => setShowPrefs(true)} aria-label={content.preferencesLabel}>
-          <Sliders weight="bold" />
+          <SlidersIcon weight="bold" />
         </button>
       </div>
 
@@ -56,7 +56,7 @@ export const RecommenderPage = () => {
         </div>
       ) : recs.length === 0 ? (
         <div className="empty-state">
-          <Sparkle weight="fill" className="empty-icon-svg" />
+          <SparkleIcon weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
         </div>
@@ -69,7 +69,7 @@ export const RecommenderPage = () => {
               onClick={() => navigate(`/recipe/${recipe.id}`)}
             >
               {i === 0 && (
-                <span className="rec-top-badge"><Trophy weight="fill" /> {content.topPickLabel}</span>
+                <span className="rec-top-badge"><TrophyIcon weight="fill" /> {content.topPickLabel}</span>
               )}
               <div className="rec-info">
                 <span className="rec-name">{recipe.name}</span>

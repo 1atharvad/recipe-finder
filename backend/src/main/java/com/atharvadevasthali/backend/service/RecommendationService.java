@@ -3,7 +3,9 @@ package com.atharvadevasthali.backend.service;
 import com.atharvadevasthali.backend.dto.RecommendationDTO;
 import com.atharvadevasthali.backend.model.*;
 import com.atharvadevasthali.backend.repository.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -31,7 +33,7 @@ public class RecommendationService {
 
     public List<RecommendationDTO> getRecommendations(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         List<Recipe> generalRecipes = recipeRepository.findByOwnerIsNull();
         List<EatingHistory> history = historyRepository.findByUser(user);

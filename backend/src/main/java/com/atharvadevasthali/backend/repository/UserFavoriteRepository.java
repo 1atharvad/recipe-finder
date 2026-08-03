@@ -20,6 +20,7 @@ public interface UserFavoriteRepository extends JpaRepository<UserFavorite, Long
     Optional<UserFavorite> findByUserAndRecipe(User user, Recipe recipe);
     boolean existsByUserAndRecipe(User user, Recipe recipe);
     void deleteByUserAndRecipe(User user, Recipe recipe);
+    void deleteByRecipe(Recipe recipe);
 
     @Query("SELECT new com.atharvadevasthali.backend.dto.RecipeCountDTO(f.recipe.id, f.recipe.name, COUNT(f)) " +
            "FROM UserFavorite f GROUP BY f.recipe.id, f.recipe.name ORDER BY COUNT(f) DESC")

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { DayPicker } from '@/components/DayPicker'
 import { TimeWheelPicker, type TimeValue } from '@/components/TimeWheelPicker'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
-import { todayKey, asTimeValue, combineDateAndTime } from '@/assets/dateTime'
+import { todayKey, asTimeValue, combineDateAndTime } from '@/assets/global-functions'
 import content from '@/content/markEatenModal.json'
 
 interface Props {

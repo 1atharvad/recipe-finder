@@ -1,6 +1,7 @@
 package com.atharvadevasthali.backend.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
 import java.util.List;
 
 @Entity
@@ -16,14 +17,20 @@ public class Recipe {
 
     private int servings;
 
+    // BatchSize turns per-recipe lazy loads of this collection into batches of
+    // (at most) 20 IN-clause fetches instead of one query per recipe — avoids
+    // the N+1 that would otherwise happen anywhere a list of recipes is read
+    // (e.g. RecommendationService iterating the general pool).
     @ElementCollection
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
+    @BatchSize(size = 20)
     private List<Ingredient> ingredients;
 
     @ElementCollection
     @CollectionTable(name = "recipe_steps", joinColumns = @JoinColumn(name = "recipe_id"))
     @Column(name = "step", length = 1000)
     @OrderColumn(name = "step_order")
+    @BatchSize(size = 20)
     private List<String> steps;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -17,5 +17,6 @@
   "markDoneLabel": "Mark Done",
   "editLabel": "Edit",
   "deleteLabel": "Delete",
-  "deleteConfirm": "Remove this reminder?"
+  "deleteConfirm": "Remove this reminder?",
+  "actionErrorMessage": "Something went wrong. Please try again."
 }

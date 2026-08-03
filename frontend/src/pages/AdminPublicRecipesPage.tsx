@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Globe } from '@phosphor-icons/react'
+import { GlobeIcon } from '@phosphor-icons/react'
+import { toast } from 'advi-ui'
 import { adminApi } from '@/api/api'
 import type { PublicRecipe } from '@/types'
 import content from '@/content/adminPublicRecipesPage.json'
@@ -11,7 +12,7 @@ export const AdminPublicRecipesPage = () => {
   const load = () => {
     adminApi.getPublicRecipes()
       .then(setRecipes)
-      .catch(() => {})
+      .catch(() => toast.error(content.loadErrorMessage))
       .finally(() => setLoading(false))
   }
 
@@ -22,7 +23,9 @@ export const AdminPublicRecipesPage = () => {
     try {
       await adminApi.unpublishRecipe(id)
       setRecipes(prev => prev.filter(r => r.id !== id))
-    } catch {}
+    } catch {
+      toast.error(content.unpublishErrorMessage)
+    }
   }
 
   return (
@@ -38,7 +41,7 @@ export const AdminPublicRecipesPage = () => {
         <div className="recipe-page-loading">{content.loadingLabel}</div>
       ) : recipes.length === 0 ? (
         <div className="empty-state">
-          <Globe weight="fill" className="empty-icon-svg" />
+          <GlobeIcon weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
         </div>

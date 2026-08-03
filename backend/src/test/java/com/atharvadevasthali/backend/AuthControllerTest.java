@@ -23,7 +23,7 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"username":"alice","email":"alice@example.com","password":"password1"}
+                                {"firstName":"Alice","lastName":"Smith","email":"alice@example.com","password":"password1","confirmPassword":"password1"}
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").isNotEmpty());
@@ -31,7 +31,7 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"username":"alice","password":"password1"}
+                                {"email":"alice@example.com","password":"password1"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty());
@@ -42,31 +42,41 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"username":"bob","email":"bob@example.com","password":"password1"}
+                                {"firstName":"Bob","lastName":"Jones","email":"bob@example.com","password":"password1","confirmPassword":"password1"}
                                 """))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"username":"bob","password":"wrongpassword"}
+                                {"email":"bob@example.com","password":"wrongpassword"}
                                 """))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
-    void signupWithDuplicateUsernameIsRejected() throws Exception {
+    void signupWithDuplicateEmailIsRejected() throws Exception {
         mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"username":"carol","email":"carol@example.com","password":"password1"}
+                                {"firstName":"Carol","lastName":"Lee","email":"carol@example.com","password":"password1","confirmPassword":"password1"}
                                 """))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"username":"carol","email":"carol2@example.com","password":"password1"}
+                                {"firstName":"Carol","lastName":"Lee2","email":"carol@example.com","password":"password1","confirmPassword":"password1"}
+                                """))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void signupWithMismatchedPasswordsIsRejected() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"firstName":"Dave","lastName":"King","email":"dave@example.com","password":"password1","confirmPassword":"password2"}
                                 """))
                 .andExpect(status().is4xxClientError());
     }

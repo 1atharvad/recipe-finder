@@ -3,6 +3,7 @@
   "sectionLabel": "Profile",
   "title": "Your profile",
   "defaultProfileError": "Could not update profile",
+  "loadErrorMessage": "Couldn't load your profile. Please refresh and try again.",
   "defaultPasswordError": "Could not update password",
   "passwordMismatchError": "New passwords do not match",
   "infoCard": {

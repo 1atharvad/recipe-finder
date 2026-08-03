@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ClockCounterClockwise, ForkKnife, CalendarBlank, ListBullets,
-  CaretLeft, CaretRight,
+  ClockCounterClockwiseIcon, ForkKnifeIcon, CalendarBlankIcon, ListBulletsIcon,
+  CaretLeftIcon, CaretRightIcon,
 } from '@phosphor-icons/react'
+import { toast } from 'advi-ui'
 import { historyApi } from '@/api/api'
 import { MarkEatenModal } from '@/components/MarkEatenModal'
 import { HistoryDetailModal } from '@/components/HistoryDetailModal'
 import { TimelinePageSkeleton } from '@/components/Skeleton'
-import { formatTime } from '@/assets/dateTime'
+import { formatTime, toDateKey } from '@/assets/global-functions'
 import type { EatingHistoryEntry } from '@/types'
 import content from '@/content/historyPage.json'
 
 type View = 'timeline' | 'calendar'
-
-const toDateKey = (d: Date) => d.toLocaleDateString('en-CA') // YYYY-MM-DD, local time
 
 export const HistoryPage = () => {
   const [history, setHistory] = useState<EatingHistoryEntry[]>([])
@@ -28,7 +27,7 @@ export const HistoryPage = () => {
   useEffect(() => {
     historyApi.getAll()
       .then(setHistory)
-      .catch(() => {})
+      .catch(() => toast.error(content.actionErrorMessage))
       .finally(() => setLoading(false))
   }, [])
 
@@ -46,7 +45,9 @@ export const HistoryPage = () => {
     try {
       const updated = await historyApi.updateEntry(editEntry.id, eatenAt)
       setHistory(prev => prev.map(e => e.id === updated.id ? updated : e))
-    } catch {}
+    } catch {
+      toast.error(content.actionErrorMessage)
+    }
     setEditEntry(null)
   }
 
@@ -59,6 +60,7 @@ export const HistoryPage = () => {
       await historyApi.deleteEntry(id)
     } catch {
       setHistory(prev)
+      toast.error(content.actionErrorMessage)
     }
   }
 
@@ -68,7 +70,7 @@ export const HistoryPage = () => {
     return (
       <div className="page">
         <div className="empty-state">
-          <ClockCounterClockwise weight="fill" className="empty-icon-svg" />
+          <ClockCounterClockwiseIcon weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
           <Link to="/dashboard/search" className="btn-pill btn-primary">{content.browseLabel}</Link>
@@ -91,13 +93,13 @@ export const HistoryPage = () => {
             className={view === 'timeline' ? 'active' : ''}
             onClick={() => setView('timeline')}
           >
-            <ListBullets weight="bold" /> {content.timelineViewLabel}
+            <ListBulletsIcon weight="bold" /> {content.timelineViewLabel}
           </button>
           <button
             className={view === 'calendar' ? 'active' : ''}
             onClick={() => setView('calendar')}
           >
-            <CalendarBlank weight="bold" /> {content.calendarViewLabel}
+            <CalendarBlankIcon weight="bold" /> {content.calendarViewLabel}
           </button>
         </div>
       </div>
@@ -157,7 +159,7 @@ interface EntryRowProps {
 const HistoryEntryRow = ({ entry, onOpen }: EntryRowProps) => (
   <button type="button" className="history-entry" onClick={() => onOpen(entry)}>
     <span className="history-entry-link">
-      <ForkKnife weight="bold" className="history-entry-icon" />
+      <ForkKnifeIcon weight="bold" className="history-entry-icon" />
       <span className="history-entry-name">{entry.recipe.name}</span>
       <span className="history-entry-time">{formatTime(entry.recordedAt)}</span>
     </span>
@@ -191,9 +193,9 @@ const HistoryCalendar = ({ month, setMonth, grouped, selectedDate, setSelectedDa
   return (
     <div className="history-calendar">
       <div className="history-calendar-nav">
-        <button onClick={() => shiftMonth(-1)} aria-label={content.prevMonthLabel}><CaretLeft weight="bold" /></button>
+        <button onClick={() => shiftMonth(-1)} aria-label={content.prevMonthLabel}><CaretLeftIcon weight="bold" /></button>
         <span>{month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
-        <button onClick={() => shiftMonth(1)} aria-label={content.nextMonthLabel}><CaretRight weight="bold" /></button>
+        <button onClick={() => shiftMonth(1)} aria-label={content.nextMonthLabel}><CaretRightIcon weight="bold" /></button>
       </div>
 
       <div className="history-calendar-grid with-events">
@@ -242,8 +244,8 @@ const formatDate = (dateStr: string): string => {
   const yesterday = new Date(today)
   yesterday.setDate(today.getDate() - 1)
 
-  if (dateStr === today.toISOString().split('T')[0]) return content.todayLabel
-  if (dateStr === yesterday.toISOString().split('T')[0]) return content.yesterdayLabel
+  if (dateStr === toDateKey(today)) return content.todayLabel
+  if (dateStr === toDateKey(yesterday)) return content.yesterdayLabel
 
   return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 }

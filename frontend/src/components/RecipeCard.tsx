@@ -1,13 +1,9 @@
 import { useNavigate } from 'react-router-dom'
+import type { Recipe } from '@/types'
 import content from '@/content/recipeCard.json'
 
-interface Recipe {
-  id: number
-  name: string
-}
-
 interface Props {
-  recipe: Recipe
+  recipe: Pick<Recipe, 'id' | 'name'>
   index?: number
 }
 

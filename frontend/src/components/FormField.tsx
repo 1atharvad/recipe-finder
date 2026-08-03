@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { Eye, EyeSlash } from '@phosphor-icons/react'
+import { EyeIcon, EyeSlashIcon } from '@phosphor-icons/react'
 import { Input } from 'advi-ui'
 
 interface Props {
@@ -40,7 +40,7 @@ export const FormField = ({ label, type = 'text', value, onChange, ...rest }: Pr
             onClick={() => setShowPassword(v => !v)}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
-            {showPassword ? <EyeSlash /> : <Eye />}
+            {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
           </button>
         </div>
       </div>

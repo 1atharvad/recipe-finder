@@ -2,16 +2,16 @@ import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import type { Icon } from '@phosphor-icons/react'
 import {
-  BowlSteam, List, X, MagnifyingGlass, Sparkle, Package, SquaresFour, SignOut, UserCircle,
-  Heart, NotePencil, ClockCounterClockwise, BellRinging, ShoppingCart, CookingPot,
+  BowlSteamIcon, ListIcon, XIcon, MagnifyingGlassIcon, SparkleIcon, PackageIcon, SquaresFourIcon, SignOutIcon, UserCircleIcon,
+  HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon, BellRingingIcon, ShoppingCartIcon, CookingPotIcon,
 } from '@phosphor-icons/react'
 import { useAuth } from '@/context/AuthContext'
 import { ChatWidget } from '@/components/ChatWidget'
 import content from '@/content/dashboardNav.json'
 
 const ICONS: Record<string, Icon> = {
-  MagnifyingGlass, Sparkle, Package, SquaresFour, Heart, NotePencil, ClockCounterClockwise,
-  BellRinging, ShoppingCart, CookingPot,
+  MagnifyingGlassIcon, SparkleIcon, PackageIcon, SquaresFourIcon, HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon,
+  BellRingingIcon, ShoppingCartIcon, CookingPotIcon,
 }
 
 export const DashboardLayout = () => {
@@ -36,7 +36,7 @@ export const DashboardLayout = () => {
     <div className="landing dashboard-shell">
       <div className="dashboard-topbar">
         <NavLink to="/" className="dashboard-logo">
-          <BowlSteam weight="duotone" /> {content.logo}
+          <BowlSteamIcon weight="duotone" /> {content.logo}
         </NavLink>
         <button
           className="dashboard-menu-toggle"
@@ -44,7 +44,7 @@ export const DashboardLayout = () => {
           aria-label={menuOpen ? content.closeMenuLabel : content.openMenuLabel}
           aria-expanded={menuOpen}
         >
-          {menuOpen ? <X weight="bold" /> : <List weight="bold" />}
+          {menuOpen ? <XIcon weight="bold" /> : <ListIcon weight="bold" />}
         </button>
       </div>
 
@@ -54,7 +54,7 @@ export const DashboardLayout = () => {
 
       <aside className={menuOpen ? 'dashboard-sidebar open' : 'dashboard-sidebar'}>
         <NavLink to="/" className="dashboard-logo">
-          <BowlSteam weight="duotone" /> {content.logo}
+          <BowlSteamIcon weight="duotone" /> {content.logo}
         </NavLink>
 
         <nav className="dashboard-nav">
@@ -93,10 +93,10 @@ export const DashboardLayout = () => {
                 <div className="dashboard-user-menu-backdrop" onClick={() => setProfileMenuOpen(false)} />
                 <div className="dashboard-user-dropdown">
                   <button onClick={goToProfile}>
-                    <UserCircle weight="bold" /> {content.profileLabel}
+                    <UserCircleIcon weight="bold" /> {content.profileLabel}
                   </button>
                   <button onClick={handleLogout}>
-                    <SignOut weight="bold" /> {content.logoutLabel}
+                    <SignOutIcon weight="bold" /> {content.logoutLabel}
                   </button>
                 </div>
               </>

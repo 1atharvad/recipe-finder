@@ -1,16 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import type { Icon } from '@phosphor-icons/react'
 import {
-  MagnifyingGlass, Sparkle, Package, Heart, NotePencil, ClockCounterClockwise,
-  BellRinging, ShoppingCart, CookingPot,
+  MagnifyingGlassIcon, SparkleIcon, PackageIcon, HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon,
+  BellRingingIcon, ShoppingCartIcon, CookingPotIcon,
 } from '@phosphor-icons/react'
 import { useAuth } from '@/context/AuthContext'
 import { FeatureCard } from '@/components/FeatureCard'
+import { pickSeeded } from '@/assets/global-functions'
 import content from '@/content/dashboardHome.json'
 
 const ICONS: Record<string, Icon> = {
-  MagnifyingGlass, Sparkle, Package, Heart, NotePencil, ClockCounterClockwise,
-  BellRinging, ShoppingCart, CookingPot,
+  MagnifyingGlassIcon, SparkleIcon, PackageIcon, HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon,
+  BellRingingIcon, ShoppingCartIcon, CookingPotIcon,
 }
 
 const TONES = ['sage', 'mustard', 'peach']
@@ -26,10 +27,10 @@ export const DashboardHomePage = () => {
       <p className="dashboard-home-sub">{content.subtitle}</p>
 
       <div className="features-row">
-        {content.cards.map((card, i) => (
+        {content.cards.map(card => (
           <FeatureCard
             key={card.to}
-            tone={TONES[i % TONES.length]}
+            tone={pickSeeded(card.to, TONES)}
             icon={ICONS[card.icon]}
             title={card.title}
             text={card.text}

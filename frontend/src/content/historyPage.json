@@ -18,5 +18,6 @@
   "closeLabel": "✕",
   "editLabel": "Edit",
   "deleteLabel": "Delete",
-  "deleteConfirm": "Remove this entry from your history?"
+  "deleteConfirm": "Remove this entry from your history?",
+  "actionErrorMessage": "Something went wrong. Please try again."
 }

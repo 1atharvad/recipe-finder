@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle, WarningCircle } from '@phosphor-icons/react'
+import { CheckCircleIcon, WarningCircleIcon } from '@phosphor-icons/react'
+import { toast } from 'advi-ui'
 import { adminApi } from '@/api/api'
 import type { EmbeddingStatus } from '@/types'
 import content from '@/content/adminEmbeddingsPage.json'
@@ -13,7 +14,7 @@ export const AdminEmbeddingsPage = () => {
   const load = () => {
     adminApi.getEmbeddingStatus()
       .then(setStatus)
-      .catch(() => {})
+      .catch(() => toast.error(content.loadErrorMessage))
       .finally(() => setLoading(false))
   }
 
@@ -25,7 +26,9 @@ export const AdminEmbeddingsPage = () => {
     try {
       await adminApi.triggerBackfill()
       setBackfillDone(true)
-    } catch {} finally {
+    } catch {
+      toast.error(content.backfillErrorMessage)
+    } finally {
       setBackfilling(false)
     }
   }
@@ -42,8 +45,8 @@ export const AdminEmbeddingsPage = () => {
       <div className="admin-card">
         <p className="msg" style={{ padding: 0, justifyContent: 'flex-start', marginBottom: '1rem' }}>
           {status.geminiConfigured
-            ? <><CheckCircle weight="bold" color="#2e7d32" /> {content.geminiConfiguredLabel}</>
-            : <><WarningCircle weight="bold" color="#c0392b" /> {content.geminiNotConfiguredLabel}</>}
+            ? <><CheckCircleIcon weight="bold" color="#2e7d32" /> {content.geminiConfiguredLabel}</>
+            : <><WarningCircleIcon weight="bold" color="#c0392b" /> {content.geminiNotConfiguredLabel}</>}
         </p>
 
         <div className="admin-stats-grid">

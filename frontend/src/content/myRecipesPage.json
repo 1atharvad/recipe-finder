@@ -11,5 +11,7 @@
   "privateLabel": "Private",
   "servingWord": "serving",
   "editLabel": "Edit",
-  "deleteLabel": "Delete"
+  "deleteLabel": "Delete",
+  "loadErrorMessage": "Couldn't load your recipes. Please try again.",
+  "deleteErrorMessage": "Couldn't delete this recipe. Please try again."
 }

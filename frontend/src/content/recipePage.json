@@ -28,5 +28,6 @@
   "ingredientsTitle": "Ingredients",
   "instructionsTitle": "Instructions",
   "watchItMadeTitle": "Watch it made",
-  "similarRecipesLabel": "You might also like"
+  "similarRecipesLabel": "You might also like",
+  "actionErrorMessage": "Something went wrong. Please try again."
 }

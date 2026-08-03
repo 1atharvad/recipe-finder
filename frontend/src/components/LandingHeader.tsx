@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BowlSteam, List, X } from '@phosphor-icons/react'
+import { BowlSteamIcon, ListIcon, XIcon } from '@phosphor-icons/react'
 import { useAuth } from '@/context/AuthContext'
 import content from '@/content/landingHeader.json'
 
@@ -17,7 +17,7 @@ export const LandingHeader = () => {
   return (
     <header className="landing-header">
       <div className="landing-header-inner">
-        <span className="landing-logo"><BowlSteam weight="duotone" /> {content.logo}</span>
+        <span className="landing-logo"><BowlSteamIcon weight="duotone" /> {content.logo}</span>
         <nav className="landing-header-links">
           <a href="/features">{content.featuresLink}</a>
           <a href="/how-it-works">{content.howItWorksLink}</a>
@@ -51,7 +51,7 @@ export const LandingHeader = () => {
             aria-label={menuOpen ? content.closeMenuLabel : content.openMenuLabel}
             aria-expanded={menuOpen}
           >
-            {menuOpen ? <X weight="bold" /> : <List weight="bold" />}
+            {menuOpen ? <XIcon weight="bold" /> : <ListIcon weight="bold" />}
           </button>
         </div>
       </div>

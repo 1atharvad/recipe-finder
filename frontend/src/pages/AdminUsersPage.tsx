@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { toast } from 'advi-ui'
 import { adminApi } from '@/api/api'
 import type { AdminUser } from '@/types'
 import content from '@/content/adminUsersPage.json'
@@ -10,7 +11,7 @@ export const AdminUsersPage = () => {
   const load = () => {
     adminApi.getUsers()
       .then(setUsers)
-      .catch(() => {})
+      .catch(() => toast.error(content.loadErrorMessage))
       .finally(() => setLoading(false))
   }
 
@@ -21,14 +22,18 @@ export const AdminUsersPage = () => {
     try {
       await adminApi.setUserEnabled(user.id, !user.enabled)
       setUsers(prev => prev.map(u => u.id === user.id ? { ...u, enabled: !u.enabled } : u))
-    } catch {}
+    } catch {
+      toast.error(content.actionErrorMessage)
+    }
   }
 
   const togglePremium = async (user: AdminUser) => {
     try {
       await adminApi.setUserPremiumAccess(user.id, !user.premiumAccess)
       setUsers(prev => prev.map(u => u.id === user.id ? { ...u, premiumAccess: !u.premiumAccess } : u))
-    } catch {}
+    } catch {
+      toast.error(content.actionErrorMessage)
+    }
   }
 
   return (

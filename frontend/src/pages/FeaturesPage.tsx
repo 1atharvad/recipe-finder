@@ -1,6 +1,6 @@
 import type { Icon } from '@phosphor-icons/react'
 import {
-  MagnifyingGlass, Heart, NotePencil, ClockCounterClockwise, Sparkle, Sliders,
+  MagnifyingGlassIcon, HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon, SparkleIcon, SlidersIcon,
 } from '@phosphor-icons/react'
 import { LandingHeader } from '@/components/LandingHeader'
 import { LandingFooter } from '@/components/LandingFooter'
@@ -8,7 +8,7 @@ import { FeatureCard } from '@/components/FeatureCard'
 import content from '@/content/featuresPage.json'
 
 const ICONS: Record<string, Icon> = {
-  MagnifyingGlass, Heart, NotePencil, ClockCounterClockwise, Sparkle, Sliders,
+  MagnifyingGlassIcon, HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon, SparkleIcon, SlidersIcon,
 }
 
 export const FeaturesPage = () => (
@@ -17,7 +17,7 @@ export const FeaturesPage = () => (
 
     <section className="landing-hero how-it-works-hero">
       <div className="section-inner">
-        <span className="hero-eyebrow">{content.hero.eyebrow} <Sparkle weight="fill" /></span>
+        <span className="hero-eyebrow">{content.hero.eyebrow} <SparkleIcon weight="fill" /></span>
         <h1>{content.hero.title}</h1>
         <p>{content.hero.text}</p>
       </div>

@@ -93,7 +93,13 @@ public class RecipeEmbeddingService {
     /** Returns recipe IDs from the general/public pool that are actually relevant to the query, most similar first. */
     public List<Long> similaritySearch(String query, int limit) {
         if (!geminiClient.isConfigured()) return List.of();
-        float[] queryVector = geminiClient.embed(query);
+        float[] queryVector;
+        try {
+            queryVector = geminiClient.embed(query);
+        } catch (Exception e) {
+            log.warn("Failed to embed search query: {}", e.getMessage());
+            return List.of();
+        }
         String vectorLiteral = toVectorLiteral(queryVector);
         return jdbcTemplate.queryForList(
             "SELECT re.recipe_id FROM recipe_embeddings re " +

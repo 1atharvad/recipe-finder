@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Sparkle, PaperPlaneRight } from '@phosphor-icons/react'
+import { SparkleIcon, PaperPlaneRightIcon } from '@phosphor-icons/react'
 import { recipeApi, adminApi } from '@/api/api'
 import { FormField } from '@/components/FormField'
 import { SelectField } from '@/components/SelectField'
@@ -148,7 +148,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
         <form onSubmit={handleSubmit} className="recipe-form">
           {mode === 'create' && (
             <div className="ai-draft-box">
-              <span className="ai-draft-label"><Sparkle weight="fill" /> {content.draftPromptLabel}</span>
+              <span className="ai-draft-label"><SparkleIcon weight="fill" /> {content.draftPromptLabel}</span>
               <p className="ai-draft-hint">{content.draftHint}</p>
 
               {draftMessages.length > 0 && (
@@ -186,7 +186,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
                   disabled={drafting || !draftInput.trim()}
                   aria-label={content.draftButtonLabel}
                 >
-                  <PaperPlaneRight weight="fill" />
+                  <PaperPlaneRightIcon weight="fill" />
                 </button>
               </div>
             </div>

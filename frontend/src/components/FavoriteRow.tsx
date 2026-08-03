@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import { Heart, Users } from '@phosphor-icons/react'
-import { getRecipeImage } from '@/assets/recipeImages'
-import { handleImageFallback } from '@/assets/imageFallback'
+import { HeartIcon, UsersIcon } from '@phosphor-icons/react'
+import { getRecipeImage, handleImageFallback } from '@/assets/global-functions'
 import type { Recipe } from '@/types'
 import content from '@/content/favoritesPage.json'
 
@@ -25,7 +24,7 @@ export const FavoriteRow = ({ recipe, onRemove }: Props) => {
       <div className="favorite-row-info">
         <span className="favorite-row-name">{recipe.name}</span>
         <span className="favorite-row-meta">
-          <Users weight="bold" /> {recipe.servings}
+          <UsersIcon weight="bold" /> {recipe.servings}
           {recipe.cuisineType && ` · ${recipe.cuisineType}`}
           {recipe.dietaryType && ` · ${recipe.dietaryType.replace('_', ' ')}`}
         </span>
@@ -36,7 +35,7 @@ export const FavoriteRow = ({ recipe, onRemove }: Props) => {
         aria-label={content.removeLabel}
         title={content.removeLabel}
       >
-        <Heart weight="fill" />
+        <HeartIcon weight="fill" />
       </button>
     </div>
   )
