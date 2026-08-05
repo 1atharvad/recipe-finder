@@ -40,3 +40,13 @@ h1, h2, h3, .navbar-brand, .section-label, .book-title, .page-header h2 {
 .vi-toast {
   pointer-events: auto;
 }
+
+// ── Route-level code-split fallback ─────────────────────────
+.route-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: $muted;
+  font-size: $fs-body;
+}
