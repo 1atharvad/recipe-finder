@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BellRingingIcon, ForkKnifeIcon } from '@phosphor-icons/react'
-import { toast } from 'advi-ui'
+import { toast, Badge } from 'advi-ui'
 import { scheduleApi } from '@/api/api'
 import { ScheduleModal } from '@/components/ScheduleModal'
 import { ReminderDetailModal } from '@/components/ReminderDetailModal'
@@ -92,9 +92,14 @@ export const RemindersPage = () => {
 
   return (
     <div className="page">
-      <div className="page-header">
-        <h2>{content.title}</h2>
-        <p>{schedules.length} {content.countWord}{schedules.length !== 1 ? 's' : ''}</p>
+      <div className="hero-page-header">
+        <div>
+          <span className="hero-eyebrow">
+            <BellRingingIcon weight="fill" /> {schedules.length} {content.countWord}{schedules.length !== 1 ? 's' : ''}
+          </span>
+          <h1>{content.title}</h1>
+          <p>{content.subtitle}</p>
+        </div>
       </div>
 
       {upcoming.length > 0 && (
@@ -171,7 +176,7 @@ const ReminderRow = ({ schedule, onOpen }: ReminderRowProps) => {
 
       {(overdue || schedule.note) && (
         <span className="reminder-entry-meta">
-          {overdue && <span className="meta-badge tone-peach">{content.overdueLabel}</span>}
+          {overdue && <Badge className="meta-badge tone-peach">{content.overdueLabel}</Badge>}
           {schedule.note && <span className="reminder-note">{schedule.note}</span>}
         </span>
       )}

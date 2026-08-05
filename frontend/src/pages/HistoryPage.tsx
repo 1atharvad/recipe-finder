@@ -83,10 +83,13 @@ export const HistoryPage = () => {
 
   return (
     <div className="page">
-      <div className="page-header">
+      <div className="hero-page-header">
         <div>
-          <h2>{content.title}</h2>
-          <p>{history.length} {content.countWord}{history.length !== 1 ? 's' : ''} {content.countSuffix}</p>
+          <span className="hero-eyebrow">
+            <ClockCounterClockwiseIcon weight="fill" /> {history.length} {content.countWord}{history.length !== 1 ? 's' : ''} {content.countSuffix}
+          </span>
+          <h1>{content.title}</h1>
+          <p>{content.subtitle}</p>
         </div>
         <div className="view-toggle">
           <button

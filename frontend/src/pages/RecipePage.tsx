@@ -4,7 +4,7 @@ import {
   ArrowLeftIcon, HeartIcon, CheckCircleIcon, UsersIcon, ListChecksIcon, ForkKnifeIcon,
   PrinterIcon, ShareNetworkIcon, ClockCounterClockwiseIcon, PlayCircleIcon, TimerIcon, BellRingingIcon,
 } from '@phosphor-icons/react'
-import { toast } from 'advi-ui'
+import { toast, Badge } from 'advi-ui'
 import { recipeApi, favoritesApi, historyApi, scheduleApi } from '@/api/api'
 import { useAuth } from '@/context/AuthContext'
 import { LandingHeader } from '@/components/LandingHeader'
@@ -24,13 +24,10 @@ export const RecipePage = () => {
   const [recipe, setRecipe] = useState<Recipe | null>(null)
   const [status, setStatus] = useState<'loading' | 'done' | 'error'>('loading')
   const [favorited, setFavorited] = useState(false)
-  const [eatenMsg, setEatenMsg] = useState('')
   const [cookHistory, setCookHistory] = useState<EatingHistoryEntry[]>([])
   const [similar, setSimilar] = useState<Recipe[]>([])
-  const [shareMsg, setShareMsg] = useState('')
   const [showMarkEaten, setShowMarkEaten] = useState(false)
   const [showSchedule, setShowSchedule] = useState(false)
-  const [scheduledMsg, setScheduledMsg] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -86,9 +83,8 @@ export const RecipePage = () => {
     setShowMarkEaten(false)
     try {
       const entry = await historyApi.markEaten(recipe.id, eatenAt)
-      setEatenMsg(content.markedEatenLabel)
+      toast.success(content.markedEatenLabel)
       setCookHistory(prev => [entry, ...prev])
-      setTimeout(() => setEatenMsg(''), 2000)
     } catch { toast.error(content.actionErrorMessage) }
   }
 
@@ -97,8 +93,7 @@ export const RecipePage = () => {
     setShowSchedule(false)
     try {
       await scheduleApi.create(recipe.id, scheduledAt, note)
-      setScheduledMsg(content.scheduledLabel)
-      setTimeout(() => setScheduledMsg(''), 2000)
+      toast.success(content.scheduledLabel)
     } catch { toast.error(content.actionErrorMessage) }
   }
 
@@ -110,8 +105,7 @@ export const RecipePage = () => {
     }
     try {
       await navigator.clipboard.writeText(url)
-      setShareMsg(content.linkCopiedLabel)
-      setTimeout(() => setShareMsg(''), 2000)
+      toast.success(content.linkCopiedLabel)
     } catch { toast.error(content.actionErrorMessage) }
   }
 
@@ -129,9 +123,9 @@ export const RecipePage = () => {
                   <SkelBlock width="16rem" height="2rem" />
                   <SkelBlock width="8rem" height="0.9rem" />
                 </div>
-                <div className="book-actions">
-                  <SkelBlock width="5rem" height="2.25rem" radius="999px" />
-                  <SkelBlock width="5rem" height="2.25rem" radius="999px" />
+                <div className="book-title-actions">
+                  <SkelBlock width="36px" height="36px" radius="999px" />
+                  <SkelBlock width="36px" height="36px" radius="999px" />
                 </div>
               </div>
               <div className="book-meta">
@@ -211,12 +205,56 @@ export const RecipePage = () => {
         </button>
 
         <article className="recipe-card-detail">
-          <img
-            className="recipe-hero-img"
-            src={getRecipeImage(recipe.imageUrl)}
-            alt={recipe.name}
-            onError={handleImageFallback}
-          />
+          <div className="recipe-hero-wrap">
+            <img
+              className="recipe-hero-img"
+              src={getRecipeImage(recipe.imageUrl)}
+              alt={recipe.name}
+              onError={handleImageFallback}
+            />
+
+            {(recipe.dietaryType || recipe.cuisineType || recipe.difficulty) && (
+              <div className="recipe-hero-badges">
+                {recipe.dietaryType && (
+                  <Badge className="meta-badge tone-sage">{recipe.dietaryType.replace('_', ' ')}</Badge>
+                )}
+                {recipe.cuisineType && (
+                  <Badge className="meta-badge tone-mustard">{recipe.cuisineType}</Badge>
+                )}
+                {recipe.difficulty && (
+                  <Badge className="meta-badge tone-peach">{recipe.difficulty}</Badge>
+                )}
+              </div>
+            )}
+
+            <div className="recipe-hero-actions">
+              <button
+                className={`recipe-hero-icon-btn tone-fav${favorited ? ' active' : ''}`}
+                onClick={toggleFavorite}
+                aria-label={favorited ? content.savedLabel : content.saveLabel}
+              >
+                <HeartIcon weight={favorited ? 'fill' : 'bold'} />
+              </button>
+              {isAuthenticated && (
+                <button
+                  className="recipe-hero-icon-btn tone-eaten"
+                  onClick={() => setShowMarkEaten(true)}
+                  aria-label={content.markEatenLabel}
+                >
+                  <CheckCircleIcon weight="bold" />
+                </button>
+              )}
+              {isAuthenticated && (
+                <button
+                  className="recipe-hero-icon-btn tone-schedule"
+                  onClick={() => setShowSchedule(true)}
+                  aria-label={content.scheduleLabel}
+                >
+                  <BellRingingIcon weight="bold" />
+                </button>
+              )}
+            </div>
+          </div>
 
           <header className="book-header">
             <div className="book-title-row">
@@ -234,32 +272,15 @@ export const RecipePage = () => {
                   </p>
                 )}
               </div>
-              <div className="book-actions">
-                <button
-                  className={`btn-pill btn-small ${favorited ? 'btn-save saved' : 'btn-save'}`}
-                  onClick={toggleFavorite}
-                >
-                  <HeartIcon weight={favorited ? 'fill' : 'bold'} /> {favorited ? content.savedLabel : content.saveLabel}
-                </button>
-                {isAuthenticated && (
-                  <button className="btn-pill btn-small btn-eaten" onClick={() => setShowMarkEaten(true)}>
-                    <CheckCircleIcon weight="bold" /> {eatenMsg || content.markEatenLabel}
-                  </button>
-                )}
-                {isAuthenticated && (
-                  <button className="btn-pill btn-small btn-schedule" onClick={() => setShowSchedule(true)}>
-                    <BellRingingIcon weight="bold" /> {scheduledMsg || content.scheduleLabel}
-                  </button>
-                )}
-                <button className="btn-pill btn-small btn-icon-only" onClick={share} aria-label={content.shareLabel}>
+              <div className="book-title-actions">
+                <button className="btn-icon-circle" onClick={share} aria-label={content.shareLabel}>
                   <ShareNetworkIcon weight="bold" />
                 </button>
-                <button className="btn-pill btn-small btn-icon-only" onClick={() => window.print()} aria-label={content.printLabel}>
+                <button className="btn-icon-circle print-only-desktop" onClick={() => window.print()} aria-label={content.printLabel}>
                   <PrinterIcon weight="bold" />
                 </button>
               </div>
             </div>
-            {shareMsg && <p className="share-msg">{shareMsg}</p>}
             <div className="book-meta">
               <span className="meta-chip"><UsersIcon weight="bold" /> {content.servesPrefix} {recipe.servings} {recipe.servings === 1 ? content.personSingular : content.personPlural}</span>
               <span className="meta-chip"><ListChecksIcon weight="bold" /> {recipe.steps.length} {content.stepsSuffix}</span>
@@ -271,15 +292,6 @@ export const RecipePage = () => {
                   {recipe.prepTimeMinutes != null && recipe.cookTimeMinutes != null && ' + '}
                   {recipe.cookTimeMinutes != null && `${recipe.cookTimeMinutes}m ${content.cookLabel}`}
                 </span>
-              )}
-              {recipe.dietaryType && (
-                <span className="meta-badge tone-sage">{recipe.dietaryType.replace('_', ' ')}</span>
-              )}
-              {recipe.cuisineType && (
-                <span className="meta-badge tone-mustard">{recipe.cuisineType}</span>
-              )}
-              {recipe.difficulty && (
-                <span className="meta-badge tone-peach">{recipe.difficulty}</span>
               )}
             </div>
 
@@ -316,8 +328,7 @@ export const RecipePage = () => {
               </ol>
             </section>
 
-            {(recipe.calories != null || recipe.proteinGrams != null || recipe.carbsGrams != null || recipe.fatGrams != null
-              || recipe.fiberGrams != null || recipe.sugarGrams != null || recipe.sodiumMg != null) && (
+            {(recipe.calories != null || recipe.proteinGrams != null || recipe.carbsGrams != null || recipe.fatGrams != null) && (
               <section className="nutrition-section">
                 <h2>{content.nutritionTitle}</h2>
                 <p className="nutrition-subtext">{content.nutritionSubtext}</p>
@@ -344,24 +355,6 @@ export const RecipePage = () => {
                     <div className="nutrition-stat">
                       <span className="nutrition-stat-value">{recipe.fatGrams}g</span>
                       <span className="nutrition-stat-label">{content.fatLabel}</span>
-                    </div>
-                  )}
-                  {recipe.fiberGrams != null && (
-                    <div className="nutrition-stat">
-                      <span className="nutrition-stat-value">{recipe.fiberGrams}g</span>
-                      <span className="nutrition-stat-label">{content.fiberLabel}</span>
-                    </div>
-                  )}
-                  {recipe.sugarGrams != null && (
-                    <div className="nutrition-stat">
-                      <span className="nutrition-stat-value">{recipe.sugarGrams}g</span>
-                      <span className="nutrition-stat-label">{content.sugarLabel}</span>
-                    </div>
-                  )}
-                  {recipe.sodiumMg != null && (
-                    <div className="nutrition-stat">
-                      <span className="nutrition-stat-value">{recipe.sodiumMg}mg</span>
-                      <span className="nutrition-stat-label">{content.sodiumLabel}</span>
                     </div>
                   )}
                 </div>
