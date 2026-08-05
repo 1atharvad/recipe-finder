@@ -60,6 +60,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Without this, Spring's default fallback (Http403ForbiddenEntryPoint) sends
+                // 403 for a missing/invalid/expired JWT — indistinguishable from a genuine
+                // AccessDeniedException (wrong role, "not your recipe", etc). The frontend
+                // needs 401 to mean "not authenticated, redirect to login" specifically, so it
+                // never confuses an expired session with a real permission error.
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                        (request, response, authException) -> response.sendError(401)))
                 .authorizeHttpRequests(auth -> auth
                         // Spring's error handling does an internal forward to /error (e.g. for any
                         // ResponseStatusException), which otherwise gets caught by anyRequest().authenticated()

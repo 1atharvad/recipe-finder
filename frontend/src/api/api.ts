@@ -29,6 +29,17 @@ const request = async <T>(path: string, options: RequestInit = {}): Promise<T> =
   if (token) headers['Authorization'] = `Bearer ${token}`
 
   const res = await fetch(`${BASE}${path}`, { ...options, headers })
+  if (res.status === 401) {
+    // The backend only sends 401 for "not authenticated" (missing/invalid/
+    // expired JWT) — genuine permission failures (wrong role, not your
+    // recipe, premium required) are 403s and must NOT bounce the user here.
+    // A hard redirect (rather than a router navigate) guarantees every
+    // in-memory auth/UI state gets torn down along with the stale session.
+    localStorage.removeItem(AUTH_KEY)
+    if (!window.location.pathname.startsWith('/login')) {
+      window.location.href = '/login'
+    }
+  }
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     let message = text
