@@ -65,18 +65,22 @@ export interface AuthResponse {
 export interface UserPreferences {
   dietaryType: string | null
   cuisineType: string | null
+  calorieGoal?: number | null
+  proteinGoal?: number | null
+  carbsGoal?: number | null
+  fatGoal?: number | null
 }
 
 export interface EatingHistoryEntry {
   id: number
-  recipe: { id: number; name: string; imageUrl?: string | null }
+  recipe: Recipe
   eatenOn: string
   recordedAt: string
 }
 
 export interface MealSchedule {
   id: number
-  recipe: { id: number; name: string; imageUrl?: string | null }
+  recipe: Recipe
   scheduledAt: string
   note: string | null
   completed: boolean
@@ -129,6 +133,10 @@ export interface RecipeRequest {
 export interface PreferencesRequest {
   dietaryType: string | null
   cuisineType: string | null
+  calorieGoal?: number | null
+  proteinGoal?: number | null
+  carbsGoal?: number | null
+  fatGoal?: number | null
 }
 
 export interface UserProfile {

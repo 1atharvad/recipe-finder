@@ -1,0 +1,15 @@
+{
+  "title": "Daily Nutrition Goals",
+  "closeLabel": "✕",
+  "loadingLabel": "Loading...",
+  "hint": "Set daily targets to compare against what you've actually eaten. Leave a field blank to clear its goal.",
+  "calorieLabel": "Calories (kcal)",
+  "proteinLabel": "Protein (g)",
+  "carbsLabel": "Carbs (g)",
+  "fatLabel": "Fat (g)",
+  "cancelLabel": "Cancel",
+  "saveLabel": "Save Goals",
+  "savingLabel": "Saving…",
+  "loadErrorMessage": "Couldn't load your goals. Please try again.",
+  "saveErrorMessage": "Couldn't save your goals. Please try again."
+}

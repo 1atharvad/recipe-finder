@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import type { Icon } from '@phosphor-icons/react'
 import {
   BowlSteamIcon, ListIcon, MagnifyingGlassIcon, SparkleIcon, PackageIcon, SquaresFourIcon, SignOutIcon, UserCircleIcon,
-  HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon, BellRingingIcon, ShoppingCartIcon, CookingPotIcon,
+  HeartIcon, NotePencilIcon, ClockCounterClockwiseIcon, BellRingingIcon, ShoppingCartIcon, CookingPotIcon, ChartDonutIcon,
 } from '@phosphor-icons/react'
 import { PageAside, AsideDrawer } from 'advi-ui'
 import { useAuth } from '@/context/AuthContext'
@@ -13,7 +13,7 @@ import content from '@/content/dashboardNav.json'
 const ICONS: Record<string, Icon> = {
   MagnifyingGlass: MagnifyingGlassIcon, Sparkle: SparkleIcon, Package: PackageIcon, SquaresFour: SquaresFourIcon,
   Heart: HeartIcon, NotePencil: NotePencilIcon, ClockCounterClockwise: ClockCounterClockwiseIcon,
-  BellRinging: BellRingingIcon, ShoppingCart: ShoppingCartIcon, CookingPot: CookingPotIcon,
+  BellRinging: BellRingingIcon, ShoppingCart: ShoppingCartIcon, CookingPot: CookingPotIcon, ChartDonut: ChartDonutIcon,
 }
 
 export const DashboardLayout = () => {

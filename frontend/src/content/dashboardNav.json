@@ -14,6 +14,7 @@
     { "to": "/dashboard/my-recipes", "label": "My Recipes", "icon": "NotePencil", "end": false },
     { "to": "/dashboard/history", "label": "History", "icon": "ClockCounterClockwise", "end": false },
     { "to": "/dashboard/reminders", "label": "Reminders", "icon": "BellRinging", "end": false },
+    { "to": "/dashboard/nutrition", "label": "Nutrition", "icon": "ChartDonut", "end": false },
     { "divider": "Meal Planning" },
     { "to": "/dashboard/inventory", "label": "Inventory", "icon": "Package", "end": false, "soon": true },
     { "to": "/dashboard/shopping-list", "label": "Shopping List", "icon": "ShoppingCart", "end": false, "soon": true },

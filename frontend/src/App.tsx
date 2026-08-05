@@ -29,6 +29,7 @@ import { HistoryPage } from '@/pages/HistoryPage'
 import { PrivacyPolicyPage } from '@/pages/PrivacyPolicyPage'
 import { TermsPage } from '@/pages/TermsPage'
 import { RemindersPage } from '@/pages/RemindersPage'
+import { NutritionPage } from '@/pages/NutritionPage'
 import { ShoppingListPage } from '@/pages/ShoppingListPage'
 import { MealPrepPage } from '@/pages/MealPrepPage'
 
@@ -69,6 +70,7 @@ export const App = () => {
               <Route path="my-recipes" element={<MyRecipesPage />} />
               <Route path="history" element={<HistoryPage />} />
               <Route path="reminders" element={<RemindersPage />} />
+              <Route path="nutrition" element={<NutritionPage />} />
               <Route path="shopping-list" element={<ShoppingListPage />} />
               <Route path="meal-prep" element={<MealPrepPage />} />
             </Route>

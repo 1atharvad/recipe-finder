@@ -1,0 +1,179 @@
+@use 'tokens' as *;
+
+// ── Nutrition Analysis page ─────────────────────────────────────────────────────
+
+.nutrition-coverage-note {
+  font-family: $font-body;
+  font-size: 0.8rem;
+  color: $muted;
+  margin: $sp-4 0;
+}
+
+.nutrition-macro-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $sp-4;
+  margin-bottom: $sp-6;
+
+  @media (min-width: $bp-sm) { grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: $bp-md) { grid-template-columns: repeat(4, 1fr); }
+}
+
+.nutrition-macro-card {
+  display: flex;
+  align-items: center;
+  gap: $sp-3;
+  min-width: 0;
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 16px;
+  padding: $sp-4;
+
+  // advi-ui's CircularProgressBar centers its children absolutely inside
+  // the ring — this sizes/colors the value that sits inside it.
+  .nutrition-macro-value {
+    font-family: $font-display;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $text;
+  }
+}
+
+.nutrition-macro-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nutrition-macro-label {
+  font-family: $font-body;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $text;
+}
+
+.nutrition-macro-sub, .nutrition-macro-goal {
+  font-family: $font-body;
+  font-size: 0.72rem;
+  color: $muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nutrition-charts-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $sp-4;
+  margin-bottom: $sp-6;
+
+  @media (min-width: $bp-lg) { grid-template-columns: 1fr 1fr; }
+}
+
+.nutrition-panel {
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 16px;
+  padding: $sp-5;
+
+  .section-label { margin-bottom: $sp-3; }
+}
+
+.nutrition-panel-empty {
+  font-family: $font-body;
+  font-size: 0.85rem;
+  color: $muted;
+  text-align: center;
+  padding: $sp-8 0;
+}
+
+.nutrition-planned-summary {
+  font-family: $font-body;
+  font-size: 0.85rem;
+  color: $muted;
+  margin-bottom: $sp-3;
+}
+
+.nutrition-planned-list, .nutrition-contributors-list {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+}
+
+.nutrition-planned-item, .nutrition-contributor-item {
+  display: flex;
+  align-items: center;
+  gap: $sp-2;
+  padding: $sp-2 $sp-3;
+  border-radius: 10px;
+  background: $bg;
+  font-family: $font-body;
+  font-size: 0.85rem;
+  color: $text;
+
+  svg { flex-shrink: 0; width: 1.1em; height: 1.1em; color: $primary; }
+}
+
+.nutrition-planned-name, .nutrition-contributor-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nutrition-planned-date, .nutrition-contributor-calories {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: $muted;
+  font-size: 0.78rem;
+}
+
+.nutrition-daily-panel {
+  margin-bottom: $sp-6;
+}
+
+// Table can outgrow the panel on phones (4 macro columns + date) — scroll
+// horizontally inside its own box rather than pushing the page wider.
+.nutrition-daily-table-wrap {
+  overflow-x: auto;
+}
+
+.nutrition-daily-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $font-body;
+  font-size: 0.85rem;
+  white-space: nowrap;
+
+  th, td {
+    text-align: right;
+    padding: $sp-2 $sp-3;
+
+    &:first-child { text-align: left; }
+  }
+
+  th {
+    color: $muted;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1.5px solid $border;
+  }
+
+  td {
+    color: $text;
+    border-bottom: 1px solid $border;
+  }
+
+  tr:last-child td { border-bottom: none; }
+}
+
+// ── Goals modal ──────────────────────────────────────────────────────────────
+.nutrition-goals-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $sp-4;
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Custom Date Range",
+  "closeLabel": "✕",
+  "fromLabel": "From",
+  "toLabel": "To",
+  "cancelLabel": "Cancel",
+  "applyLabel": "Apply"
+}

@@ -158,6 +158,10 @@ public class UserService implements UserDetailsService {
                 .orElseGet(() -> new UserPreferences(user));
         prefs.setDietaryType(request.getDietaryType());
         prefs.setCuisineType(request.getCuisineType());
+        prefs.setCalorieGoal(request.getCalorieGoal());
+        prefs.setProteinGoal(request.getProteinGoal());
+        prefs.setCarbsGoal(request.getCarbsGoal());
+        prefs.setFatGoal(request.getFatGoal());
         return preferencesRepository.save(prefs);
     }
 
