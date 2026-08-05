@@ -18,6 +18,7 @@ node_modules/
 .idea/
 *.iml
 .vscode/settings.json
+.claude/
 
 # OS
 .DS_Store
