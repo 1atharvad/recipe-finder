@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { SparkleIcon, PaperPlaneRightIcon } from '@phosphor-icons/react'
+import { SparkleIcon, PaperPlaneRightIcon, CaretDownIcon } from '@phosphor-icons/react'
 import { recipeApi, adminApi } from '@/api/api'
 import { FormField } from '@/components/FormField'
 import { SelectField } from '@/components/SelectField'
@@ -40,6 +40,13 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
   )
   const [steps, setSteps] = useState<string[]>(
     initial?.steps?.length ? initial.steps : ['']
+  )
+  const [nutritionOpen, setNutritionOpen] = useState(() =>
+    [initial?.calories, initial?.proteinGrams, initial?.carbsGrams, initial?.fatGrams, initial?.fiberGrams, initial?.sugarGrams, initial?.sodiumMg]
+      .some(v => v != null)
+  )
+  const [mediaOpen, setMediaOpen] = useState(() =>
+    !!(initial?.imageUrl || initial?.videoUrl || initial?.sourceName || initial?.sourceUrl)
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -121,6 +128,9 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
         setFiberGrams(draft.fiberGrams ?? '')
         setSugarGrams(draft.sugarGrams ?? '')
         setSodiumMg(draft.sodiumMg ?? '')
+        if ([draft.calories, draft.proteinGrams, draft.carbsGrams, draft.fatGrams, draft.fiberGrams, draft.sugarGrams, draft.sodiumMg].some(v => v != null)) {
+          setNutritionOpen(true)
+        }
         setIngredients(draft.ingredients.length ? draft.ingredients : [{ name: '', quantity: '' }])
         setSteps(draft.steps.length ? draft.steps : [''])
       }
@@ -169,58 +179,57 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
         {error && <p className="auth-error">{error}</p>}
 
         <form onSubmit={handleSubmit} className="recipe-form">
-          {(
-            <div className="ai-draft-box">
-              <span className="ai-draft-label">
-                <SparkleIcon weight="fill" /> {mode === 'create' ? content.draftPromptLabel : content.draftPromptLabelEdit}
-              </span>
-              <p className="ai-draft-hint">{mode === 'create' ? content.draftHint : content.draftHintEdit}</p>
+          <div className="ai-draft-box">
+            <span className="ai-draft-label">
+              <SparkleIcon weight="fill" /> {mode === 'create' ? content.draftPromptLabel : content.draftPromptLabelEdit}
+            </span>
+            <p className="ai-draft-hint">{mode === 'create' ? content.draftHint : content.draftHintEdit}</p>
 
-              {draftMessages.length > 0 && (
-                <div className="chat-thread ai-draft-thread">
-                  {draftMessages.map((m, i) => (
-                    <div key={i} className={`chat-message ${m.role}`}>
-                      <div className="chat-bubble">{m.content}</div>
+            {draftMessages.length > 0 && (
+              <div className="chat-thread ai-draft-thread">
+                {draftMessages.map((m, i) => (
+                  <div key={i} className={`chat-message ${m.role}`}>
+                    <div className="chat-bubble">{m.content}</div>
+                  </div>
+                ))}
+                {drafting && (
+                  <div className="chat-message assistant">
+                    <div className="chat-bubble chat-typing">
+                      <span></span><span></span><span></span>
                     </div>
-                  ))}
-                  {drafting && (
-                    <div className="chat-message assistant">
-                      <div className="chat-bubble chat-typing">
-                        <span></span><span></span><span></span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {draftError && <p className="auth-error">{draftError}</p>}
-
-              <div className="ai-draft-input-row">
-                <textarea
-                  value={draftInput}
-                  onChange={e => setDraftInput(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleDraft() } }}
-                  placeholder={
-                    draftMessages.length
-                      ? content.draftFollowUpPlaceholder
-                      : mode === 'create' ? content.draftPromptPlaceholder : content.draftPromptPlaceholderEdit
-                  }
-                  rows={1}
-                  disabled={drafting}
-                />
-                <button
-                  type="button"
-                  className="btn-pill btn-primary btn-icon-only"
-                  onClick={handleDraft}
-                  disabled={drafting || !draftInput.trim()}
-                  aria-label={content.draftButtonLabel}
-                >
-                  <PaperPlaneRightIcon weight="fill" />
-                </button>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
 
+            {draftError && <p className="auth-error">{draftError}</p>}
+
+            <div className="ai-draft-input-row">
+              <textarea
+                value={draftInput}
+                onChange={e => setDraftInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleDraft() } }}
+                placeholder={
+                  draftMessages.length
+                    ? content.draftFollowUpPlaceholder
+                    : mode === 'create' ? content.draftPromptPlaceholder : content.draftPromptPlaceholderEdit
+                }
+                rows={1}
+                disabled={drafting}
+              />
+              <button
+                type="button"
+                className="btn-pill btn-primary btn-icon-only"
+                onClick={handleDraft}
+                disabled={drafting || !draftInput.trim()}
+                aria-label={content.draftButtonLabel}
+              >
+                <PaperPlaneRightIcon weight="fill" />
+              </button>
+            </div>
+          </div>
+
+          <div className="recipe-form-fields">
           <p className="section-label">{content.detailsSection}</p>
 
           <div className="form-row">
@@ -257,98 +266,99 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
             <SelectField label={content.difficultyLabel} value={difficulty} onChange={setDifficulty} options={content.difficultyOptions} />
           </div>
 
-          <p className="section-label">{content.nutritionSection}</p>
+          <button
+            type="button"
+            className="section-label section-toggle"
+            onClick={() => setNutritionOpen(o => !o)}
+            aria-expanded={nutritionOpen}
+          >
+            {content.nutritionSection}
+            <CaretDownIcon weight="bold" className={nutritionOpen ? 'section-toggle-caret section-toggle-caret--open' : 'section-toggle-caret'} />
+          </button>
 
-          <div className="form-row form-row--3">
-            <FormField
-              label={content.caloriesLabel}
-              type="number"
-              value={calories}
-              onChange={v => setCalories(v === '' ? '' : Number(v))}
-              min={0}
-            />
-            <FormField
-              label={content.proteinLabel}
-              type="number"
-              value={proteinGrams}
-              onChange={v => setProteinGrams(v === '' ? '' : Number(v))}
-              min={0}
-            />
-            <FormField
-              label={content.carbsLabel}
-              type="number"
-              value={carbsGrams}
-              onChange={v => setCarbsGrams(v === '' ? '' : Number(v))}
-              min={0}
-            />
-          </div>
-          <div className="form-row form-row--3">
-            <FormField
-              label={content.fatLabel}
-              type="number"
-              value={fatGrams}
-              onChange={v => setFatGrams(v === '' ? '' : Number(v))}
-              min={0}
-            />
-            <FormField
-              label={content.fiberLabel}
-              type="number"
-              value={fiberGrams}
-              onChange={v => setFiberGrams(v === '' ? '' : Number(v))}
-              min={0}
-            />
-            <FormField
-              label={content.sugarLabel}
-              type="number"
-              value={sugarGrams}
-              onChange={v => setSugarGrams(v === '' ? '' : Number(v))}
-              min={0}
-            />
-          </div>
-          <div className="form-row form-row--3">
-            <FormField
-              label={content.sodiumLabel}
-              type="number"
-              value={sodiumMg}
-              onChange={v => setSodiumMg(v === '' ? '' : Number(v))}
-              min={0}
-            />
-          </div>
+          {nutritionOpen && (
+            <>
+              <div className="form-row form-row--3">
+                <FormField
+                  label={content.caloriesLabel}
+                  type="number"
+                  value={calories}
+                  onChange={v => setCalories(v === '' ? '' : Number(v))}
+                  min={0}
+                />
+                <FormField
+                  label={content.proteinLabel}
+                  type="number"
+                  value={proteinGrams}
+                  onChange={v => setProteinGrams(v === '' ? '' : Number(v))}
+                  min={0}
+                />
+                <FormField
+                  label={content.carbsLabel}
+                  type="number"
+                  value={carbsGrams}
+                  onChange={v => setCarbsGrams(v === '' ? '' : Number(v))}
+                  min={0}
+                />
+              </div>
+              <div className="form-row form-row--3">
+                <FormField
+                  label={content.fatLabel}
+                  type="number"
+                  value={fatGrams}
+                  onChange={v => setFatGrams(v === '' ? '' : Number(v))}
+                  min={0}
+                />
+              </div>
+            </>
+          )}
 
-          <p className="section-label">{content.mediaSection}</p>
+          <button
+            type="button"
+            className="section-label section-toggle"
+            onClick={() => setMediaOpen(o => !o)}
+            aria-expanded={mediaOpen}
+          >
+            {content.mediaSection}
+            <CaretDownIcon weight="bold" className={mediaOpen ? 'section-toggle-caret section-toggle-caret--open' : 'section-toggle-caret'} />
+          </button>
 
-          <div className="form-row form-row--2">
-            <FormField
-              label={content.imageUrlLabel}
-              type="url"
-              value={imageUrl}
-              onChange={setImageUrl}
-              placeholder={content.imageUrlPlaceholder}
-            />
-            <FormField
-              label={content.videoUrlLabel}
-              type="url"
-              value={videoUrl}
-              onChange={setVideoUrl}
-              placeholder={content.videoUrlPlaceholder}
-            />
-          </div>
+          {mediaOpen && (
+            <>
+              <div className="form-row form-row--2">
+                <FormField
+                  label={content.imageUrlLabel}
+                  type="url"
+                  value={imageUrl}
+                  onChange={setImageUrl}
+                  placeholder={content.imageUrlPlaceholder}
+                />
+                <FormField
+                  label={content.videoUrlLabel}
+                  type="url"
+                  value={videoUrl}
+                  onChange={setVideoUrl}
+                  placeholder={content.videoUrlPlaceholder}
+                />
+              </div>
 
-          <div className="form-row form-row--2">
-            <FormField
-              label={content.sourceNameLabel}
-              value={sourceName}
-              onChange={setSourceName}
-              placeholder={content.sourceNamePlaceholder}
-            />
-            <FormField
-              label={content.sourceUrlLabel}
-              type="url"
-              value={sourceUrl}
-              onChange={setSourceUrl}
-              placeholder={content.sourceUrlPlaceholder}
-            />
-          </div>
+              <div className="form-row form-row--2">
+                <FormField
+                  label={content.sourceNameLabel}
+                  value={sourceName}
+                  onChange={setSourceName}
+                  placeholder={content.sourceNamePlaceholder}
+                />
+                <FormField
+                  label={content.sourceUrlLabel}
+                  type="url"
+                  value={sourceUrl}
+                  onChange={setSourceUrl}
+                  placeholder={content.sourceUrlPlaceholder}
+                />
+              </div>
+            </>
+          )}
 
           {context === 'user' && (
             <label className="form-checkbox-row">
@@ -406,6 +416,7 @@ export const RecipeFormModal = ({ mode, context, initial, onSave, onClose }: Pro
               </div>
             ))}
             <button type="button" className="add-row-btn" onClick={addStep}>{content.addStepLabel}</button>
+          </div>
           </div>
 
           <div className="modal-footer">

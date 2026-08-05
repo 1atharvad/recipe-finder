@@ -4,6 +4,7 @@
   "emptyText": "Open any recipe and tap \"Schedule\" to plan when you'll cook it.",
   "browseLabel": "Browse Recipes",
   "title": "Reminders",
+  "subtitle": "Schedule a recipe for later and get reminded.",
   "countWord": "reminder",
   "todayLabel": "Today",
   "tomorrowLabel": "Tomorrow",

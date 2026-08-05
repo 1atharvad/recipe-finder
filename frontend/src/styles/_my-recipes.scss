@@ -10,22 +10,31 @@
 .my-recipe-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   background: #fff;
   border: 1px solid $border;
   border-radius: 10px;
-  padding: $sp-3 $sp-4;
-  gap: $sp-4;
+  padding: $sp-2 $sp-4 $sp-2 $sp-2;
+  gap: $sp-3;
   transition: border-color 0.2s;
+  cursor: pointer;
 
   &:hover { border-color: $primary; }
 }
 
+.my-recipe-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .my-recipe-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: $sp-1;
-  cursor: pointer;
+  min-width: 0;
 }
 
 .my-recipe-name {
@@ -48,6 +57,11 @@
   border-radius: 999px;
   padding: 2px $sp-2;
 
+  @media (max-width: $bp-sm - 1) {
+    font-size: 0.6rem;
+    padding: 1px 6px;
+  }
+
   &.is-public  { background: $accent-green; color: $deep-brown; }
   &.is-private { background: $bg; color: $muted; border: 1px solid $border; }
 }
@@ -58,8 +72,66 @@
   color: $muted;
 }
 
-.my-recipe-actions {
-  display: flex;
-  gap: $sp-2;
+.my-recipe-menu {
+  position: relative;
   flex-shrink: 0;
 }
+
+.my-recipe-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  color: $muted;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover, &[aria-expanded="true"] { background: $bg; color: $text; }
+
+  svg { width: 1.2em; height: 1.2em; }
+}
+
+.my-recipe-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+
+.my-recipe-dropdown {
+  position: absolute;
+  top: calc(100% + #{$sp-1});
+  right: 0;
+  z-index: 71;
+  display: flex;
+  flex-direction: column;
+  gap: $sp-1;
+  min-width: 140px;
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  padding: $sp-2;
+
+  button {
+    display: flex;
+    align-items: center;
+    padding: $sp-2 $sp-3;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    font-family: $font-body;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: $text;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover { background: $primary-light; color: $primary-dark; }
+    &:last-child:hover { background: #fdecea; color: #c0392b; }
+  }
+}
+

@@ -26,3 +26,17 @@ body {
 h1, h2, h3, .navbar-brand, .section-label, .book-title, .page-header h2 {
   font-family: $font-display;
 }
+
+// advi-ui's toast viewport is a full-width, fixed, top-anchored div that
+// stays in the DOM even with zero toasts showing — without this, its empty
+// space silently swallows clicks on whatever sits underneath it near the
+// top of the page (e.g. a modal's close button, the mobile nav toggle).
+// Re-enable pointer-events on the toast card itself so real toasts stay
+// clickable (e.g. a dismiss button on the toast).
+.vi-toast-viewport {
+  pointer-events: none;
+}
+
+.vi-toast {
+  pointer-events: auto;
+}

@@ -6,14 +6,18 @@
   "logoutLabel": "Logout",
   "navItems": [
     { "to": "/dashboard", "label": "Overview", "icon": "SquaresFour", "end": true },
+    { "divider": "Discover" },
     { "to": "/dashboard/search", "label": "Search", "icon": "MagnifyingGlass", "end": false },
     { "to": "/dashboard/recommender", "label": "Recommender", "icon": "Sparkle", "end": false },
+    { "divider": "Your Recipes" },
     { "to": "/dashboard/favorites", "label": "Favorites", "icon": "Heart", "end": false },
     { "to": "/dashboard/my-recipes", "label": "My Recipes", "icon": "NotePencil", "end": false },
     { "to": "/dashboard/history", "label": "History", "icon": "ClockCounterClockwise", "end": false },
     { "to": "/dashboard/reminders", "label": "Reminders", "icon": "BellRinging", "end": false },
-    { "to": "/dashboard/inventory", "label": "Inventory", "icon": "Package", "end": false },
-    { "to": "/dashboard/shopping-list", "label": "Shopping List", "icon": "ShoppingCart", "end": false },
-    { "to": "/dashboard/meal-prep", "label": "Meal Prep", "icon": "CookingPot", "end": false }
-  ]
+    { "divider": "Meal Planning" },
+    { "to": "/dashboard/inventory", "label": "Inventory", "icon": "Package", "end": false, "soon": true },
+    { "to": "/dashboard/shopping-list", "label": "Shopping List", "icon": "ShoppingCart", "end": false, "soon": true },
+    { "to": "/dashboard/meal-prep", "label": "Meal Prep", "icon": "CookingPot", "end": false, "soon": true }
+  ],
+  "soonTag": "Soon"
 }

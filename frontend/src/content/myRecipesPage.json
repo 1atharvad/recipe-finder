@@ -1,6 +1,7 @@
 {
   "loadingLabel": "Loading your recipes...",
   "title": "My Recipes",
+  "subtitle": "Create, edit, and manage your own recipes.",
   "countWord": "recipe",
   "addRecipeLabel": "+ Add Recipe",
   "emptyTitle": "No recipes yet",
@@ -12,6 +13,7 @@
   "servingWord": "serving",
   "editLabel": "Edit",
   "deleteLabel": "Delete",
+  "rowMenuLabel": "Recipe options",
   "loadErrorMessage": "Couldn't load your recipes. Please try again.",
   "deleteErrorMessage": "Couldn't delete this recipe. Please try again."
 }

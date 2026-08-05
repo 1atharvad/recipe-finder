@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { toast } from 'advi-ui'
+import { toast, Badge } from 'advi-ui'
 import { adminApi } from '@/api/api'
 import type { AdminUser } from '@/types'
 import content from '@/content/adminUsersPage.json'
@@ -70,14 +70,14 @@ export const AdminUsersPage = () => {
                     <td>{user.role.replace('ROLE_', '')}</td>
                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                     <td>
-                      <span className={`visibility-badge ${user.enabled ? 'is-public' : 'is-private'}`}>
+                      <Badge className={`visibility-badge ${user.enabled ? 'is-public' : 'is-private'}`}>
                         {user.enabled ? content.enabledLabel : content.disabledLabel}
-                      </span>
+                      </Badge>
                     </td>
                     <td>
-                      <span className={`visibility-badge ${user.premiumAccess ? 'is-public' : 'is-private'}`}>
+                      <Badge className={`visibility-badge ${user.premiumAccess ? 'is-public' : 'is-private'}`}>
                         {user.premiumAccess ? content.premiumOnLabel : content.premiumOffLabel}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="admin-actions">
                       <button

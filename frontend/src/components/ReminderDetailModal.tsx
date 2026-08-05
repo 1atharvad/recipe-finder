@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { Badge } from 'advi-ui'
 import { ArrowSquareOutIcon, CheckCircleIcon } from '@phosphor-icons/react'
 import { getRecipeImage, handleImageFallback, formatTime } from '@/assets/global-functions'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
@@ -41,8 +42,8 @@ export const ReminderDetailModal = ({ schedule, onComplete, onEdit, onDelete, on
           </button>
           <p className="entry-detail-meta">
             {scheduledDateLabel} · {formatTime(schedule.scheduledAt)}
-            {schedule.completed && <span className="meta-badge tone-sage">{content.completedBadgeLabel}</span>}
-            {overdue && <span className="meta-badge tone-peach">{content.overdueLabel}</span>}
+            {schedule.completed && <Badge className="meta-badge tone-sage">{content.completedBadgeLabel}</Badge>}
+            {overdue && <Badge className="meta-badge tone-peach">{content.overdueLabel}</Badge>}
           </p>
           <p className="entry-detail-note">{schedule.note || content.noNoteLabel}</p>
         </div>

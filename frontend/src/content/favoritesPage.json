@@ -4,6 +4,7 @@
   "emptyText": "Open any recipe and tap the heart to save it here.",
   "browseLabel": "Browse Recipes",
   "title": "Favourite Recipes",
+  "subtitle": "Quick access to the recipes you've saved for later.",
   "countWord": "recipe",
   "countSuffix": "favourited",
   "removeLabel": "Remove from favourites",

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { NotePencilIcon } from '@phosphor-icons/react'
-import { toast } from 'advi-ui'
+import { NotePencilIcon, DotsThreeVerticalIcon } from '@phosphor-icons/react'
+import { toast, Badge } from 'advi-ui'
 import { recipeApi } from '@/api/api'
+import { getRecipeImage, handleImageFallback } from '@/assets/global-functions'
 import type { Recipe } from '@/types'
 import { RecipeFormModal } from '@/components/RecipeFormModal'
 import { SkelBlock } from '@/components/Skeleton'
@@ -14,6 +15,7 @@ export const MyRecipesPage = () => {
   const [loading, setLoading] = useState(true)
   const [editTarget, setEditTarget] = useState<Recipe | null>(null)
   const [showCreate, setShowCreate] = useState(false)
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
 
   const load = () => {
     recipeApi.getMyRecipes()
@@ -52,12 +54,15 @@ export const MyRecipesPage = () => {
 
   return (
     <div className="page">
-      <div className="page-header">
+      <div className="hero-page-header">
         <div>
-          <h2>{content.title}</h2>
-          <p>{recipes.length} {content.countWord}{recipes.length !== 1 ? 's' : ''}</p>
+          <span className="hero-eyebrow">
+            <NotePencilIcon weight="fill" /> {recipes.length} {content.countWord}{recipes.length !== 1 ? 's' : ''}
+          </span>
+          <h1>{content.title}</h1>
+          <p>{content.subtitle}</p>
         </div>
-        <button className="btn-pill btn-primary" onClick={() => setShowCreate(true)}>{content.addRecipeLabel}</button>
+        <button className="btn-pill btn-primary btn-small" onClick={() => setShowCreate(true)}>{content.addRecipeLabel}</button>
       </div>
 
       {recipes.length === 0 ? (
@@ -70,13 +75,20 @@ export const MyRecipesPage = () => {
       ) : (
         <div className="my-recipes-list">
           {recipes.map(recipe => (
-            <div key={recipe.id} className="my-recipe-row">
-              <div className="my-recipe-info" onClick={() => navigate(`/recipe/${recipe.id}`)}>
+            <div key={recipe.id} className="my-recipe-row" onClick={() => navigate(`/recipe/${recipe.id}`)}>
+              <img
+                src={getRecipeImage(recipe.imageUrl)}
+                alt={recipe.name}
+                className="my-recipe-img"
+                loading="lazy"
+                onError={handleImageFallback}
+              />
+              <div className="my-recipe-info">
                 <span className="my-recipe-name">
                   {recipe.name}
-                  <span className={`visibility-badge ${recipe.isPublic ? 'is-public' : 'is-private'}`}>
+                  <Badge className={`visibility-badge ${recipe.isPublic ? 'is-public' : 'is-private'}`}>
                     {recipe.isPublic ? content.publicLabel : content.privateLabel}
-                  </span>
+                  </Badge>
                 </span>
                 <span className="my-recipe-meta">
                   {recipe.servings} {content.servingWord}{recipe.servings !== 1 ? 's' : ''}
@@ -84,9 +96,25 @@ export const MyRecipesPage = () => {
                   {recipe.cuisineType && ` · ${recipe.cuisineType}`}
                 </span>
               </div>
-              <div className="my-recipe-actions">
-                <button className="btn-pill btn-small btn-edit" onClick={e => { e.stopPropagation(); setEditTarget(recipe) }}>{content.editLabel}</button>
-                <button className="btn-pill btn-small btn-delete" onClick={e => { e.stopPropagation(); handleDelete(recipe.id) }}>{content.deleteLabel}</button>
+              <div className="my-recipe-menu">
+                <button
+                  className="my-recipe-menu-btn"
+                  aria-label={content.rowMenuLabel}
+                  aria-expanded={openMenuId === recipe.id}
+                  onClick={e => { e.stopPropagation(); setOpenMenuId(o => o === recipe.id ? null : recipe.id) }}
+                >
+                  <DotsThreeVerticalIcon weight="bold" />
+                </button>
+
+                {openMenuId === recipe.id && (
+                  <>
+                    <div className="my-recipe-menu-backdrop" onClick={e => { e.stopPropagation(); setOpenMenuId(null) }} />
+                    <div className="my-recipe-dropdown" onClick={e => e.stopPropagation()}>
+                      <button onClick={() => { setEditTarget(recipe); setOpenMenuId(null) }}>{content.editLabel}</button>
+                      <button onClick={() => { handleDelete(recipe.id); setOpenMenuId(null) }}>{content.deleteLabel}</button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           ))}
@@ -116,24 +144,23 @@ export const MyRecipesPage = () => {
 
 const MyRecipesPageSkeleton = () => (
   <div className="page">
-    <div className="page-header">
+    <div className="hero-page-header">
       <div>
-        <h2><SkelBlock width="9rem" /></h2>
-        <p><SkelBlock width="6rem" /></p>
+        <SkelBlock width="7rem" height="0.9rem" />
+        <SkelBlock width="9rem" height="1.8rem" />
+        <SkelBlock width="14rem" height="1rem" />
       </div>
       <SkelBlock width="8rem" height="2.25rem" radius="999px" />
     </div>
     <div className="my-recipes-list">
       {Array.from({ length: 5 }).map((_, i) => (
         <div key={i} className="my-recipe-row">
+          <SkelBlock width="52px" height="52px" radius="8px" />
           <div className="my-recipe-info">
             <SkelBlock width="12rem" height="1rem" />
             <SkelBlock width="8rem" height="0.8rem" />
           </div>
-          <div className="my-recipe-actions">
-            <SkelBlock width="4rem" height="1.8rem" radius="999px" />
-            <SkelBlock width="4rem" height="1.8rem" radius="999px" />
-          </div>
+          <SkelBlock width="32px" height="32px" radius="8px" />
         </div>
       ))}
     </div>

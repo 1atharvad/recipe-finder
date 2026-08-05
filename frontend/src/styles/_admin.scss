@@ -1,28 +1,6 @@
 @use 'tokens' as *;
 
 // ── Admin dashboard ───────────────────────────────────────────────────────────
-.admin-hero-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: $sp-4;
-  margin-top: $sp-2;
-  text-align: left;
-
-  p {
-    color: $muted;
-    font-size: $fs-body;
-    margin: 0;
-  }
-}
-
-.admin-hero {
-  text-align: left;
-
-  .section-inner { text-align: left; }
-}
-
 .admin-card {
   background: $card-bg;
   border: 1.5px solid $border;

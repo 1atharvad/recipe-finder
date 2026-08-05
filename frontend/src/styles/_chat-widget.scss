@@ -10,6 +10,15 @@
   flex-direction: column;
   align-items: flex-end;
   gap: $sp-3;
+  transition: opacity 0.2s, transform 0.2s;
+
+  // Only the closed launcher fades on scroll — never the open panel, so a
+  // conversation in progress can't be scrolled out from under the user.
+  &--hidden {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    pointer-events: none;
+  }
 }
 
 .chatbot-launcher {

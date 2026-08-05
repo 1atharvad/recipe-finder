@@ -28,6 +28,31 @@ export const ChatWidget = () => {
     if (open) bodyEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [messages, loading, open])
 
+  // The launcher is fixed in the viewport corner, so on narrow screens it can
+  // sit directly over whatever content the page happens to scroll to (e.g. a
+  // form field). Fade it out while actively scrolling down, and bring it
+  // back on scroll-up or once scrolling settles, so it's never covering a
+  // stationary target for long.
+  const [scrollHidden, setScrollHidden] = useState(false)
+  useEffect(() => {
+    if (open) return
+    let lastY = window.scrollY
+    let settleTimer: ReturnType<typeof setTimeout>
+    const onScroll = () => {
+      const y = window.scrollY
+      if (y > lastY + 4) setScrollHidden(true)
+      else if (y < lastY - 4) setScrollHidden(false)
+      lastY = y
+      clearTimeout(settleTimer)
+      settleTimer = setTimeout(() => setScrollHidden(false), 500)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      clearTimeout(settleTimer)
+    }
+  }, [open])
+
   const send = async (textOverride?: string) => {
     const text = (textOverride ?? input).trim()
     if (!text || loading) return
@@ -53,7 +78,7 @@ export const ChatWidget = () => {
   const started = messages.length > 0
 
   return (
-    <div className="chatbot-widget">
+    <div className={`chatbot-widget${scrollHidden ? ' chatbot-widget--hidden' : ''}`}>
       {open && (
         <div className="chatbot-panel">
           <div className="chatbot-header">

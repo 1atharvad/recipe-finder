@@ -204,3 +204,18 @@
 
   &:hover { background: $primary-dark; }
 }
+
+// Below $bp-sm the featured-card treatment doesn't have room to breathe —
+// every favorite gets the same compact row instead of a top-3/rest split.
+.favorites-desktop-view {
+  display: none;
+}
+
+.favorites-mobile-view {
+  display: flex;
+}
+
+@media (min-width: $bp-sm) {
+  .favorites-desktop-view { display: block; }
+  .favorites-mobile-view { display: none; }
+}

@@ -16,13 +16,6 @@
   @media (min-width: $bp-md) { padding: 0 $sp-8; }
 }
 
-.squiggle {
-  color: $primary;
-  text-decoration: underline wavy rgba($primary, 0.55);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
-}
-
 .btn-pill {
   display: inline-flex;
   align-items: center;
@@ -429,6 +422,11 @@
   letter-spacing: 0.02em;
   text-transform: capitalize;
   border: 1.5px solid rgba(0, 0, 0, 0.08);
+
+  @media (max-width: $bp-sm - 1) {
+    padding: 0.18rem $sp-2;
+    font-size: 0.68rem;
+  }
 
   &.tone-sage    { background: $accent-green; color: $deep-brown; }
   &.tone-mustard { background: $accent-yellow; color: $deep-brown; }

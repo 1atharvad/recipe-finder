@@ -36,6 +36,10 @@
   box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
   overflow: hidden;
 
+  .recipe-hero-wrap {
+    position: relative;
+  }
+
   .recipe-hero-img {
     display: block;
     width: 100%;
@@ -43,6 +47,70 @@
     object-fit: cover;
 
     @media (min-width: $bp-md) { height: 360px; }
+  }
+
+  .recipe-hero-badges {
+    position: absolute;
+    top: $sp-3;
+    left: $sp-3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+    max-width: calc(100% - #{$sp-3} * 2 - 44px);
+  }
+
+  // Favourite / Mark as Eaten / Schedule — same floating circular treatment
+  // as the favourite heart on FavoriteCard, stacked here since the hero
+  // image now carries all three quick actions instead of the header.
+  .recipe-hero-actions {
+    position: absolute;
+    top: $sp-3;
+    right: $sp-3;
+    display: flex;
+    flex-direction: column;
+    gap: $sp-2;
+  }
+
+  .recipe-hero-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: none;
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s, filter 0.15s;
+
+    svg { width: 1.2em; height: 1.2em; }
+
+    &:hover { transform: scale(1.08); }
+
+    // Same accent colors the old full-width action pills used — kept as a
+    // quick visual identifier now that they're icon-only.
+    &.tone-fav {
+      background: rgba(255, 255, 255, 0.9);
+      color: $primary;
+
+      &:hover { background: #fff; }
+      &.active { background: $primary; color: #fff; }
+    }
+
+    &.tone-eaten {
+      background: $accent-green;
+      color: $deep-brown;
+
+      &:hover { filter: brightness(0.96); }
+    }
+
+    &.tone-schedule {
+      background: $accent-yellow;
+      color: $deep-brown;
+
+      &:hover { filter: brightness(0.96); }
+    }
   }
 
   .book-header {
@@ -85,43 +153,42 @@
       }
     }
 
-    .book-actions {
+    // Share/Print — small icon buttons on the title row, next to the name
+    // rather than a separate actions row (Favourite/Mark as Eaten/Schedule
+    // live on the hero image itself, see .recipe-hero-actions above).
+    .book-title-actions {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       gap: $sp-2;
+      flex-shrink: 0;
     }
 
-    .btn-save {
+    .btn-icon-circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 1.5px solid $border;
       background: $card-bg;
-      color: $primary;
-      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);
+      color: $muted;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
 
-      &:hover { background: $primary-light; }
-      &.saved { background: $primary; color: #fff; }
+      svg { width: 1.1em; height: 1.1em; }
+
+      &:hover { background: $primary-light; color: $primary-dark; border-color: $primary; }
     }
 
-    .btn-eaten {
-      background: $accent-green;
-      color: $deep-brown;
-      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.14);
+    // Printing is a desktop/laptop habit — hide it below tablet width
+    // rather than clutter the phone/tablet title row with an action that
+    // doesn't fit those use cases.
+    .print-only-desktop {
+      display: none;
 
-      &:hover { filter: brightness(0.96); }
-    }
-
-    .btn-schedule {
-      background: $accent-yellow;
-      color: $deep-brown;
-      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.14);
-
-      &:hover { filter: brightness(0.96); }
-    }
-
-    .share-msg {
-      color: $muted-green;
-      font-weight: 600;
-      font-size: $fs-footer;
-      margin-bottom: $sp-3;
+      @media (min-width: $bp-lg) { display: flex; }
     }
 
     .cook-history-note {

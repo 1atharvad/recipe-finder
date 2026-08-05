@@ -45,10 +45,24 @@ export const DashboardLayout = () => {
   )
 
   const navItems = content.navItems.map(item => {
+    if ('divider' in item) {
+      return { type: 'divider' as const, label: item.divider ?? '' }
+    }
     const ItemIcon = ICONS[item.icon]
+    // PageAside's AsideItem types `label` as a plain string, but it's
+    // rendered as React children under the hood — safe to hand it a node
+    // instead so "soon" items can carry a dimmed style + tag inline.
+    const label = item.soon
+      ? (
+        <span className="dashboard-nav-soon">
+          {item.label}
+          <span className="dashboard-nav-soon-tag">{content.soonTag}</span>
+        </span>
+      ) as unknown as string
+      : item.label
     return {
-      icon: <ItemIcon weight="bold" />,
-      label: item.label,
+      icon: <ItemIcon weight="bold" className={item.soon ? 'dashboard-nav-soon-icon' : undefined} />,
+      label,
       active: isActive(item.to, item.end),
       onClick: () => { navigate(item.to); setMenuOpen(false) },
     }

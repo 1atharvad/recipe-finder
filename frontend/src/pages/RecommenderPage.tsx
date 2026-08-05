@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Badge } from 'advi-ui'
 import { SparkleIcon, SlidersIcon, TrophyIcon } from '@phosphor-icons/react'
 import { recommendationApi } from '@/api/api'
 import type { RecommendationDTO } from '@/types'
@@ -69,16 +70,16 @@ export const RecommenderPage = () => {
               onClick={() => navigate(`/recipe/${recipe.id}`)}
             >
               {i === 0 && (
-                <span className="rec-top-badge"><TrophyIcon weight="fill" /> {content.topPickLabel}</span>
+                <Badge className="rec-top-badge"><TrophyIcon weight="fill" /> {content.topPickLabel}</Badge>
               )}
               <div className="rec-info">
                 <span className="rec-name">{recipe.name}</span>
                 <div className="rec-tags">
                   {recipe.dietaryType && (
-                    <span className="meta-badge tone-sage">{recipe.dietaryType.replace('_', ' ')}</span>
+                    <Badge className="meta-badge tone-sage">{recipe.dietaryType.replace('_', ' ')}</Badge>
                   )}
                   {recipe.cuisineType && (
-                    <span className="meta-badge tone-mustard">{recipe.cuisineType}</span>
+                    <Badge className="meta-badge tone-mustard">{recipe.cuisineType}</Badge>
                   )}
                 </div>
               </div>

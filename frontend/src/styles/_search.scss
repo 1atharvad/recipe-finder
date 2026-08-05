@@ -1,13 +1,12 @@
 @use 'tokens' as *;
 
 // ── Page wrapper ─────────────────────────────────────────
+// Padding comes solely from the parent .dashboard-main (DashboardLayout/
+// AdminLayout) — same as .recommender-page — so every dashboard/admin page
+// shares one padding value instead of stacking a second layer here.
 .page {
   max-width: $bp-lg;
   margin: 0 auto;
-  padding: $sp-4 $sp-4 $sp-16;
-
-  @media (min-width: $bp-md) { padding: $sp-6 $sp-6 $sp-16; }
-  @media (min-width: $bp-lg) { padding: $sp-8 $sp-6 $sp-16; }
 }
 
 // ── Hero ─────────────────────────────────────────────────
@@ -112,38 +111,9 @@
   }
 }
 
-.smart-search-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: $sp-3;
-
-  &.active {
-    border-color: $primary;
-    color: $primary-dark;
-    background: $primary-light;
-  }
-}
-
-// ── Clear / back button ───────────────────────────────────
-.clear-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: $sp-1;
-  margin-top: $sp-3;
-
-  svg { width: 1em; height: 1em; }
-}
-
 // ── Results container ─────────────────────────────────────
 .results {
   margin-top: $sp-2;
-}
-
-.results-count {
-  font-size: 0.88rem;
-  color: $muted;
-  margin-bottom: $sp-4;
 }
 
 .msg {

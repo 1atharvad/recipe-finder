@@ -16,10 +16,11 @@ export const SkelBlock = ({ width, height, radius, className = '' }: BlockProps)
 // "history-entry" row list, so one skeleton shape covers both.
 export const TimelinePageSkeleton = () => (
   <div className="page">
-    <div className="page-header">
+    <div className="hero-page-header">
       <div>
-        <h2><SkelBlock width="8rem" /></h2>
-        <p><SkelBlock width="6rem" /></p>
+        <SkelBlock width="7rem" height="0.9rem" />
+        <SkelBlock width="10rem" height="1.8rem" />
+        <SkelBlock width="15rem" height="1rem" />
       </div>
     </div>
     <div className="history-timeline">

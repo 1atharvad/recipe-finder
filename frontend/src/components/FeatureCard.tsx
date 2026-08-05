@@ -1,3 +1,4 @@
+import { Badge } from 'advi-ui'
 import type { Icon } from '@phosphor-icons/react'
 
 interface Props {
@@ -19,7 +20,7 @@ export const FeatureCard = ({ tone, icon: IconComponent, title, text, badge, onC
       <IconComponent className="feature-icon" weight="bold" />
       <h3>{title}</h3>
       <p>{text}</p>
-      {badge && <span className="meta-badge tone-mustard feature-card-badge">{badge}</span>}
+      {badge && <Badge className="meta-badge tone-mustard feature-card-badge">{badge}</Badge>}
     </>
   )
   return onClick

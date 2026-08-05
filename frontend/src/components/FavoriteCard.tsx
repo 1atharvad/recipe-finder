@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { Badge } from 'advi-ui'
 import { HeartIcon, UsersIcon, TimerIcon } from '@phosphor-icons/react'
 import { getRecipeImage, handleImageFallback } from '@/assets/global-functions'
 import type { Recipe } from '@/types'
@@ -22,7 +23,7 @@ export const FavoriteCard = ({ recipe, onRemove }: Props) => {
           loading="lazy"
           onError={handleImageFallback}
         />
-        {recipe.cuisineType && <span className="meta-badge tone-mustard favorite-card-badge">{recipe.cuisineType}</span>}
+        {recipe.cuisineType && <Badge className="meta-badge tone-mustard favorite-card-badge">{recipe.cuisineType}</Badge>}
         <button
           className="favorite-remove-btn"
           onClick={e => { e.stopPropagation(); onRemove(recipe.id) }}

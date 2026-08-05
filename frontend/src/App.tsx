@@ -1,10 +1,9 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ToastProvider } from 'advi-ui'
 import './App.scss'
 import { AuthProvider } from '@/context/AuthContext'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AdminRoute } from '@/components/AdminRoute'
-import { Navbar } from '@/components/Navbar'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import { LandingPage } from '@/pages/LandingPage'
 import { HowItWorksPage } from '@/pages/HowItWorksPage'
@@ -33,27 +32,11 @@ import { RemindersPage } from '@/pages/RemindersPage'
 import { ShoppingListPage } from '@/pages/ShoppingListPage'
 import { MealPrepPage } from '@/pages/MealPrepPage'
 
-// These routes render their own LandingHeader (or DashboardLayout) instead
-// of the app-wide Navbar.
-const LANDING_STYLED_PATHS = ['/', '/how-it-works', '/features', '/login', '/signup', '/admin/login', '/privacy', '/terms']
-
-const AppNavbar = () => {
-  const location = useLocation()
-  if (
-    LANDING_STYLED_PATHS.includes(location.pathname) ||
-    location.pathname.startsWith('/recipe/') ||
-    location.pathname.startsWith('/dashboard') ||
-    location.pathname.startsWith('/admin')
-  ) return null
-  return <Navbar />
-}
-
 export const App = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
-          <AppNavbar />
           <Routes>
             {/* Public */}
             <Route path="/" element={<LandingPage />} />
