@@ -38,7 +38,7 @@ export const FavoritesPage = () => {
           <HeartIcon weight="fill" className="empty-icon-svg" />
           <h2>{content.emptyTitle}</h2>
           <p>{content.emptyText}</p>
-          <Link to="/dashboard/search" className="btn-pill btn-primary">{content.browseLabel}</Link>
+          <Link to="/dashboard" className="btn-pill btn-primary">{content.browseLabel}</Link>
         </div>
       </div>
     )

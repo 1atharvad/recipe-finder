@@ -39,7 +39,7 @@ export const LandingPage = () => {
             <h1>{content.hero.title}</h1>
             <p>{content.hero.text}</p>
             <div className="landing-cta-row">
-              <button className="btn-pill btn-primary" onClick={() => navigate('/dashboard/search')}>
+              <button className="btn-pill btn-primary" onClick={() => navigate('/dashboard')}>
                 {content.hero.ctaLabel} <MagnifyingGlassIcon weight="bold" />
               </button>
               <a className="btn-link" href="#how-it-works">{content.hero.howItWorksLink}</a>

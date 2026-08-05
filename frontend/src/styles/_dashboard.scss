@@ -150,6 +150,14 @@
     &:hover { background: none; color: $muted-green; }
   }
 
+  // advi-ui gives every divider row margin-top: .75rem for breathing room
+  // from the item above it. "Discover" is now the very first nav row (no
+  // standalone Overview item above it anymore), so that margin just pushes
+  // it away from the header for no reason.
+  .vi-aside-nav > .vi-aside-item-text--divider:first-child {
+    margin-top: 0;
+  }
+
   .vi-aside-footer {
     padding: $sp-4;
     border-color: $border;
@@ -305,34 +313,6 @@
   padding: $sp-8 $sp-4 $sp-16;
 
   @media (min-width: $bp-md) { padding: $sp-8 $sp-6 $sp-16; }
-}
-
-.dashboard-home {
-  max-width: $bp-lg;
-  margin: 0 auto;
-  text-align: left;
-
-  h1 {
-    font-size: $fs-h2;
-    color: $text;
-    margin: $sp-2 0 $sp-2;
-
-    @media (min-width: $bp-md) { font-size: $fs-h2-md; }
-  }
-
-  .dashboard-home-sub {
-    color: $muted;
-    font-size: $fs-body;
-    margin-bottom: $sp-8;
-  }
-
-  .dashboard-home-card {
-    text-align: left;
-    width: 100%;
-    border: none;
-    font-family: $font-body;
-    cursor: pointer;
-  }
 }
 
 .profile-page {

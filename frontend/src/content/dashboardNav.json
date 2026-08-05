@@ -5,9 +5,8 @@
   "profileLabel": "Profile",
   "logoutLabel": "Logout",
   "navItems": [
-    { "to": "/dashboard", "label": "Overview", "icon": "SquaresFour", "end": true },
     { "divider": "Discover" },
-    { "to": "/dashboard/search", "label": "Search", "icon": "MagnifyingGlass", "end": false },
+    { "to": "/dashboard", "label": "Search", "icon": "MagnifyingGlass", "end": true },
     { "to": "/dashboard/recommender", "label": "Recommender", "icon": "Sparkle", "end": false },
     { "divider": "Your Recipes" },
     { "to": "/dashboard/favorites", "label": "Favorites", "icon": "Heart", "end": false },

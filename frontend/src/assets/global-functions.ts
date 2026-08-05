@@ -4,23 +4,6 @@ import type { TimeValue } from '@/components/TimeWheelPicker'
 // All shared, non-component helper functions for the frontend live in this
 // single file rather than being split one-per-concern across assets/.
 
-// ── Generic ──────────────────────────────────────────────────────────────
-
-// Deterministic hash of a string into an unsigned 32-bit int (djb2-ish).
-const hashString = (seed: string): number => {
-  let h = 0
-  for (let i = 0; i < seed.length; i++) {
-    h = (h * 31 + seed.charCodeAt(i)) | 0
-  }
-  return h >>> 0
-}
-
-// Picks an item from `items` based on a hash of `seed` — same seed always
-// yields the same item (stable across re-renders/reloads, no flicker), but
-// unlike `index % items.length` the picks don't visibly cycle in order.
-export const pickSeeded = <T,>(seed: string, items: readonly T[]): T =>
-  items[hashString(seed) % items.length]
-
 // ── Date/time ────────────────────────────────────────────────────────────
 // Shared by MarkEatenModal and ScheduleModal, which both combine a
 // DayPicker date + TimeWheelPicker time into a single ISO datetime string.

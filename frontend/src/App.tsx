@@ -8,7 +8,6 @@ import { DashboardLayout } from '@/components/DashboardLayout'
 import { LandingPage } from '@/pages/LandingPage'
 import { HowItWorksPage } from '@/pages/HowItWorksPage'
 import { FeaturesPage } from '@/pages/FeaturesPage'
-import { DashboardHomePage } from '@/pages/DashboardHomePage'
 import { SearchPage } from '@/pages/SearchPage'
 import { RecommenderPage } from '@/pages/RecommenderPage'
 import { InventoryPage } from '@/pages/InventoryPage'
@@ -61,8 +60,7 @@ export const App = () => {
 
             {/* Dashboard portal — requires login, own sidebar layout */}
             <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-              <Route index element={<DashboardHomePage />} />
-              <Route path="search" element={<SearchPage />} />
+              <Route index element={<SearchPage />} />
               <Route path="recommender" element={<RecommenderPage />} />
               <Route path="inventory" element={<InventoryPage />} />
               <Route path="profile" element={<ProfilePage />} />

@@ -184,7 +184,7 @@ export const RecipePage = () => {
         <LandingHeader />
         <div className="recipe-page-error">
           <p>{content.notFoundLabel}</p>
-          <button className="btn-pill btn-primary btn-small" onClick={() => navigate('/dashboard/search')}>
+          <button className="btn-pill btn-primary btn-small" onClick={() => navigate('/dashboard')}>
             {content.backToSearchLabel}
           </button>
         </div>
