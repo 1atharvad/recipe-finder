@@ -1,0 +1,66 @@
+name: Deploy Backend to Contabo
+
+# Only the backend runs on the VPS — the frontend deploys separately via
+# Vercel's own GitHub integration, so this only triggers on backend/infra
+# changes to avoid a pointless redeploy on every frontend commit.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - "docker-compose.yml"
+  workflow_dispatch:
+
+env:
+  SECRETS_JSON: ${{ toJSON(secrets) }}
+  DEPLOY_PATH: /www/wwwroot/cookmate.atharvadevasthali.com
+
+jobs:
+  deploy:
+    environment: production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate .env file
+        run: |
+          rm -f .env
+
+          # Every repo secret except the deploy credentials themselves becomes
+          # a line in .env — matches docker-compose.yml's required vars
+          # (SPRING_DATASOURCE_*, JWT_SECRET, ADMIN_*, ALLOWED_ORIGINS,
+          # GEMINI_API_KEY) without hand-listing them here twice.
+          echo "$SECRETS_JSON" | jq -r '
+            to_entries
+            | map(select(
+                (.key | test("^(github_token|CONTABO_.*)$") | not)
+                and (.value | type == "string")
+              ))
+            | map("\(.key)=\(.value)")
+            | .[]
+          ' > .env
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CONTABO_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.CONTABO_MAIN_IP }} >> ~/.ssh/known_hosts
+
+      - name: Sync repo + .env to server
+        run: |
+          rsync -az --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            ./ ${{ secrets.CONTABO_SSH_USER }}@${{ secrets.CONTABO_MAIN_IP }}:$DEPLOY_PATH/
+
+      - name: Deploy
+        run: |
+          ssh ${{ secrets.CONTABO_SSH_USER }}@${{ secrets.CONTABO_MAIN_IP }} "
+            cd $DEPLOY_PATH &&
+            docker compose up -d --build --remove-orphans &&
+            docker image prune -f
+          "
