@@ -1,37 +1,83 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BowlSteamIcon, ListIcon, XIcon } from '@phosphor-icons/react'
+import type { Icon } from '@phosphor-icons/react'
+import {
+  BowlSteamIcon, ListIcon, XIcon, SquaresFourIcon, HeartIcon,
+  NotePencilIcon, UserCircleIcon, SignOutIcon,
+} from '@phosphor-icons/react'
 import { useAuth } from '@/context/AuthContext'
 import content from '@/content/landingHeader.json'
 
+const ICONS: Record<string, Icon> = {
+  SquaresFour: SquaresFourIcon, Heart: HeartIcon, NotePencil: NotePencilIcon, UserCircle: UserCircleIcon,
+}
+
 export const LandingHeader = () => {
   const navigate = useNavigate()
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated, user, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
 
   const go = (path: string) => {
     setMenuOpen(false)
     navigate(path)
   }
 
+  const goFromAvatar = (path: string) => {
+    setAvatarMenuOpen(false)
+    navigate(path)
+  }
+
+  const handleLogout = () => {
+    setAvatarMenuOpen(false)
+    logout()
+    navigate('/')
+  }
+
   return (
     <header className="landing-header">
       <div className="landing-header-inner">
         <span className="landing-logo"><BowlSteamIcon weight="duotone" /> {content.logo}</span>
-        <nav className="landing-header-links">
-          <a href="/features">{content.featuresLink}</a>
-          <a href="/how-it-works">{content.howItWorksLink}</a>
-        </nav>
+        {!isAuthenticated && (
+          <nav className="landing-header-links">
+            {content.navLinks.map(link => (
+              <a key={link.url} href={link.url}>{link.text}</a>
+            ))}
+          </nav>
+        )}
         <div className="landing-header-actions">
           {isAuthenticated ? (
-            <button
-              className="landing-header-avatar"
-              onClick={() => navigate('/dashboard')}
-              aria-label={content.dashboardLabel}
-              title={content.dashboardTitle}
-            >
-              {`${user?.firstName?.charAt(0) ?? ''}${user?.lastName?.charAt(0) ?? ''}`.toUpperCase()}
-            </button>
+            <div className="landing-header-user-menu">
+              <button
+                className="landing-header-avatar"
+                onClick={() => setAvatarMenuOpen(open => !open)}
+                aria-label={content.dashboardLabel}
+                title={content.dashboardTitle}
+                aria-haspopup="true"
+                aria-expanded={avatarMenuOpen}
+              >
+                {`${user?.firstName?.charAt(0) ?? ''}${user?.lastName?.charAt(0) ?? ''}`.toUpperCase()}
+              </button>
+
+              {avatarMenuOpen && (
+                <>
+                  <div className="landing-header-user-menu-backdrop" onClick={() => setAvatarMenuOpen(false)} />
+                  <div className="landing-header-user-dropdown">
+                    {content.avatarMenuItems.map(item => {
+                      const ItemIcon = ICONS[item.icon]
+                      return (
+                        <button key={item.to} onClick={() => goFromAvatar(item.to)}>
+                          <ItemIcon weight="bold" /> {item.label}
+                        </button>
+                      )
+                    })}
+                    <button onClick={handleLogout}>
+                      <SignOutIcon weight="bold" /> {content.logoutLabel}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           ) : (
             <>
               <button className="btn-link landing-header-login-inline" onClick={() => navigate('/login')}>
@@ -58,8 +104,9 @@ export const LandingHeader = () => {
 
       {menuOpen && (
         <div className="landing-header-menu">
-          <a href="/features" onClick={() => setMenuOpen(false)}>{content.featuresLink}</a>
-          <a href="/how-it-works" onClick={() => setMenuOpen(false)}>{content.howItWorksLink}</a>
+          {!isAuthenticated && content.navLinks.map(link => (
+            <a key={link.url} href={link.url} onClick={() => setMenuOpen(false)}>{link.text}</a>
+          ))}
           {isAuthenticated ? (
             <button onClick={() => go('/dashboard')}>{content.dashboardTitle}</button>
           ) : (

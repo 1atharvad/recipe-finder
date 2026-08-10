@@ -1,9 +1,18 @@
 {
   "logo": "CookMate",
-  "featuresLink": "Features",
-  "howItWorksLink": "How it works",
-  "dashboardLabel": "Go to dashboard",
+  "navLinks": [
+    { "url": "/features", "text": "Features" },
+    { "url": "/how-it-works", "text": "How it works" }
+  ],
+  "dashboardLabel": "Open account menu",
   "dashboardTitle": "Dashboard",
+  "avatarMenuItems": [
+    { "to": "/dashboard", "label": "Dashboard", "icon": "SquaresFour" },
+    { "to": "/dashboard/favorites", "label": "Favorites", "icon": "Heart" },
+    { "to": "/dashboard/my-recipes", "label": "My Recipes", "icon": "NotePencil" },
+    { "to": "/dashboard/profile", "label": "Profile", "icon": "UserCircle" }
+  ],
+  "logoutLabel": "Logout",
   "loginLabel": "Log in",
   "signupLabel": "Sign up",
   "openMenuLabel": "Open menu",
