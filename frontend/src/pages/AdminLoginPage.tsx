@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
+import { toast } from 'advi-ui'
 import { authApi } from '@/api/api'
 import { useAuth } from '@/context/AuthContext'
 import { FormField } from '@/components/FormField'
@@ -12,21 +13,26 @@ export const AdminLoginPage = () => {
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   if (isAdmin) return <Navigate to="/admin" replace />
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
     setLoading(true)
     try {
       const res = await authApi.adminLogin({ username, password })
       login(res)
       navigate('/admin')
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : content.errorMessage)
+      const message = err instanceof Error ? err.message : ''
+      if (message.includes('401') || message.includes('Invalid')) {
+        toast.error(content.errorInvalidCredentials)
+      } else if (message.includes('network') || message.includes('fetch')) {
+        toast.error(content.errorNetwork)
+      } else {
+        toast.error(content.errorDefault)
+      }
     } finally {
       setLoading(false)
     }
@@ -46,7 +52,6 @@ export const AdminLoginPage = () => {
       <div className="auth-page">
         <div className="auth-card auth-card--admin">
           <h2>{content.title}</h2>
-          {error && <p className="auth-error">{error}</p>}
           <form onSubmit={handleSubmit} className="auth-form">
             <FormField label={content.usernameLabel} value={username} onChange={setUsername} required autoFocus />
             <FormField label={content.passwordLabel} type="password" value={password} onChange={setPassword} required />

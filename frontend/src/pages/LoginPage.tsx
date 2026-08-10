@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { toast } from 'advi-ui'
 import { authApi } from '@/api/api'
 import { useAuth } from '@/context/AuthContext'
 import { LandingHeader } from '@/components/LandingHeader'
@@ -12,7 +13,6 @@ export const LoginPage = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   if (isAdmin) return <Navigate to="/admin" replace />
@@ -20,14 +20,20 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
     setLoading(true)
     try {
       const res = await authApi.login({ email, password })
       login(res)
       navigate('/dashboard')
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : content.defaultError)
+      const message = err instanceof Error ? err.message : ''
+      if (message.includes('401') || message.includes('Invalid')) {
+        toast.error(content.errorInvalidCredentials)
+      } else if (message.includes('network') || message.includes('fetch')) {
+        toast.error(content.errorNetwork)
+      } else {
+        toast.error(content.errorDefault)
+      }
     } finally {
       setLoading(false)
     }
@@ -48,7 +54,6 @@ export const LoginPage = () => {
         <div className="auth-card">
           <h2>{content.cardTitle}</h2>
           <p className="auth-sub">{content.cardSubtitle}</p>
-          {error && <p className="auth-error">{error}</p>}
           <form onSubmit={handleSubmit} className="auth-form">
             <FormField
               label={content.emailLabel}

@@ -3,7 +3,6 @@
   "heroText": "Log in to save recipes, track meals, and keep fridge panic in the past.",
   "cardTitle": "Log in to CookMate",
   "cardSubtitle": "Your next good meal is waiting.",
-  "defaultError": "Login failed",
   "emailLabel": "Email",
   "emailPlaceholder": "you@example.com",
   "passwordLabel": "Password",
@@ -11,5 +10,8 @@
   "submitLabel": "Log in",
   "submittingLabel": "Signing in…",
   "signupPrompt": "New here?",
-  "signupLink": "Create a free account"
+  "signupLink": "Create a free account",
+  "errorInvalidCredentials": "Invalid email or password. Please try again.",
+  "errorNetwork": "Connection error. Check your internet and try again.",
+  "errorDefault": "Login failed. Please try again."
 }

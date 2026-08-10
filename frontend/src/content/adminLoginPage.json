@@ -2,9 +2,11 @@
   "heroTitle": "Admin access",
   "heroText": "A discrete, separately authenticated panel for managing the general recipe pool.",
   "title": "Admin",
-  "errorMessage": "Invalid admin credentials",
   "usernameLabel": "Username",
   "passwordLabel": "Password",
   "submitLabel": "Sign In",
-  "submittingLabel": "Signing in…"
+  "submittingLabel": "Signing in…",
+  "errorInvalidCredentials": "Invalid username or password.",
+  "errorNetwork": "Connection error. Check your internet and try again.",
+  "errorDefault": "Sign in failed. Please try again."
 }
