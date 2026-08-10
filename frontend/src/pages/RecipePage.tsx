@@ -30,6 +30,10 @@ export const RecipePage = () => {
   const [showSchedule, setShowSchedule] = useState(false)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [id])
+
+  useEffect(() => {
     let cancelled = false
     setStatus('loading')
     recipeApi.getById(Number(id))

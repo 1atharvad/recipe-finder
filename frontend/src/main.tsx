@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client'
 import 'advi-ui/styles'
 import './index.scss'
 import { App } from '@/App.tsx'
+// Vercel Analytics — lightweight web analytics (https://vercel.com/docs/analytics)
 import { Analytics } from '@vercel/analytics/react'
 
 createRoot(document.getElementById('root')!).render(

@@ -36,7 +36,8 @@ const request = async <T>(path: string, options: RequestInit = {}): Promise<T> =
     // A hard redirect (rather than a router navigate) guarantees every
     // in-memory auth/UI state gets torn down along with the stale session.
     localStorage.removeItem(AUTH_KEY)
-    if (!window.location.pathname.startsWith('/login')) {
+    const path = window.location.pathname
+    if (!path.startsWith('/login') && path !== '/admin/login') {
       window.location.href = '/login'
     }
   }
