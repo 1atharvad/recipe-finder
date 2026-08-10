@@ -1,13 +1,32 @@
 {
   "loadingLabel": "Loading analytics...",
   "title": "Analytics",
-  "stats": {
-    "totalUsers": "Total users",
-    "totalGeneralRecipes": "Curated recipes",
-    "totalPublicUserRecipes": "Public user recipes",
-    "totalFavorites": "Favorites saved",
-    "totalHistoryEntries": "Meals logged"
-  },
+  "statGroups": [
+    {
+      "title": "Community",
+      "items": [
+        { "key": "totalUsers", "label": "Total users", "icon": "Users" },
+        { "key": "totalGeneralRecipes", "label": "Curated recipes", "icon": "BowlSteam" },
+        { "key": "totalPublicUserRecipes", "label": "Public user recipes", "icon": "Globe" }
+      ]
+    },
+    {
+      "title": "Engagement",
+      "items": [
+        { "key": "totalFavorites", "label": "Favorites saved", "icon": "Heart" },
+        { "key": "totalHistoryEntries", "label": "Meals logged", "icon": "ClockCounterClockwise" },
+        { "key": "totalRecipeViews", "label": "Recipe views", "icon": "Eye" },
+        { "key": "totalSearches", "label": "Searches", "icon": "MagnifyingGlass" }
+      ]
+    },
+    {
+      "title": "AI Assistant",
+      "items": [
+        { "key": "totalAiChats", "label": "AI chats", "icon": "ChatCircleDots" },
+        { "key": "aiAcceptanceRate", "label": "AI acceptance rate (%)", "icon": "Target" }
+      ]
+    }
+  ],
   "topFavoritedTitle": "Most favorited",
   "topCookedTitle": "Most cooked",
   "emptyText": "Not enough data yet."

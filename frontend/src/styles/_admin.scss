@@ -25,31 +25,61 @@
   }
 }
 
+.admin-stat-section {
+  margin-bottom: $sp-5;
+}
+
+.admin-stat-section-title {
+  font-family: $font-display;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $muted;
+  margin-bottom: $sp-3;
+}
+
 .admin-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: $sp-3;
-  margin-bottom: $sp-4;
 }
 
 .admin-stat-card {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: $sp-3;
   background: $card-bg;
   border: 1.5px solid $border;
   border-radius: 14px;
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);
   padding: $sp-3 $sp-4;
 
-  .admin-stat-value {
-    font-family: $font-display;
-    font-size: 1.5rem;
-    font-weight: 800;
+  .admin-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background: $primary-light;
     color: $primary;
+
+    svg { width: 1.2rem; height: 1.2rem; }
+  }
+
+  .admin-stat-value {
+    display: block;
+    font-family: $font-display;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: $text;
+    line-height: 1.2;
   }
 
   .admin-stat-label {
+    display: block;
     font-family: $font-body;
     font-size: 0.78rem;
     color: $muted;

@@ -192,6 +192,10 @@ export interface Analytics {
   totalPublicUserRecipes: number
   totalFavorites: number
   totalHistoryEntries: number
+  totalRecipeViews: number
+  totalSearches: number
+  totalAiChats: number
+  aiAcceptanceRate: number | null
   topFavorited: RecipeCount[]
   topCooked: RecipeCount[]
 }
