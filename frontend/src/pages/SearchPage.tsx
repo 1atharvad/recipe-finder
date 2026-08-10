@@ -3,7 +3,7 @@ import { MagnifyingGlassIcon, XIcon, WarningCircleIcon, SparkleIcon } from '@pho
 import { RecipeCard } from '@/components/RecipeCard'
 import { BentoGrid } from '@/components/BentoGrid'
 import { SkelBlock } from '@/components/Skeleton'
-import { recipeApi } from '@/api/api'
+import { recipeApi, eventsApi } from '@/api/api'
 import type { Recipe } from '@/types'
 import content from '@/content/searchPage.json'
 
@@ -28,8 +28,10 @@ export const SearchPage = () => {
     setSearched(true)
     setStatus('loading')
     try {
-      setResults(await recipeApi.search(trimmed))
+      const found = await recipeApi.search(trimmed)
+      setResults(found)
       setStatus('done')
+      eventsApi.trackSearch(trimmed, found.length).catch(() => {})
     } catch {
       setStatus('error')
     }

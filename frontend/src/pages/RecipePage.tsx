@@ -5,7 +5,7 @@ import {
   PrinterIcon, ShareNetworkIcon, ClockCounterClockwiseIcon, PlayCircleIcon, TimerIcon, BellRingingIcon,
 } from '@phosphor-icons/react'
 import { toast, Badge } from 'advi-ui'
-import { recipeApi, favoritesApi, historyApi, scheduleApi } from '@/api/api'
+import { recipeApi, favoritesApi, historyApi, scheduleApi, eventsApi } from '@/api/api'
 import { useAuth } from '@/context/AuthContext'
 import { LandingHeader } from '@/components/LandingHeader'
 import { LandingFooter } from '@/components/LandingFooter'
@@ -41,6 +41,7 @@ export const RecipePage = () => {
         if (cancelled) return
         setRecipe(data)
         setStatus('done')
+        eventsApi.trackView(data.id).catch(() => {})
       })
       .catch(() => { if (!cancelled) setStatus('error') })
     return () => { cancelled = true }

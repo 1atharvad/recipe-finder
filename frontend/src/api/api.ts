@@ -144,6 +144,20 @@ export const userApi = {
     request<void>('/users/me/password', { method: 'PUT', body: JSON.stringify(body) }),
 }
 
+// ── Event tracking ───────────────────────────────────────────────────────────
+// Fire-and-forget analytics: failures are swallowed by callers so a dropped
+// tracking request never blocks or breaks the feature it's observing.
+export const eventsApi = {
+  trackView: (recipeId: number) =>
+    request<void>('/events/recipe-views', { method: 'POST', body: JSON.stringify({ recipeId }) }),
+  trackSearch: (query: string, resultCount: number) =>
+    request<void>('/events/searches', { method: 'POST', body: JSON.stringify({ query, resultCount }) }),
+  trackAiChat: (query: string, recommendedRecipeIds: number[]) =>
+    request<{ id: number }>('/events/ai-chats', { method: 'POST', body: JSON.stringify({ query, recommendedRecipeIds }) }),
+  trackAiAcceptance: (aiLogId: number, acceptedRecipeId: number) =>
+    request<void>(`/events/ai-chats/${aiLogId}/accept`, { method: 'PUT', body: JSON.stringify({ acceptedRecipeId }) }),
+}
+
 // ── Admin ─────────────────────────────────────────────────────────────────────
 export const adminApi = {
   getAll: () => request<Recipe[]>('/admin/recipes'),

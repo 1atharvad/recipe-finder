@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import DOMPurify from 'dompurify'
 import { ChatCircleDotsIcon, XIcon, PaperPlaneRightIcon, WarningCircleIcon, MicrophoneIcon } from '@phosphor-icons/react'
 import { RecipeCard } from '@/components/RecipeCard'
-import { recipeApi } from '@/api/api'
+import { recipeApi, eventsApi } from '@/api/api'
 import { useSpeechToText } from '@/hooks/useSpeechToText'
 import type { Recipe, ChatMessage } from '@/types'
 import content from '@/content/chatWidget.json'
@@ -17,6 +17,7 @@ export const ChatWidget = () => {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [aiLogId, setAiLogId] = useState<number | null>(null)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -67,6 +68,10 @@ export const ChatWidget = () => {
       const res = await recipeApi.chat(text, historyForRequest)
       setMessages(prev => [...prev, { role: 'assistant', content: res.reply }])
       setRecipes(res.recipes)
+      setAiLogId(null)
+      eventsApi.trackAiChat(text, res.recipes.map(r => r.id))
+        .then(({ id }) => setAiLogId(id))
+        .catch(() => {})
     } catch (err: unknown) {
       const isPremiumRequired = err instanceof Error && err.message === 'Premium access required'
       setError(isPremiumRequired ? content.premiumRequiredMessage : content.errorMessage)
@@ -133,7 +138,11 @@ export const ChatWidget = () => {
                 <p className="section-label">{recipes.length} recipe{recipes.length > 1 ? 's' : ''} {content.resultsForYouSuffix}</p>
                 <div className="recipe-list">
                   {recipes.map(recipe => (
-                    <RecipeCard key={recipe.id} recipe={recipe} />
+                    <RecipeCard
+                      key={recipe.id}
+                      recipe={recipe}
+                      onClick={() => { if (aiLogId != null) eventsApi.trackAiAcceptance(aiLogId, recipe.id).catch(() => {}) }}
+                    />
                   ))}
                 </div>
               </div>

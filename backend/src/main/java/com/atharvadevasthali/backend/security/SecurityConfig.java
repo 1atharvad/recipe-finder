@@ -76,6 +76,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/recipes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/recipes/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/recipes/{id}").permitAll()
+                        // recipe-views and searches are tracked for anonymous visitors too, so
+                        // they must be reachable without a JWT; ai-chats tracking stays behind
+                        // anyRequest().authenticated() below since AI chat itself requires login.
+                        .requestMatchers(HttpMethod.POST, "/api/v1/events/recipe-views", "/api/v1/events/searches").permitAll()
                         // smart-search and chat call the paid Gemini API — require login so
                         // premiumAccess can be checked (see RecipeController), unlike the
                         // other endpoints above which are free and open to anyone.
